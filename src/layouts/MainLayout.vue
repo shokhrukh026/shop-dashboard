@@ -1,0 +1,101 @@
+<template>
+  <q-layout view="lHh Lpr lFf">
+    <q-header elevated>
+      <q-toolbar class="bg-green">
+        <q-btn flat dense round @click="leftDrawerOpen = !leftDrawerOpen" icon="menu" aria-label="Menu" />
+
+        <q-toolbar-title>
+          <router-link class="cursor-pointer" to="/main" tag="div">
+            UzPos Аналитика
+          </router-link>
+        </q-toolbar-title>
+
+
+        <q-space />
+
+        <div class="q-gutter-sm row items-center no-wrap">
+          <!-- <q-btn round dense flat color="white" :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
+            @click="$q.fullscreen.toggle()" v-if="$q.screen.gt.sm">
+                       <q-tooltip>Messages</q-tooltip>
+          </q-btn> -->
+          <!-- <q-btn round dense flat color="white" icon="notifications">
+            <q-badge color="red" text-color="white" floating>
+              5
+            </q-badge>
+            <q-menu>
+              <q-list style="min-width: 100px">
+                <messages></messages>
+                <q-card class="text-center no-shadow no-border">
+                  <q-btn label="View All" style="max-width: 120px !important;" flat dense class="text-indigo-8"></q-btn>
+                </q-card>
+              </q-list>
+            </q-menu>
+                       <q-tooltip>Notifications</q-tooltip>
+          </q-btn> -->
+          <q-btn round flat to="/Profile">
+            <q-avatar size="26px">
+              <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+            </q-avatar>
+          </q-btn>
+        </div>
+      </q-toolbar>
+    </q-header>
+
+    <q-drawer v-model="leftDrawerOpen" show-if-above bordered content-class="bg-green text-white">
+      <router-link class="q-pa-sm cursor-pointer" to="/main" tag="div">
+        <q-img  :src="require('../statics/Uzpos_logo_rectangle.png')"></q-img>
+      </router-link>
+      <q-list>
+       
+      
+
+        <q-item :to="bar.url" active-class="q-item-no-link-highlighting" v-for="(bar,item) in sideBar" :key="item">
+          <q-item-section avatar>
+            <q-icon :name="bar.icon" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{bar.title}}</q-item-label>
+          </q-item-section>
+        </q-item>
+       
+        
+
+
+      </q-list>
+    </q-drawer>
+
+    <q-page-container class="bg-grey-2">
+      <router-view />
+    </q-page-container>
+  </q-layout>
+</template>
+
+<script>
+import EssentialLink from 'components/EssentialLink'
+import Messages from "./Messages";
+
+export default {
+  name: 'MainLayout',
+  components: {
+    Messages,
+    EssentialLink
+  },
+  data() {
+    return {
+      leftDrawerOpen: false,
+      sideBar: [
+        {title: 'Главная', icon: 'dashboard', url: '/main'},
+        {title: 'Филиалы', icon: 'fas fa-building', url: '/branches'},
+        {title: 'Продукты', icon: 'fas fa-box-open', url: '/products'},
+        {title: 'Панель приборов', icon: 'fas fa-chart-pie ', url: '/products'},
+        {title: 'Лучшие продажи', icon: 'fas fa-chart-line', url: '/products'},
+        {title: 'Остаток средств', icon: 'fas fa-chart-bar', url: 'Uzpos_logo_rectangle'},
+
+
+
+      ]
+
+    }
+  }
+}
+</script>

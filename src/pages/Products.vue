@@ -1,0 +1,194 @@
+<template>
+    <q-page class="bg-grey-3">
+        <div class="q-pa-md">
+            <q-btn push color="white" text-color="primary" label="Добавить" 
+            class="q-mb-xs" :disable="loading" to="/add-product"/>
+            <q-table
+            dense
+            title="Покупатели"
+            :data="data"
+            :columns="columns"
+            row-key="index"  
+            :filter="filter"
+            :loading="loading"
+            separator="cell"
+            virtual-scroll
+            table-style="height: 350px"
+            :pagination.sync="pagination"
+            :rows-per-page-options="[0]"
+            :virtual-scroll-sticky-size-start="48"
+            class="my-sticky-virtscroll-table"
+            >
+            <template v-slot:body-cell-actions="props">
+                <q-td :props="props">
+                    <q-btn dense round flat color="grey" @click="editRow(props)" icon="edit"></q-btn>
+                    <q-btn dense round flat color="grey" to="/med-info" icon="fas fa-info-circle"></q-btn>
+                    <q-btn dense round flat color="grey" @click="deleteRow(props)" icon="delete"></q-btn>
+                </q-td>
+            </template>
+            <template v-slot:top="props">
+                <span class="text-subtitle1">Продукты в филиалах</span>
+                <!-- <q-btn color="green" :disable="loading" label="Добавить" @click="addRow = !addRow" /> -->
+                <!-- <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" /> -->
+                <q-space />
+                <q-input borderless dense debounce="300" color="primary" v-model="filter"
+                placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; border-radius: 5px;">
+                <template v-slot:append>
+                    <q-icon name="search" />
+                </template>
+                </q-input>
+                <q-btn
+                flat round dense
+                :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+                @click="props.toggleFullscreen"
+                class="q-ml-md"
+                />
+            </template>
+            </q-table>
+        </div>
+
+
+
+
+
+           <q-dialog v-model="addRow" persistent>
+             <q-card>
+               <q-card-section>
+                 <div class="text-h6">Добавить Товар</div>
+               </q-card-section>
+
+               <q-separator />
+
+               <q-card-section>
+                
+
+                 <q-input v-model="row.branch_name" label="Филиал"/>
+                 <q-input v-model.number="row.city" label="Город"/>
+                 <q-input v-model.number="row.owner" label="Владелец"/>
+                 <q-input v-model.number="row.status" label="Статус"/>
+                 
+               
+               </q-card-section>
+               <q-separator />
+               <q-card-actions align="right" class="bg-white text-teal">
+                 <q-btn flat label="Отменить" v-close-popup @click="cleanData" />
+                 <q-btn flat label="Добавить" v-close-popup @click="addProviderData" :disable="button" />
+               </q-card-actions>
+             </q-card>
+           </q-dialog>
+
+
+           <q-dialog v-model="editRowVar" persistent>
+             <q-card>
+               <q-card-section>
+                 <div class="text-h6">Добавить Товар</div>
+               </q-card-section>
+
+               <q-separator />
+
+               <q-card-section>
+                
+
+                 <q-input v-model="row.products" label="Филиал"/>
+                 <q-input v-model="row.total_quantity" label="Город"/>
+                 <q-input v-model="row.left_quantity" label="Владелец"/>
+                 <q-input v-model="row.vat" label="Статус"/>
+                 
+               
+               </q-card-section>
+               <q-separator />
+               <q-card-actions align="right" class="bg-white text-teal">
+                 <q-btn flat label="Отменить" v-close-popup @click="cleanData" />
+                 <q-btn flat label="Изменить" v-close-popup @click="addProviderData" :disable="button" />
+               </q-card-actions>
+             </q-card>
+           </q-dialog>
+
+
+
+           <q-dialog v-model="deleteRowVar">
+             <q-card style="width: 300px">
+               <q-card-section class="bg-warning">
+                 <div class="text-h6 text-white">Удаление</div>
+               </q-card-section>
+               <q-separator />
+               <q-card-section class="q-pt-none q-pa-lg">
+                 Вы всерьёз хотите удалить строку?
+               </q-card-section>
+               <q-separator />
+               <q-card-actions align="right" class="bg-white text-teal">
+                 <q-btn flat label="Нет" v-close-popup />
+                 <q-btn flat label="Да" v-close-popup @click="deleteProviderData" />
+               </q-card-actions>
+             </q-card>
+           </q-dialog>
+
+
+    </q-page>
+</template>
+
+
+<script>
+export default {
+    data(){
+      return {
+      pagination: {
+        rowsPerPage: 0
+      },
+      row: {
+        index: '',
+        products: '',
+        barcode: '',
+        total_quantity: '',
+        left_quantity: '',
+        vat: '',
+      },
+      editRowVar: false,
+      addRow: false,
+      deleteRowVar: false,
+      rowDelete: {},
+      loading: false,
+      filter: '',
+      columns: [
+        { name: 'index', align: 'center', label: 'No#', field: 'index', sortable: true},
+        { name: 'products', align: 'center', label: 'Продукты', field: 'products', sortable: true },
+        { name: 'barcode', align: 'center', label: 'Штрих-код', field: 'barcode', sortable: true },
+        // {
+        //   name: 'name',
+        //   required: true,
+        //   label: 'Покупатель',
+        //   align: 'left',
+        //   field: row => row.name,
+        //   format: val => ${val},
+        //   sortable: true
+        // },
+        { name: 'total_quantity', align: 'center', label: 'Кол-во', field: 'total_quantity', sortable: true },
+        { name: 'left_quantity', align: 'center', label: 'Остаток', field: 'left_quantity', sortable: true },
+        { name: 'vat', align: 'center', label: 'НДС', field: 'vat', sortable: true },
+       
+        { name: 'actions', label: 'Действия', field: '', align:'center' },
+      ],
+      data: [
+          {index: 1, products: 'Тримол', barcode: '2313141', total_quantity: '100', left_quantity: '50', vat: '10%'},
+          {index: 2, products: 'Ношпа', barcode: '2313141', total_quantity: '56', left_quantity: '40', vat: '12%'},
+          {index: 3, products: 'Ибуклин', barcode: '2313141', total_quantity: '80', left_quantity: '10', vat: '5%'},
+          {index: 4, products: 'Арбидол', barcode: '2313141', total_quantity: '14', left_quantity: '0', vat: '7%'},
+      ],
+      }
+    },
+    methods: {
+       deleteRow(props){
+        this.rowDelete = props.row
+        this.deleteRowVar = !this.deleteRowVar
+      },
+      editRow(props) {
+        this.row = props.row
+        this.editRowVar = !this.editRowVar
+      },
+    }
+}
+</script>
+
+<style scoped>
+
+</style>
