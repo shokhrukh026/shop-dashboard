@@ -7,14 +7,16 @@ const routes = [
     path: '/main',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      // {path: '', component: () => import('pages/Dashboard.vue')},
-      {path: '/', component: () => import('pages/Dashboard2.vue')},
-      {path: '/branches', component: () => import('pages/Branches.vue')},
-      {path: '/products', component: () => import('pages/Products.vue')},
-      {path: '/med-info', component: () => import('pages/Med-info.vue')},
-      {path: '/branch-info', component: () => import('pages/Branch-info.vue')},
-      {path: '/branch-update', component: () => import('pages/Branch-update.vue')},
-      {path: '/add-product', component: () => import('pages/Add-product.vue')},
+      // {path: '', component: () => import('pages/Dashboard.vue'), beforeEnter: AuthGuard},
+      {path: '/', component: () => import('pages/Dashboard2.vue'), meta: {authRequired: true}},
+      {path: '/branches', component: () => import('pages/Branches.vue'), meta: {authRequired: true}},
+      {path: '/products', component: () => import('pages/Products.vue'), meta: {authRequired: true}},
+      {path: '/med-info', component: () => import('pages/Med-info.vue'), meta: {authRequired: true}},
+      {path: '/branch-info', component: () => import('pages/Branch-info.vue'), meta: {authRequired: true}},
+      {path: '/branch-update', component: () => import('pages/Branch-update.vue'), meta: {authRequired: true}},
+      {path: '/add-product', component: () => import('pages/Add-product.vue'), meta: {authRequired: true}},
+      {path: '/edit-product', component: () => import('pages/Edit-product.vue'), meta: {authRequired: true}},
+
       
 
       {path: '/Profile', component: () => import('pages/UserProfile.vue')},
@@ -60,3 +62,18 @@ if (process.env.MODE !== 'ssr') {
 }
 
 export default routes
+
+
+
+
+
+// function AuthGuard(from, to, next){
+//   if(store.getters.getUser){
+//     next()
+//   }
+//   else
+//     next('/')
+// }
+
+
+    

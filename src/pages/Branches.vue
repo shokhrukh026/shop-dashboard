@@ -38,8 +38,6 @@
             </template>
             </q-table>
         </div>
-      {{getUser}}
-      {{getBranches}}
     </q-page>
 </template>
 
@@ -65,15 +63,6 @@ export default {
       columns: [
         { name: 'index', align: 'center', label: 'No#', field: 'index', sortable: true},
         { name: 'branch_name', align: 'center', label: 'Имя Филиала', field: 'branch_name', sortable: true },
-        // {
-        //   name: 'name',
-        //   required: true,
-        //   label: 'Покупатель',
-        //   align: 'left',
-        //   field: row => row.name,
-        //   format: val => ${val},
-        //   sortable: true
-        // },
         { name: 'city', align: 'center', label: 'Город', field: 'city', sortable: true },
         { name: 'owner', align: 'center', label: 'Владелец', field: 'owner', sortable: true },
         { name: 'status', align: 'center', label: 'Статус', field: 'status', sortable: true },

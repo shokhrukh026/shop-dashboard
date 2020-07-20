@@ -15,6 +15,7 @@ export default{
           return axios({
               method: "GET",
               url: baseUrl + getters.getUser.business_id + '/branches/',
+              headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
               commit('SET_BRANCHES_INFO', e.data);

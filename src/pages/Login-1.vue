@@ -36,12 +36,23 @@
               />
 
               <div>
-                <q-btn label="Login" to="/" type="button" color="primary" @click="Login"/>
+                <q-btn label="Login" type="button" color="primary" @click="Login"/>
               </div>
             </q-form>
           </q-card-section>
         </q-card>
-        {{getUser}}
+
+         <q-dialog v-model="error" position="top">
+           <q-card  class="bg-negative">
+             <!-- <q-linear-progress :value="0.6" color="red" /> -->
+
+             <q-card-section class="row items-center no-wrap">
+               <div class="text-white">
+                 Incorrect username or password.  
+               </div>
+             </q-card-section>
+           </q-card>
+         </q-dialog>
       </q-page>
     </q-page-container>
   </q-layout>
@@ -57,7 +68,7 @@ export default {
         return {
             username: 'admin',
             password: 'admin',
-            posts: [],
+            error: false,
         }
     },
     computed: {
@@ -71,8 +82,10 @@ export default {
         ]),
         
       async Login(){
-         await this.AUTHORIZATION({username: this.username, password: this.password, router: this.$router});
-        
+        let a = await this.AUTHORIZATION({username: this.username, password: this.password, router: this.$router});
+        if(a == 'error'){
+          this.error = true;
+        }
         
       }
     }

@@ -21,7 +21,7 @@
             >
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
-                    <q-btn dense round flat color="grey" @click="editRow(props)" icon="edit"></q-btn>
+                    <q-btn dense round flat color="grey" to="/edit-product" icon="edit"></q-btn>
                     <q-btn dense round flat color="grey" to="/med-info" icon="fas fa-info-circle"></q-btn>
                     <q-btn dense round flat color="grey" @click="deleteRow(props)" icon="delete"></q-btn>
                 </q-td>
@@ -48,64 +48,6 @@
         </div>
 
 
-
-
-
-           <q-dialog v-model="addRow" persistent>
-             <q-card>
-               <q-card-section>
-                 <div class="text-h6">Добавить Товар</div>
-               </q-card-section>
-
-               <q-separator />
-
-               <q-card-section>
-                
-
-                 <q-input v-model="row.branch_name" label="Филиал"/>
-                 <q-input v-model.number="row.city" label="Город"/>
-                 <q-input v-model.number="row.owner" label="Владелец"/>
-                 <q-input v-model.number="row.status" label="Статус"/>
-                 
-               
-               </q-card-section>
-               <q-separator />
-               <q-card-actions align="right" class="bg-white text-teal">
-                 <q-btn flat label="Отменить" v-close-popup @click="cleanData" />
-                 <q-btn flat label="Добавить" v-close-popup @click="addProviderData" :disable="button" />
-               </q-card-actions>
-             </q-card>
-           </q-dialog>
-
-
-           <q-dialog v-model="editRowVar" persistent>
-             <q-card>
-               <q-card-section>
-                 <div class="text-h6">Добавить Товар</div>
-               </q-card-section>
-
-               <q-separator />
-
-               <q-card-section>
-                
-
-                 <q-input v-model="row.products" label="Филиал"/>
-                 <q-input v-model="row.total_quantity" label="Город"/>
-                 <q-input v-model="row.left_quantity" label="Владелец"/>
-                 <q-input v-model="row.vat" label="Статус"/>
-                 
-               
-               </q-card-section>
-               <q-separator />
-               <q-card-actions align="right" class="bg-white text-teal">
-                 <q-btn flat label="Отменить" v-close-popup @click="cleanData" />
-                 <q-btn flat label="Изменить" v-close-popup @click="addProviderData" :disable="button" />
-               </q-card-actions>
-             </q-card>
-           </q-dialog>
-
-
-
            <q-dialog v-model="deleteRowVar">
              <q-card style="width: 300px">
                <q-card-section class="bg-warning">
@@ -118,7 +60,7 @@
                <q-separator />
                <q-card-actions align="right" class="bg-white text-teal">
                  <q-btn flat label="Нет" v-close-popup />
-                 <q-btn flat label="Да" v-close-popup @click="deleteProviderData" />
+                 <q-btn flat label="Да" v-close-popup  />
                </q-card-actions>
              </q-card>
            </q-dialog>
