@@ -14,7 +14,8 @@
             >
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
-                    <q-btn dense round flat color="grey" to="/branch-update" icon="edit"></q-btn>
+                    <q-btn dense round flat color="grey" :to="{ name: 'branch-update', params: {id: props.row.id, row: props.row}}"
+                     icon="edit"></q-btn>
                     <q-btn dense round flat color="grey" to="/branch-info" icon="fas fa-info-circle"></q-btn>
                 </q-td>
             </template>
@@ -38,6 +39,7 @@
             </template>
             </q-table>
         </div>
+        {{getBranches}}
     </q-page>
 </template>
 
@@ -62,39 +64,46 @@ export default {
       filter: '',
       columns: [
         { name: 'index', align: 'center', label: 'No#', field: 'index', sortable: true},
-        { name: 'branch_name', align: 'center', label: 'Имя Филиала', field: 'branch_name', sortable: true },
+        { name: 'branch_name', align: 'center', label: 'Название', field: 'name', sortable: true },
+        { name: 'address', align: 'center', label: 'Адрес', field: 'address', sortable: true },
+        { name: 'street', align: 'center', label: 'Улица', field: 'street', sortable: true },
         { name: 'city', align: 'center', label: 'Город', field: 'city', sortable: true },
-        { name: 'owner', align: 'center', label: 'Владелец', field: 'owner', sortable: true },
+        // { name: 'owner', align: 'center', label: 'Владелец', field: 'owner', sortable: true },
         { name: 'status', align: 'center', label: 'Статус', field: 'status', sortable: true },
+        { name: 'virtual_number', align: 'center', label: 'Виртуальный номер', field: 'virtual_number', sortable: true },
+        { name: 'contact_person', align: 'center', label: 'Контактное лицо', field: 'contact_person', sortable: true },
+        { name: 'contact_phone', align: 'center', label: 'Контактный телефон', field: 'contact_phone', sortable: true },
        
         { name: 'actions', label: 'Действия', field: '', align:'center' },
       ],
       data: [
-          {index: 1, branch_name: 'Арзон аптека #1', city: 'Тошкент', owner: 'Шоазиз', status: 'новый'},
-          {index: 2, branch_name: 'Арзон аптека #2', city: 'Тошкент', owner: 'Жахонгир', status: 'новый'},
-          {index: 3, branch_name: 'Арзон аптека #3', city: 'Бухоро', owner: 'Бехруз', status: 'новый'},
-          {index: 4, branch_name: 'Арзон аптека #4', city: 'Самарканд', owner: 'Жавохир', status: 'новый'},
-          {index: 5, branch_name: 'Арзон аптека #5', city: 'Жиззах', owner: 'Улугбек', status: 'новый'},
-          {index: 6, branch_name: 'Арзон аптека #6', city: 'Тошкент вилояти', owner: 'Фарход', status: 'новый'},
-          {index: 7, branch_name: 'Арзон аптека #7', city: 'Тошкент вилояти', owner: 'Шохрух', status: 'новый'},
-          {index: 8, branch_name: 'Арзон аптека #8', city: 'Тошкент вилояти', owner: 'Олим ака', status: 'новый'},
-          {index: 9, branch_name: 'Арзон аптека #9', city: 'Тошкент вилояти', owner: 'Олим ака', status: 'новый'},
-          {index: 10, branch_name: 'Арзон аптека #10', city: 'Тошкент вилояти', owner: 'Олим ака', status: 'новый'},
+          // {index: 1, branch_name: 'Арзон аптека #1', city: 'Тошкент', owner: 'Шоазиз', status: 'новый'},
+          // {index: 2, branch_name: 'Арзон аптека #2', city: 'Тошкент', owner: 'Жахонгир', status: 'новый'},
+          // {index: 3, branch_name: 'Арзон аптека #3', city: 'Бухоро', owner: 'Бехруз', status: 'новый'},
+          // {index: 4, branch_name: 'Арзон аптека #4', city: 'Самарканд', owner: 'Жавохир', status: 'новый'},
+          // {index: 5, branch_name: 'Арзон аптека #5', city: 'Жиззах', owner: 'Улугбек', status: 'новый'},
+          // {index: 6, branch_name: 'Арзон аптека #6', city: 'Тошкент вилояти', owner: 'Фарход', status: 'новый'},
+          // {index: 7, branch_name: 'Арзон аптека #7', city: 'Тошкент вилояти', owner: 'Шохрух', status: 'новый'},
+          // {index: 8, branch_name: 'Арзон аптека #8', city: 'Тошкент вилояти', owner: 'Олим ака', status: 'новый'},
+          // {index: 9, branch_name: 'Арзон аптека #9', city: 'Тошкент вилояти', owner: 'Олим ака', status: 'новый'},
+          // {index: 10, branch_name: 'Арзон аптека #10', city: 'Тошкент вилояти', owner: 'Олим ака', status: 'новый'},
       ],
       }
     },
-    mounted(){
-      this.GET_BRANCHES();
+    async created(){
+      await this.GET_BRANCHES();
+      this.data = await this.getBranches;
     },
     computed:{
       ...mapGetters([
-        'getBranches', 'getUser'
+        'getBranches', 'getUser', 
       ])
     },
     methods: {
       ...mapActions([
-          'GET_BRANCHES',
+        'GET_BRANCHES'
       ]),
+
     }
 }
 </script>

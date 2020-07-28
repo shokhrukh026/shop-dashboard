@@ -11,7 +11,7 @@
           <q-card-section>
             <div class="text-center q-pt-lg">
               <div class="col text-h6 ellipsis">
-                Log in
+                Войти
               </div>
             </div>
           </q-card-section>
@@ -22,7 +22,7 @@
               <q-input
                 filled
                 v-model="username"
-                label="Username"
+                label="Логин"
                 lazy-rules
               />
 
@@ -30,13 +30,13 @@
                 type="password"
                 filled
                 v-model="password"
-                label="Password"
+                label="Пароль"
                 lazy-rules
 
               />
-
+              
               <div>
-                <q-btn label="Login" type="button" color="primary" @click="Login"/>
+                <q-btn label="Вход" type="button" color="primary" @click="Login"/>
               </div>
             </q-form>
           </q-card-section>
@@ -48,11 +48,12 @@
 
              <q-card-section class="row items-center no-wrap">
                <div class="text-white">
-                 Incorrect username or password.  
+                 Ошибка. Неправильный логин или пароль.  
                </div>
              </q-card-section>
            </q-card>
          </q-dialog>
+         {{getUser}}
       </q-page>
     </q-page-container>
   </q-layout>
@@ -60,7 +61,7 @@
 
 <script>
 import axios from 'axios';
-import {mapActions, mapGetters} from 'vuex'
+import { mapMutations, mapActions, mapGetters} from 'vuex'
 import router from '../router/index'
 
 export default {
@@ -74,8 +75,26 @@ export default {
     computed: {
       ...mapGetters([
         'getUser',
-      ])
+      ]),
+
+      ...mapMutations([
+        'UNSET_USER_FROM_STATE'
+      ]),
     },
+    
+    beforeRouteEnter(to, from, next) {
+        next(vm => {
+          // access to component's instance using `vm` .
+          // this is done because this navigation guard is called before the component is created.            
+          // clear your previously populated search results.            
+          // re-populate search results
+
+          // vm.$root.enterToRouter;
+          vm.UNSET_USER_FROM_STATE;
+          // next();
+        })
+    },
+
     methods: {
       ...mapActions([
             'AUTHORIZATION',
@@ -85,9 +104,10 @@ export default {
         let a = await this.AUTHORIZATION({username: this.username, password: this.password, router: this.$router});
         if(a == 'error'){
           this.error = true;
-        }
-        
-      }
+        } 
+      },
+
+
     }
 }
 </script>

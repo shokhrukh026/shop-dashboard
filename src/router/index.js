@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import routes from './routes'
-import store from '../store/index'
 Vue.use(VueRouter)
 
 /*
@@ -27,9 +26,8 @@ export default function ({ store }) {
 
 
  Router.beforeEach(async (to, from, next) => {
-    let user = await store.getters.getUser
+    let user = await store.getters.getUser;
     if (to.matched.some(route => route.meta.authRequired)) {
-      console.log(user);
       if(user.token != ''){
         next()
       } else{

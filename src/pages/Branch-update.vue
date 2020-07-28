@@ -4,53 +4,59 @@
            <div class="col-lg-8 col-md-8 col-xs-12 col-sm-12">
              <q-card class="card-bg text-black">
                <q-card-section class="text-h6 bg-blue">
-                 <div class="text-h6 text-white">Update Branch</div>
-                 <div class="text-subtitle2 text-white">Complete your branch</div>
+                 <div class="text-h6 text-white">Редактирование филиала</div>
+                 <div class="text-subtitle2 text-white">Заполните поля</div>
                </q-card-section>
                <q-card-section class="q-pa-sm">
                  <q-list class="row">
                    <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                      <q-item-section>
-                       <q-input color="blue" dense v-model="branch_edit.user_name" label="Name" />
+                       <q-input color="blue" outlined dense v-model="branch_edit.name" label="Название" />
                      </q-item-section>
                    </q-item>
                    <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                      <q-item-section>
-                       <q-input  color="blue" dense v-model="branch_edit.first_name" label="Address" />
+                       <q-input  color="blue" outlined dense v-model="branch_edit.address" label="Адрес" />
                      </q-item-section>
                    </q-item>
                    <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                      <q-item-section>
-                       <q-input  color="blue" dense v-model="branch_edit.email" label="Street" />
+                       <q-input  color="blue" outlined dense v-model="branch_edit.street" label="Улица" />
                      </q-item-section>
                    </q-item>
                    <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                      <q-item-section>
-                       <q-input  color="blue" dense v-model="branch_edit.last_name" label="Contact Person" />
+                       <q-input  color="blue" outlined dense v-model="branch_edit.city" label="Город" />
                      </q-item-section>
                    </q-item>
                    <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                      <q-item-section>
-                       <q-input  color="blue" dense v-model="branch_edit.last_name" label="Contact Phone" />
+                       <q-input  color="blue" outlined dense v-model="branch_edit.status" label="Статус" />
                      </q-item-section>
                    </q-item>
                    <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                      <q-item-section>
-                       <q-input  color="blue" dense v-model="branch_edit.city" label="City" />
+                       <q-input  color="blue" outlined dense v-model="branch_edit.contact_person" label="Контактное лицо" />
                      </q-item-section>
                    </q-item>
                    <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                      <q-item-section>
-                       <q-input  color="blue" dense v-model="branch_edit.post_code" label="Owner" />
+                       <q-input  color="blue" outlined dense v-model="branch_edit.contact_phone" label="Контактный телефон" />
+                     </q-item-section>
+                   </q-item>
+                  <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                     <q-item-section>
+                       <q-input  color="blue" outlined dense v-model="branch_edit.virtual_number" label="Виртуальный номер" />
                      </q-item-section>
                    </q-item>
                  </q-list>
                </q-card-section>
                <q-card-actions align="right">
-                 <q-btn class="text-capitalize bg-blue text-white">Update Branch Info</q-btn>
+                 <q-btn class="text-capitalize bg-blue text-white">Сохранить</q-btn>
                </q-card-actions>
              </q-card>
            </div>
+           {{branch_edit}}
         </div>
     </q-page>
 </template>
@@ -60,11 +66,27 @@
 import {mapActions, mapGetters} from 'vuex'
 
 export default {
-    data(){
-      return {
-          branch_edit: {user_name: '', email: '', first_name: '', last_name: '', address: '', city: '', post_code: '', about: ''}
+    props: {
+      id: {
+        type: Number,
+        required: true
+      },
+      row: {
+        type: Object,
+        required: false 
       }
     },
+    data(){
+      return {
+          branch_edit: this.row,
+      }
+    },
+    mounted(){
+      // let a = this.row;
+      // this.$set(this.branch_edit,0 , a)
+    }
+
+
     
 }
 </script>

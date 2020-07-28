@@ -15,6 +15,7 @@
     "apexcharts": "^3.16.0",
     "axios": "^0.18.1",
     "echarts": "^4.6.0",
+    "json-server": "^0.16.1",
     "quasar": "^1.0.0",
     "vue-apexcharts": "^1.5.2",
     "vue-echarts-v3": "^2.0.1",

@@ -5,29 +5,31 @@
             class="q-mb-xs" :disable="loading" to="/add-product"/>
             <q-table
             dense
-            title="Покупатели"
+            title=""
             :data="data"
             :columns="columns"
             row-key="index"  
             :filter="filter"
             :loading="loading"
             separator="cell"
+            :pagination.sync="pagination"
+            >
+
+            <!-- :rows-per-page-options="[0]"
             virtual-scroll
             table-style="height: 350px"
-            :pagination.sync="pagination"
-            :rows-per-page-options="[0]"
-            :virtual-scroll-sticky-size-start="48"
             class="my-sticky-virtscroll-table"
-            >
+            :virtual-scroll-sticky-size-start="48" -->
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
-                    <q-btn dense round flat color="grey" to="/edit-product" icon="edit"></q-btn>
+                    <q-btn dense round flat color="grey" @click="addRow = !addRow" icon="add_circle"></q-btn>
+                    <q-btn dense round flat color="grey" :to="{ name: 'edit-product', params: {id: props.row.id, row: props.row}}" icon="edit"></q-btn>
                     <q-btn dense round flat color="grey" to="/med-info" icon="fas fa-info-circle"></q-btn>
                     <q-btn dense round flat color="grey" @click="deleteRow(props)" icon="delete"></q-btn>
                 </q-td>
             </template>
             <template v-slot:top="props">
-                <span class="text-subtitle1">Продукты в филиалах</span>
+                <span class="text-subtitle1">Все лекарства</span>
                 <!-- <q-btn color="green" :disable="loading" label="Добавить" @click="addRow = !addRow" /> -->
                 <!-- <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" /> -->
                 <q-space />
@@ -66,16 +68,41 @@
            </q-dialog>
 
 
+           <q-dialog v-model="addRow">
+             <q-card style="width: 300px">
+               <q-card-section class="bg-info">
+                 <div class="text-h6 text-white">Распределение</div>
+               </q-card-section>
+               <q-separator />
+               <q-card-section class="q-pt-none q-pa-lg">
+                <q-select outlined v-model="distribution_branch" :options="distribution_options" label="Филиал" class="q-mb-sm"/>
+                <q-input outlined v-model="distribution_amount" label="Кол-во"  class="q-mb-sm"/>
+                
+               </q-card-section>
+               <q-separator />
+               <q-card-actions align="right" class="bg-white text-teal">
+                 <q-btn flat label="Отменить" v-close-popup />
+                 <q-btn flat label="Распределить" v-close-popup  />
+               </q-card-actions>
+             </q-card>
+           </q-dialog>
+           {{distribution_options}}
     </q-page>
 </template>
 
 
 <script>
+import {mapActions, mapGetters} from 'vuex'
+
 export default {
     data(){
       return {
+      distribution_amount: '',
+      distribution_branch: '',
+      distribution_options: [],
       pagination: {
-        rowsPerPage: 0
+        rowsPerPage: 1,
+        page: 1,
       },
       row: {
         index: '',
@@ -93,7 +120,7 @@ export default {
       filter: '',
       columns: [
         { name: 'index', align: 'center', label: 'No#', field: 'index', sortable: true},
-        { name: 'products', align: 'center', label: 'Продукты', field: 'products', sortable: true },
+        { name: 'products', align: 'center', label: 'Лекарство', field: 'title', sortable: true },
         { name: 'barcode', align: 'center', label: 'Штрих-код', field: 'barcode', sortable: true },
         // {
         //   name: 'name',
@@ -111,11 +138,37 @@ export default {
         { name: 'actions', label: 'Действия', field: '', align:'center' },
       ],
       data: [
-          {index: 1, products: 'Тримол', barcode: '2313141', total_quantity: '100', left_quantity: '50', vat: '10%'},
-          {index: 2, products: 'Ношпа', barcode: '2313141', total_quantity: '56', left_quantity: '40', vat: '12%'},
-          {index: 3, products: 'Ибуклин', barcode: '2313141', total_quantity: '80', left_quantity: '10', vat: '5%'},
-          {index: 4, products: 'Арбидол', barcode: '2313141', total_quantity: '14', left_quantity: '0', vat: '7%'},
+          // {index: 1, products: 'Тримол', barcode: '2313141', total_quantity: '100', left_quantity: '50', vat: '10%'},
+          // {index: 2, products: 'Ношпа', barcode: '2313141', total_quantity: '56', left_quantity: '40', vat: '12%'},
+          // {index: 3, products: 'Ибуклин', barcode: '2313141', total_quantity: '80', left_quantity: '10', vat: '5%'},
+          // {index: 4, products: 'Арбидол', barcode: '2313141', total_quantity: '14', left_quantity: '0', vat: '7%'},
       ],
+      }
+    },
+    watch: {
+       'pagination.page': function (newVal, oldVal){
+          console.log(newVal);
+        },
+    },
+    async mounted(){
+      await this.GET_MEDICINES();
+      this.data = await this.getMedicines.results;
+      // await this.GET_COMMENTS();
+      // this.data = await this.getComments
+      this.distribution_options = await function() {
+        let a = [];
+        for(let i = 0; i<this.getBranches.length; i++){
+          a.push(this.getBranches[i].name);
+        }
+        return a;
+      }
+    },
+    computed:{
+      ...mapGetters([
+        'getMedicines', 'getComments', 'getBranches'
+      ]),
+      pagesNumber () {
+        return Math.ceil(this.data.length / this.pagination.rowsPerPage)
       }
     },
     methods: {
@@ -127,6 +180,10 @@ export default {
         this.row = props.row
         this.editRowVar = !this.editRowVar
       },
+      ...mapActions([
+        'GET_MEDICINES', 'GET_COMMENTS'
+      ]),
+
     }
 }
 </script>
