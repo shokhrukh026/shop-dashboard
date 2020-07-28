@@ -5,6 +5,7 @@ export default{
     state:{
         branches: [],
         medicines: [],
+        search_result: [],
         comments: []
     },
     mutations:{
@@ -13,6 +14,9 @@ export default{
         },
         SET_MEDICINES_INFO: (state, payload) => {
           state.medicines = payload
+        },
+        SET_SEARCH_RESULT_INFO: (state, payload) =>{
+          state.search_result = payload
         },
         SET_COMMENTS_INFO: (state, payload) => {
           state.comments = payload
@@ -58,6 +62,21 @@ export default{
             .then((e) => {
               commit('SET_COMMENTS_INFO', e.data);
             //   return e;
+            })
+            .catch((error) => {
+              console.log(error);
+            //   return error;
+            })
+        },
+        GET_SEARCH_RESULT({commit, getters},payload) {
+          return axios({
+              method: "GET",
+              url: 'http://dev.epos.uz/v1/medicine/list?title='+payload.title,
+              headers: {Authorization: getters.getUser.token}
+            })
+            .then((e) => {
+              commit('SET_SEARCH_RESULT_INFO', e.data);
+               return e;
             })
             .catch((error) => {
               console.log(error);
@@ -115,10 +134,12 @@ export default{
             //   return error;
             })
         },
+        
     },
     getters:{
         getBranches: state => state.branches,
         getMedicines: state => state.medicines,
-        getComments: state => state.comments
+        getComments: state => state.comments,
+        getSearchResult: state => state.search_result,
     }
 }

@@ -33,11 +33,11 @@
                 <!-- <q-btn color="green" :disable="loading" label="Добавить" @click="addRow = !addRow" /> -->
                 <!-- <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" /> -->
                 <q-space />
-                <q-input borderless dense debounce="300" color="primary" v-model="filter"
+                <q-input borderless dense debounce="100" color="primary" v-model="filter" @keydown="filterFunc"
                 placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; border-radius: 5px;">
-                <template v-slot:append>
-                    <q-icon name="search" />
-                </template>
+                  <template v-slot:append>
+                      <q-icon name="search" />
+                  </template>
                 </q-input>
                 <q-btn
                 flat round dense
@@ -87,6 +87,8 @@
              </q-card>
            </q-dialog>
            {{distribution_options}}
+           {{answer.data.data[0]}}
+           {{getMedicines}}
     </q-page>
 </template>
 
@@ -97,6 +99,7 @@ import {mapActions, mapGetters} from 'vuex'
 export default {
     data(){
       return {
+        answer: {data: {data: []}},
       distribution_amount: '',
       distribution_branch: '',
       distribution_options: [],
@@ -149,19 +152,24 @@ export default {
        'pagination.page': function (newVal, oldVal){
           console.log(newVal);
         },
+        // filter: async function(newVal, oldVal) {
+        //   if(newVal.length >= 3){
+        //     this.answer = await this.getSearchResultByFilter();
+        //     this.data = []
+        //     this.data.push(await this.answer.data.data[0])
+        //   }
+        //   else{
+        //     this.data = []
+        //     this.data = await this.getMedicines.results
+        //   }
+        // },
     },
     async mounted(){
       await this.GET_MEDICINES();
       this.data = await this.getMedicines.results;
       // await this.GET_COMMENTS();
       // this.data = await this.getComments
-      this.distribution_options = await function() {
-        let a = [];
-        for(let i = 0; i<this.getBranches.length; i++){
-          a.push(this.getBranches[i].name);
-        }
-        return a;
-      }
+      this.distribution_options = await this.getBranchNames;
     },
     computed:{
       ...mapGetters([
@@ -169,9 +177,39 @@ export default {
       ]),
       pagesNumber () {
         return Math.ceil(this.data.length / this.pagination.rowsPerPage)
-      }
+      },
+      getBranchNames() {
+        let a = [];
+        for(let i = 0; i<this.getBranches.length; i++){
+          a.push(this.getBranches[i].name);
+        }
+        return a;
+      },
     },
     methods: {
+      ...mapActions([
+        'GET_MEDICINES', 'GET_COMMENTS', 'GET_SEARCH_RESULT'
+      ]),
+      async getSearchResultByFilter(){
+        return await this.GET_SEARCH_RESULT(
+          {
+            title: this.filter
+          }
+        )
+      },
+      async filterFunc(){
+         if(this.filter.length >= 1){
+            this.data = []
+            this.answer = await this.getSearchResultByFilter();
+            this.data.push(await this.answer.data.data[0])
+          }
+         if(this.filter == ''){
+            this.data = []
+            this.data = await this.getMedicines.results
+          }
+      },
+
+
        deleteRow(props){
         this.rowDelete = props.row
         this.deleteRowVar = !this.deleteRowVar
@@ -180,9 +218,6 @@ export default {
         this.row = props.row
         this.editRowVar = !this.editRowVar
       },
-      ...mapActions([
-        'GET_MEDICINES', 'GET_COMMENTS'
-      ]),
 
     }
 }
