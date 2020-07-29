@@ -1,8 +1,17 @@
 <template>
     <q-page class="bg-grey-3">
         <div class="q-pa-md">
-            <q-btn push color="white" text-color="primary" label="Добавить" 
-            class="q-mb-xs" :disable="loading" to="/add-product"/>
+            <div class="row q-mb-xs">
+              <q-btn push color="white" text-color="primary" label="Добавить" 
+              class="q-mb-xs" :disable="loading" to="/add-product"/>
+              <q-space/>
+              <q-input borderless dense debounce="100" color="primary" v-model="filter" @keyup="filterFunc" class="bg-white"
+              placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; border-radius: 5px;">
+                <template v-slot:append>
+                    <q-icon name="search" />
+                </template>
+              </q-input>
+            </div>
             <q-table
             dense
             title=""
@@ -33,12 +42,12 @@
                 <!-- <q-btn color="green" :disable="loading" label="Добавить" @click="addRow = !addRow" /> -->
                 <!-- <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" /> -->
                 <q-space />
-                <q-input borderless dense debounce="100" color="primary" v-model="filter" @keydown="filterFunc"
+                <!-- <q-input borderless dense debounce="100" color="primary" v-model="filter" @keydown="filterFunc"
                 placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; border-radius: 5px;">
                   <template v-slot:append>
                       <q-icon name="search" />
                   </template>
-                </q-input>
+                </q-input> -->
                 <q-btn
                 flat round dense
                 :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
@@ -86,9 +95,10 @@
                </q-card-actions>
              </q-card>
            </q-dialog>
-           {{distribution_options}}
+           <!-- {{distribution_options}}
            {{answer.data.data[0]}}
-           {{getMedicines}}
+           {{getMedicines}} -->
+          
     </q-page>
 </template>
 
@@ -125,6 +135,10 @@ export default {
         { name: 'index', align: 'center', label: 'No#', field: 'index', sortable: true},
         { name: 'products', align: 'center', label: 'Лекарство', field: 'title', sortable: true },
         { name: 'barcode', align: 'center', label: 'Штрих-код', field: 'barcode', sortable: true },
+        { name: 'country', align: 'center', label: 'Страна', field: 'country', sortable: true },
+        { name: 'manufacture', align: 'center', label: 'Производитель', field: 'manufacture', sortable: true },
+        { name: 'serial_code', align: 'center', label: 'Серийный номер', field: 'serial_code', sortable: true },
+        { name: 'capacity', align: 'center', label: 'Вместимость', field: 'capacity', sortable: true },
         // {
         //   name: 'name',
         //   required: true,
@@ -146,6 +160,7 @@ export default {
           // {index: 3, products: 'Ибуклин', barcode: '2313141', total_quantity: '80', left_quantity: '10', vat: '5%'},
           // {index: 4, products: 'Арбидол', barcode: '2313141', total_quantity: '14', left_quantity: '0', vat: '7%'},
       ],
+      data2: [],
       }
     },
     watch: {
@@ -198,13 +213,14 @@ export default {
         )
       },
       async filterFunc(){
-         if(this.filter.length >= 1){
-            this.data = []
+         if(this.filter.length >= 1){     
+            this.data = await []
             this.answer = await this.getSearchResultByFilter();
             this.data.push(await this.answer.data.data[0])
           }
          if(this.filter == ''){
-            this.data = []
+            this.data = await []
+            this.data = await []
             this.data = await this.getMedicines.results
           }
       },
