@@ -1,7 +1,7 @@
 <template>
     <q-page class="bg-grey-3">
         <div class="row q-pa-sm">
-           <div class="col-lg-7 col-md-7 col-xs-7 col-sm-12 q-mr-md q-mb-md">
+           <div class="col-lg-5 col-md-5 col-xs-5 col-sm-12 q-mr-md q-mb-md" style="min-width: 35vw;">
              <q-card class="card-bg text-black">
                <q-card-section class="text-h6 bg-blue">
                  <div class="text-h6 text-white">Добавить лекарство</div>
@@ -29,20 +29,22 @@
                         label="Название"
                         outlined
                         dense
-                        v-model="medicine_add.title"
+                        v-model="medicine_add[0].title"
                         use-input
+                        
                         hide-selected
                         fill-input
                         clearable
                         input-debounce="100"
                         :options="med_options"
+                        @new-value="createValue"
                         @filter="filterFn"
                         color="blue"
                       >
                         <template v-slot:no-option>
                           <q-item>
                             <q-item-section class="text-grey">
-                              No results
+                              Нет результатов
                             </q-item-section>
                           </q-item>
                         </template>
@@ -87,19 +89,19 @@
                        <q-input  color="blue" outlined dense v-model="medicine_add[0].serial_code" label="Серийный номер" />
                      </q-item-section>
                    </q-item>
-                   <q-item class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                   <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                      <q-item-section>
                        <q-input  color="blue" outlined dense v-model="medicine_add[0].capacity" label="Вместимость" />
                      </q-item-section>
                    </q-item>
-                   <q-item class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                     <q-item-section>
-                       <q-input  color="blue" outlined dense v-model="medicine_add[0].quantity" label="Количество" />
-                     </q-item-section>
-                   </q-item>
-                   <q-item class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                   <!-- <q-item class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                      <q-item-section>
                        <q-input color="blue" outlined dense v-model="medicine_add[0].vat" label="НДС" />
+                     </q-item-section>
+                   </q-item> -->
+                   <!-- <q-item class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                     <q-item-section>
+                       <q-input  color="blue" outlined dense v-model="medicine_add[0].quantity" label="Количество" />
                      </q-item-section>
                    </q-item>
                     <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -116,9 +118,9 @@
                      <q-item-section>
                        <q-input color="blue" outlined dense v-model="medicine_add[0].selling_price" label="Цена продажи" />
                      </q-item-section>
-                   </q-item>
+                   </q-item> -->
 
-                   <q-item class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+                   <!-- <q-item class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                      <q-item-section>
 
                        <q-input dense color="blue" outlined v-model="medicine_add[0].expire_date" label="Годен до">
@@ -132,7 +134,7 @@
                        </q-input>
 
                      </q-item-section>
-                   </q-item>
+                   </q-item> -->
 
                  </q-list>
                </q-card-section>
@@ -145,7 +147,7 @@
 
 
 
-          <div class="col-lg-4 col-md-4 col-xs-4 col-sm-12">
+          <!-- <div class="col-lg-4 col-md-4 col-xs-4 col-sm-12">
              <q-card class="card-bg text-black">
                <q-card-section class="text-h6 bg-blue">
                  <div class="text-h6 text-white">Добавить инфо для лекарства</div>
@@ -176,7 +178,6 @@
                           </q-item>
                         </template>
                       </q-select>
-                       <!-- <q-input color="blue" outlined dense v-model="title" label="Название" /> -->
                      </q-item-section>
                    </q-item>
                   
@@ -218,10 +219,84 @@
                  <q-btn class="text-capitalize bg-blue text-white" @click="addMedicine">Добавить</q-btn>
                </q-card-actions>
              </q-card>
+           </div> -->
+           <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
+            <q-btn color="blue" icon="add" label="Добавить информацию о лекарстве" @click="addInfoForMedicine"/>
            </div>
+           
+              
 
+              <div class="q-pt-sm"  style="max-width: 20vw; min-width: 20vw;" v-for="(medInfo,item) in medicine_info_add" :key="item">
+                 <div class="col-lg-5 col-md-5 col-xs-5 col-sm-12 q-mr-sm">
+                <q-list bordered class="rounded-borders bg-blue" dark>
+                  <q-expansion-item expand-separator icon="info" :label="'Информация о лекарстве #' + (item + 1)  " caption="Введите данные лекарства">
+                    <q-card>
+                      <q-card-section>
+
+                        <q-list class="row">
+                          <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                            <q-item-section>
+                              <q-select label="Название" outlined dense v-model="title" use-input use-chips
+                                input-debounce="0" @new-value="createValue" :options="options" @filter="filterFn"
+                                color="blue">
+                                <template v-slot:no-option>
+                                  <q-item>
+                                    <q-item-section class="text-grey">
+                                      Нет результатов
+                                    </q-item-section>
+                                  </q-item>
+                                </template>
+                              </q-select>
+                              <!-- <q-input color="blue" outlined dense v-model="title" label="Название" /> -->
+                            </q-item-section>
+                          </q-item>
+
+                          <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <q-item-section>
+                              <q-input color="blue" outlined dense v-model="medInfo.quantity"
+                                label="Количество" />
+                            </q-item-section>
+                          </q-item>
+                          <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <q-item-section>
+                              <q-input color="blue" outlined dense v-model="medInfo.purchase_price"
+                                label="Цена покупки" />
+                            </q-item-section>
+                          </q-item>
+                          <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <q-item-section>
+                              <q-input color="blue" outlined dense v-model="medInfo.selling_price"
+                                label="Цена продажи" />
+                            </q-item-section>
+                          </q-item>
+
+                          <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                            <q-item-section>
+
+                              <q-input dense color="blue" outlined v-model="medInfo.expire_date"
+                                label="Годен до">
+                                <template v-slot:append>
+                                  <q-icon name="event" class="cursor-pointer">
+                                    <q-popup-proxy transition-show="scale" transition-hide="scale">
+                                      <q-date color="blue" outlined mask="YYYY-MM-DD" today-btn
+                                        v-model="medInfo.expire_date" />
+                                    </q-popup-proxy>
+                                  </q-icon>
+                                </template>
+                              </q-input>
+
+                            </q-item-section>
+                          </q-item>
+                        </q-list>
+
+                      </q-card-section>
+                    </q-card>
+                  </q-expansion-item>
+                </q-list>
+              </div>
+            </div>
 {{med_options}}
-{{medicine_add}}
+{{medicine_info_add}}
 
 
         </div>
@@ -236,12 +311,12 @@ export default {
     data(){
       return {
           med_options: [],
-          options: ['ADS'],
+          options: [],
           response: {data: {data: {}}},
           medicine_add: [{title: '', barcode: '', country: '', manufacture: '', serial_code: '', capacity: '',
            quantity: '', vat: '', description: '', purchase_price: '', selling_price: '', expire_date: ''}],
           title: null,
-          medicine_info_add: { quantity: '', purchase_price: '', selling_price: '', expire_date: ''},
+          medicine_info_add: [{ quantity: '', purchase_price: '', selling_price: '', expire_date: ''}],
       }
     },
     watch: {
@@ -256,7 +331,7 @@ export default {
         },
     },
     computed:{
-
+      
     },
     mounted(){
       
@@ -265,6 +340,9 @@ export default {
       ...mapActions([
         'ADD_MEDICINES', 'ADD_MEDICINE_INFO', 'GET_SEARCH_RESULT'
       ]),
+      addInfoForMedicine(){
+        this.$set(this.medicine_info_add, this.medicine_info_add.length, { quantity: '', purchase_price: '', selling_price: '', expire_date: ''});
+      },
       async filterFn (val, update, abort) {
         if(val.length >= 2){
           await update(async () => {
@@ -276,20 +354,20 @@ export default {
           for(let i = 0; i < this.response.data.data.length; i++){
             this.med_options.push(await this.response.data.data[i].title);
           }
-          console.log(this.med_options);
+          // console.log(this.med_options);
           // this.options = stringOptions.filter(v => v.toLowerCase().indexOf(needle) > -1)
           })
         }
       },
-      async filterFunc(){
-        let response = {data: {data: {}}};
-        this.med_options = []
-        response = await this.GET_SEARCH_RESULT({title: this.medicine_add.title});
-        console.log(response.data.data);
-        for(let i = 0; i < response.data.data.length; i++){
-          this.med_options.push(response.data.data[i]);
-        }
-      },
+      // async filterFunc(){
+      //   let response = {data: {data: {}}};
+      //   this.med_options = []
+      //   response = await this.GET_SEARCH_RESULT({title: this.medicine_add.title});
+      //   console.log(response.data.data);
+      //   for(let i = 0; i < response.data.data.length; i++){
+      //     this.med_options.push(response.data.data[i]);
+      //   }
+      // },
     
       async addMedicineInfo(){
         await this.ADD_MEDICINE_INFO(
@@ -319,33 +397,20 @@ export default {
           }
         )
         if(answer){
-          this.$router.go();
+          this.$router.go('/medicines');
         }
       },
       createValue (val, done) {
-        // Calling done(var) when new-value-mode is not set or "add", or done(var, "add") adds "var" content to the model
-        // and it resets the input textbox to empty string
-        // ----
-        // Calling done(var) when new-value-mode is "add-unique", or done(var, "add-unique") adds "var" content to the model
-        // only if is not already set
-        // and it resets the input textbox to empty string
-        // ----
-        // Calling done(var) when new-value-mode is "toggle", or done(var, "toggle") toggles the model with "var" content
-        // (adds to model if not already in the model, removes from model if already has it)
-        // and it resets the input textbox to empty string
-        // ----
-        // If "var" content is undefined/null, then it doesn't tampers with the model
-        // and only resets the input textbox to empty string
-        
-        // if (val.length > 2) {
-        //   // if (!stringOptions.includes(val)) {
-        //   //   done(val, 'add-unique')
-        //   // }
-        //   done(val, 'add-unique')
-        // }
-
-        done(val, 'add-unique')
+        if (val.length > 0) {
+          if (!this.med_options.includes(val)) {
+            // this.$set(this.med_options, this.med_options.length, val);
+            this.med_options.push(val);
+          }
+          done(val, 'toggle')
+        }
       },
+
+
     }
     
 }

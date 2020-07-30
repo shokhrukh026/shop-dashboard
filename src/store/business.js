@@ -101,6 +101,8 @@ export default{
             //   return error;
             })
         },
+        // business/{business_id}/medicines?key=value&key=value
+
         GET_NEXT_PAGE({commit, getters},payload) {
           return axios({
               method: "GET",
