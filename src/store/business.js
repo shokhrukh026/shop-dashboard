@@ -1,4 +1,5 @@
 import axios from 'axios';
+import lodash from 'lodash'; 
 
 const baseUrl = 'http://dev.epos.uz/v1/business/';
 export default{
@@ -10,16 +11,33 @@ export default{
     },
     mutations:{
         SET_BRANCHES_INFO: (state, payload) => {
-          state.branches = payload
+          state.branches = payload;
         },
         SET_MEDICINES_INFO: (state, payload) => {
-          state.medicines = payload
+          state.medicines = payload;
+        },
+        SET_NEXT_MEDICINE_INFO: (state, payload) => {
+          let final;
+          state.medicines.links = payload.links;
+          state.medicines.count = payload.count;
+          for(let i = 0; i<payload.results.length; i++){
+            for(let k = 0; k<state.medicines.results.length; k++){
+              let answer = lodash.isEqual(state.medicines.results[k], payload.results[i]);
+              if(answer){
+                final = answer;
+              }
+            }
+            if(!final)
+              state.medicines.results.push(payload.results[i]);
+            
+            
+          }
         },
         SET_SEARCH_RESULT_INFO: (state, payload) =>{
-          state.search_result = payload
+          state.search_result = payload;
         },
         SET_COMMENTS_INFO: (state, payload) => {
-          state.comments = payload
+          state.comments = payload;
         }
     },
     actions: {
@@ -68,8 +86,8 @@ export default{
             //   return error;
             })
         },
-        GET_SEARCH_RESULT({commit, getters},payload) {
-          return axios({
+        async GET_SEARCH_RESULT({commit, getters},payload) {
+          return await axios({
               method: "GET",
               url: 'http://dev.epos.uz/v1/medicine/list?title='+payload.title,
               headers: {Authorization: getters.getUser.token}
@@ -77,6 +95,21 @@ export default{
             .then((e) => {
               commit('SET_SEARCH_RESULT_INFO', e.data);
                return e;
+            })
+            .catch((error) => {
+              console.log(error);
+            //   return error;
+            })
+        },
+        GET_NEXT_PAGE({commit, getters},payload) {
+          return axios({
+              method: "GET",
+              url: getters.getMedicines.links.next,
+              headers: {Authorization: getters.getUser.token}
+            })
+            .then((e) => {
+              commit('SET_NEXT_MEDICINE_INFO', e.data);
+               //return e;
             })
             .catch((error) => {
               console.log(error);
@@ -105,7 +138,7 @@ export default{
             })
             .then((e) => {
               console.log('Successfully added medicines!')
-            //   return e;
+               return true;
             })
             .catch((error) => {
               console.log(error);

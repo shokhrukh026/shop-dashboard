@@ -5,12 +5,17 @@
               <q-btn push color="white" text-color="primary" label="Добавить" 
               class="q-mb-xs" :disable="loading" to="/add-product"/>
               <q-space/>
-              <q-input borderless dense debounce="100" color="primary" v-model="filter" @keyup="filterFunc" class="bg-white"
-              placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; border-radius: 5px;">
-                <template v-slot:append>
+              <!-- <q-input   borderless dense debounce="1000" color="primary" v-model="filter" @keyup="filterFunc" class="bg-white"
+              placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; border-radius: 5px;"> -->
+                <!-- <template v-slot:append>
                     <q-icon name="search" />
+                </template> -->
+                <!-- <template v-slot:after>
+                  <q-btn round dense flat icon="send" />
                 </template>
-              </q-input>
+              </q-input> -->
+              <!-- <q-btn color="blue" size="sm"    label="Поиск" icon-right="search" >
+              </q-btn> -->
             </div>
             <q-table
             dense
@@ -42,12 +47,12 @@
                 <!-- <q-btn color="green" :disable="loading" label="Добавить" @click="addRow = !addRow" /> -->
                 <!-- <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" /> -->
                 <q-space />
-                <!-- <q-input borderless dense debounce="100" color="primary" v-model="filter" @keydown="filterFunc"
+                <q-input borderless dense debounce="100" color="primary" v-model="filter" @keydown="filterFunc"
                 placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; border-radius: 5px;">
                   <template v-slot:append>
                       <q-icon name="search" />
                   </template>
-                </q-input> -->
+                </q-input>
                 <q-btn
                 flat round dense
                 :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
@@ -96,9 +101,9 @@
              </q-card>
            </q-dialog>
            <!-- {{distribution_options}}
-           {{answer.data.data[0]}}
-           {{getMedicines}} -->
-          
+           {{answer.data.data[0]}} -->
+           {{getMedicines}}
+         
     </q-page>
 </template>
 
@@ -165,7 +170,9 @@ export default {
     },
     watch: {
        'pagination.page': function (newVal, oldVal){
-          console.log(newVal);
+         if(newVal == this.pagesNumber){
+           this.GET_NEXT_PAGE();
+         }
         },
         // filter: async function(newVal, oldVal) {
         //   if(newVal.length >= 3){
@@ -203,7 +210,7 @@ export default {
     },
     methods: {
       ...mapActions([
-        'GET_MEDICINES', 'GET_COMMENTS', 'GET_SEARCH_RESULT'
+        'GET_MEDICINES', 'GET_COMMENTS', 'GET_SEARCH_RESULT', 'GET_NEXT_PAGE'
       ]),
       async getSearchResultByFilter(){
         return await this.GET_SEARCH_RESULT(
