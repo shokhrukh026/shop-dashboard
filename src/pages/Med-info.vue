@@ -4,44 +4,44 @@
              <q-list bordered separator class="bg-white shadow-1">
                <q-item v-ripple>
                  <q-item-section>
-                     <q-item-label class="text-subtitle2">Название лекарства : <span class="text-body2">{{getMedicines[0].title}}</span></q-item-label>
-                     <q-item-label caption>Описание: {{getMedicines[0].description}}</q-item-label>
+                     <q-item-label class="text-h5">Название лекарства : <span class="text-h6 text-bold">&nbsp;{{getMedicines.title}}</span></q-item-label>
+                     <q-item-label class="text-subtitle2 text-bold text-grey-6">Описание: <span class="text-black text-weight-medium">&nbsp;{{getMedicines.description}}</span></q-item-label> 
                  </q-item-section>
                </q-item>
 
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-subtitle2">Штрих-код: <span class="text-body2">{{getMedicines[0].barcode}}</span></q-item-label>
+                   <q-item-label class="text-h6">Штрих-код: <span class="text-h6">&nbsp;{{getMedicines.barcode}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-subtitle2">Страна: <span class="text-body2">{{getMedicines[0].country}}</span></q-item-label>
+                   <q-item-label class="text-h6">Страна: <span class="text-h6">&nbsp;{{getMedicines.country}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-subtitle2">Производитель: <span class="text-body2">{{getMedicines[0].manufacture}}</span></q-item-label>
+                   <q-item-label class="text-h6">Производитель: <span class="text-h6">&nbsp;{{getMedicines.manufacture}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-subtitle2">Серийный номер: <span class="text-body2">{{getMedicines[0].serial_code}}</span></q-item-label>
+                   <q-item-label class="text-h6">Серийный номер: <span class="text-h6">&nbsp;{{getMedicines.serial_code}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-subtitle2">НДС: <span class="text-body2">{{getMedicines[0].vat}}%</span></q-item-label>
+                   <q-item-label class="text-h6">НДС: <span class="text-h6">&nbsp;{{getMedicines.vat}}%</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-subtitle2">Общее количество в бизнесе: <span class="text-body2">{{getMedicines[0].total_quantity}}</span></q-item-label>
+                   <q-item-label class="text-h6">Общее количество в бизнесе: <span class="text-h6">&nbsp;{{getMedicines.total_quantity}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-subtitle2">Оставшееся количество в бизнесе: <span class="text-body2">{{getMedicines[0].left_quantity}}</span></q-item-label>
+                   <q-item-label class="text-h6">Оставшееся количество в бизнесе: <span class="text-h6">{{getMedicines.left_quantity}}</span></q-item-label>
                  </q-item-section>
                </q-item>
              </q-list>
@@ -88,6 +88,7 @@
                 </q-table>
             </div>
         </div>
+        {{getMedicinesInfo}}
     </q-page>
 </template>
 
@@ -99,10 +100,7 @@ export default {
     data(){
         return{
           // this should be commented
-            getMedicines: [
-              {title: 'sad', Barcode: 12345689, Country: 'Russia', Manufacture: 'Company LLC', "Serial Code": 'serial code', Vat: '15.0 %',
-            "Total Quantity in Business": '1 упаковок по (10) + 0 шт', "Left Quantity in Busuness": '2 упаковок по (10) + 0 шт'}
-            ],
+            getMedicines: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', vat: '', total_quantity: '', left_quantity: ''},
             pagination: {
               rowsPerPage: 8
             },
@@ -120,22 +118,35 @@ export default {
                 { name: 'actions', label: 'Действия', field: '', align:'center' },
             ],
             data: [
-                {index: 1, expire_date: 'Арзон аптека #1', total_quantity: 'Тошкент', left_quantity: 'Шоазиз', purchase_price: 'новый', selling_price: '10 000'},
-            ],
+            ],  
             
         }
     },
     async mounted(){
       await this.GET_MEDICINES();
+      const answer = await this.GET_MEDICINE_INFO();
+      this.getMedicines.title = answer.data.title;
+      this.getMedicines.description = answer.data.description;
+      this.getMedicines.barcode = answer.data.barcode;
+      this.getMedicines.country = answer.data.country;
+      this.getMedicines.manufacture = answer.data.manufacture;
+      this.getMedicines.serial_code = answer.data.serial_code;
+      this.getMedicines.vat = answer.data.vat;
+      this.getMedicines.total_quantity = answer.data.total_quantity;
+      this.getMedicines.left_quantity = answer.data.left_quantity;
+
+      for(let i = 0; i < answer.data.medicines_info.length; i++ ){
+        this.$set(this.data, this.data.length, answer.data.medicines_info[i]);
+      }
     },
     computed:{
       ...mapGetters([
-        'getMedicines', 'getUser'
+        '', 'getUser', 'getMedicinesInfo'
       ])
     },
     methods: {
       ...mapActions([
-          'GET_MEDICINES',
+          'GET_MEDICINES', 'GET_MEDICINE_INFO'
       ]),
     }
 }

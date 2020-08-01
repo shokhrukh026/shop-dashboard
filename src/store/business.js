@@ -6,6 +6,7 @@ export default{
     state:{
         branches: [],
         medicines: [],
+        medicine_info: [],
         search_result: [],
         comments: []
     },
@@ -15,6 +16,9 @@ export default{
         },
         SET_MEDICINES_INFO: (state, payload) => {
           state.medicines = payload;
+        },
+        SET_INFO_MEDICINES_INFO: (state, payload) => {
+          state.medicine_info = payload;
         },
         SET_NEXT_MEDICINE_INFO: (state, payload) => {
           let final;
@@ -72,21 +76,21 @@ export default{
             //   return error;
             })
         },
-        // GET_MEDICINES({commit, getters}) {
-        //   return axios({
-        //       method: "GET",
-        //       url: baseUrl + getters.getUser.business_id + '/medicines?',
-        //       headers: {Authorization: getters.getUser.token}
-        //     })
-        //     .then((e) => {
-        //       commit('SET_MEDICINES_INFO', e.data);
-        //     //   return e;
-        //     })
-        //     .catch((error) => {
-        //       console.log(error);
-        //     //   return error;
-        //     })
-        // },
+        GET_MEDICINE_INFO({commit, getters}) {
+          return axios({
+              method: "GET",
+              url: baseUrl + getters.getUser.business_id + '/medicines/info/' + 1 + '/',  // payload.business_medicine_id
+              headers: {Authorization: getters.getUser.token}
+            })
+            .then((e) => {
+              commit('SET_INFO_MEDICINES_INFO', e.data);
+               return e;
+            })
+            .catch((error) => {
+              console.log(error);
+            //   return error;
+            })
+        },
         GET_COMMENTS({commit, getters}) {
           return axios({
               method: "GET",
@@ -189,6 +193,7 @@ export default{
     getters:{
         getBranches: state => state.branches,
         getMedicines: state => state.medicines,
+        getMedicinesInfo: state => state.medicine_info,
         getComments: state => state.comments,
         getSearchResult: state => state.search_result,
     }
