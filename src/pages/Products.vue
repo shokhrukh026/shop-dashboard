@@ -160,10 +160,10 @@ export default {
         { name: 'actions', label: 'Действия', field: '', align:'center' },
       ],
       data: [
-          // {index: 1, products: 'Тримол', barcode: '2313141', total_quantity: '100', left_quantity: '50', vat: '10%'},
-          // {index: 2, products: 'Ношпа', barcode: '2313141', total_quantity: '56', left_quantity: '40', vat: '12%'},
-          // {index: 3, products: 'Ибуклин', barcode: '2313141', total_quantity: '80', left_quantity: '10', vat: '5%'},
-          // {index: 4, products: 'Арбидол', barcode: '2313141', total_quantity: '14', left_quantity: '0', vat: '7%'},
+          {index: 1, products: 'Тримол', barcode: '2313141', total_quantity: '100', left_quantity: '50', vat: '10%'},
+          {index: 2, products: 'Ношпа', barcode: '2313141', total_quantity: '56', left_quantity: '40', vat: '12%'},
+          {index: 3, products: 'Ибуклин', barcode: '2313141', total_quantity: '80', left_quantity: '10', vat: '5%'},
+          {index: 4, products: 'Арбидол', barcode: '2313141', total_quantity: '14', left_quantity: '0', vat: '7%'},
       ],
       data2: [],
       }
@@ -187,8 +187,11 @@ export default {
         // },
     },
     async mounted(){
-      await this.GET_MEDICINES();
-      this.data = await this.getMedicines.results;
+      // await this.GET_MEDICINES();
+      // this.data = await this.getMedicines.results;
+      //this.$set(this.data, this.data.length, {id: 1, products: 'Тримол', barcode: '2313141', total_quantity: '100', left_quantity: '50', vat: '10%'});
+      //this.$set(this.data, this.data.length, {id: 2, products: 'Тримол', barcode: '2313141', total_quantity: '100', left_quantity: '50', vat: '10%'});
+
       // await this.GET_COMMENTS();
       // this.data = await this.getComments
       this.distribution_options = await this.getBranchNames;

@@ -72,6 +72,21 @@ export default{
             //   return error;
             })
         },
+        // GET_MEDICINES({commit, getters}) {
+        //   return axios({
+        //       method: "GET",
+        //       url: baseUrl + getters.getUser.business_id + '/medicines?',
+        //       headers: {Authorization: getters.getUser.token}
+        //     })
+        //     .then((e) => {
+        //       commit('SET_MEDICINES_INFO', e.data);
+        //     //   return e;
+        //     })
+        //     .catch((error) => {
+        //       console.log(error);
+        //     //   return error;
+        //     })
+        // },
         GET_COMMENTS({commit, getters}) {
           return axios({
               method: "GET",
@@ -89,7 +104,7 @@ export default{
         async GET_SEARCH_RESULT({commit, getters},payload) {
           return await axios({
               method: "GET",
-              url: 'http://dev.epos.uz/v1/medicine/list?title='+payload.title,
+              url: 'http://dev.epos.uz/v1/medicine/list?' + payload.type + '=' + payload.value,
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {

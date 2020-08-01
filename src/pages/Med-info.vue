@@ -100,7 +100,7 @@ export default {
         return{
           // this should be commented
             getMedicines: [
-              { Barcode: 12345689, Country: 'Russia', Manufacture: 'Company LLC', "Serial Code": 'serial code', Vat: '15.0 %',
+              {title: 'sad', Barcode: 12345689, Country: 'Russia', Manufacture: 'Company LLC', "Serial Code": 'serial code', Vat: '15.0 %',
             "Total Quantity in Business": '1 упаковок по (10) + 0 шт', "Left Quantity in Busuness": '2 упаковок по (10) + 0 шт'}
             ],
             pagination: {
