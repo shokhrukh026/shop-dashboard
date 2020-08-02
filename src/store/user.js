@@ -7,7 +7,7 @@ export default{
     },
     mutations:{
         SET_USER_TO_STATE: (state, payload) => {
-          state.user = payload
+            state.user = payload
         },
         UNSET_USER_FROM_STATE: (state) => {
             state.user = {token: ''};
@@ -25,6 +25,9 @@ export default{
             })
             .then((e) => {
               commit('SET_USER_TO_STATE', e.data);
+            //   console.log(e.data);
+            //   sessionStorage.setItem('token', e.data.token);
+              // localStorage.setItem('token', e.data)
               payload.router.push({path: '/main'});
             //   return e;
             })

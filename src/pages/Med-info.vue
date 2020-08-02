@@ -1,55 +1,65 @@
 <template>
     <q-page class="bg-grey-3">
         <div class="q-pa-md">
-             <q-list bordered separator class="bg-white shadow-1">
+            <q-expansion-item expand-separator icon="info" default-opened   header-class="bg-blue text-h6" dark :label="'Информация о лекарстве ' + getMedicines.title">
+
+             <q-list bordered separator dense class="bg-white shadow-1">
                <q-item v-ripple>
                  <q-item-section>
-                     <q-item-label class="text-h5">Название лекарства : <span class="text-h6 text-bold">&nbsp;{{getMedicines.title}}</span></q-item-label>
-                     <q-item-label class="text-subtitle2 text-bold text-grey-6">Описание: <span class="text-black text-weight-medium">&nbsp;{{getMedicines.description}}</span></q-item-label> 
-                 </q-item-section>
-               </q-item>
-
-               <q-item v-ripple >
-                 <q-item-section>
-                   <q-item-label class="text-h6">Штрих-код: <span class="text-h6">&nbsp;{{getMedicines.barcode}}</span></q-item-label>
+                     <q-item-label class="text-h6 text-blue-9">Название лекарства : <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.title}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6">Страна: <span class="text-h6">&nbsp;{{getMedicines.country}}</span></q-item-label>
+                   <q-item-label class="text-h6 text-blue-9">Описание: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.description}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6">Производитель: <span class="text-h6">&nbsp;{{getMedicines.manufacture}}</span></q-item-label>
+                   <q-item-label class="text-h6 text-blue-9">Штрих-код: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.barcode}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6">Серийный номер: <span class="text-h6">&nbsp;{{getMedicines.serial_code}}</span></q-item-label>
+                   <q-item-label class="text-h6 text-blue-9">Страна: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.country}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6">НДС: <span class="text-h6">&nbsp;{{getMedicines.vat}}%</span></q-item-label>
+                   <q-item-label class="text-h6 text-blue-9">Производитель: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.manufacture}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6">Общее количество в бизнесе: <span class="text-h6">&nbsp;{{getMedicines.total_quantity}}</span></q-item-label>
+                   <q-item-label class="text-h6 text-blue-9">Серийный номер: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.serial_code}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6">Оставшееся количество в бизнесе: <span class="text-h6">{{getMedicines.left_quantity}}</span></q-item-label>
+                   <q-item-label class="text-h6 text-blue-9">НДС: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.vat}}%</span></q-item-label>
                  </q-item-section>
                </q-item>
+               <q-item v-ripple >
+                 <q-item-section>
+                   <q-item-label class="text-h6 text-blue-9">Общее количество в бизнесе: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.total_quantity}}</span></q-item-label>
+                 </q-item-section>
+               </q-item>
+               <q-item v-ripple >
+                 <q-item-section>
+                   <q-item-label class="text-h6 text-blue-9">Оставшееся количество в бизнесе: <span class="text-subtitle1 text-black">{{getMedicines.left_quantity}}</span></q-item-label>
+                 </q-item-section>
+               </q-item>
+                
              </q-list>
-
+      </q-expansion-item>
 
                    {{getMedicines}}
+            <div class="q-mt-md">
+              <q-btn push color="white" text-color="primary" label="Добавить" 
+              class="q-mb-xs" :disable="loading" to="/add-info-medicine"/>
+            </div>
 
-            <div class="q-mt-lg">
+            <div class="q-mt-xs">
                 <q-table
                 dense
                 title="Покупатели"
@@ -110,7 +120,7 @@ export default {
                 { name: 'index', align: 'center', label: '№', field: 'index', sortable: true},
                 { name: 'expire_date', align: 'center', label: 'Годен до', field: 'expire_date', sortable: true },
 
-                { name: 'total_quantity', align: 'center', label: 'Общее кол-во', field: 'total_quantity', sortable: true },
+                { name: 'total_qauntity', align: 'center', label: 'Общее кол-во', field: 'total_qauntity', sortable: true },
                 { name: 'left_quantity', align: 'center', label: 'Остаток', field: 'left_quantity', sortable: true },
                 { name: 'purchase_price', align: 'center', label: 'Цена покупки', field: 'purchase_price', sortable: true },
                 { name: 'selling_price', align: 'center', label: 'Цена продажи', field: 'selling_price', sortable: true },

@@ -14,7 +14,8 @@ const routes = [
       {path: '/med-info/:id', component: () => import('pages/Med-info.vue'), props:true, meta: {authRequired: true}},
       {path: '/branch-info', component: () => import('pages/Branch-info.vue'), meta: {authRequired: true}},
       {path: '/branch-update/:id', name: 'branch-update', component: () => import('pages/Branch-update.vue'), props: true, meta: {authRequired: true}},
-      {path: '/add-product', component: () => import('pages/Add-product.vue'), meta: {authRequired: true}},
+      {path: '/add-medicine', component: () => import('pages/Add-medicine.vue'), meta: {authRequired: true}},
+      {path: '/add-info-medicine', component: () => import('pages/Add-info-medicine.vue'), meta: {authRequired: true}},
       {path: '/edit-product/:id', name: 'edit-product', component: () => import('pages/Edit-product.vue'), props:true, meta: {authRequired: true}},
       {path: '/shopping-cart', component: () => import('pages/Cart.vue'), meta: {authRequired: true}},
       

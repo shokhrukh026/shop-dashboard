@@ -34,7 +34,9 @@
           </q-btn> -->
           <q-btn round flat to="/shopping-cart">
             <q-icon name="shopping_cart"></q-icon>
+            <q-badge color="red" floating>1</q-badge>
           </q-btn>
+          
 
 
           <q-btn round flat>

@@ -72,6 +72,9 @@ export default {
             error: false,
         }
     },
+    mounted(){
+     
+    },
     computed: {
       ...mapGetters([
         'getUser',
