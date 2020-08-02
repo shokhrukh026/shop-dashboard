@@ -56,7 +56,7 @@
                 <q-separator />
                 <q-item clickable>
                   <q-item-section>
-                    <q-btn color="blue" label="Выход" push size="sm" v-close-popup to="/" />
+                    <q-btn color="blue" label="Выход" push size="sm" v-close-popup to="/" @click="logout" />
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -122,6 +122,13 @@ export default {
       ]
 
     }
+  },
+  methods: {
+    //clears Session
+    async logout(){
+      await this.$store.dispatch('LOGOUT');
+    },
+
   }
 }
 </script>

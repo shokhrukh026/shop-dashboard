@@ -11,6 +11,9 @@ export default{
         },
         UNSET_USER_FROM_STATE: (state) => {
             state.user = {token: ''};
+        },
+        LOG_OUT: (state) =>{
+           sessionStorage.clear();
         }
     },
     actions: {
@@ -43,6 +46,9 @@ export default{
         },
         STATE_CHANGED({commit}, payload){
             commit('SET_USER_TO_STATE', payload);
+        },
+        LOGOUT({commit}){
+          commit('LOG_OUT');
         }
     },
     getters:{
