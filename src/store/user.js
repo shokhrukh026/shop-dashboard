@@ -25,9 +25,7 @@ export default{
             })
             .then((e) => {
               commit('SET_USER_TO_STATE', e.data);
-            //   console.log(e.data);
-            //   sessionStorage.setItem('token', e.data.token);
-              // localStorage.setItem('token', e.data)
+              sessionStorage.setItem('user', JSON.stringify(e.data));
               payload.router.push({path: '/main'});
             //   return e;
             })
@@ -42,6 +40,9 @@ export default{
           commit('SET_USER_TO_STATE', data);
           payload.router.push({path: '/main'})
             
+        },
+        STATE_CHANGED({commit}, payload){
+            commit('SET_USER_TO_STATE', payload);
         }
     },
     getters:{

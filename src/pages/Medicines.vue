@@ -38,7 +38,7 @@
                 <q-td :props="props">
                     <q-btn dense round flat color="grey" @click="addRow = !addRow" icon="add_circle"></q-btn>
                     <q-btn dense round flat color="grey" :to="{ name: 'edit-product', params: {id: props.row.id, row: props.row}}" icon="edit"></q-btn>
-                    <q-btn dense round flat color="grey" :to="'/med-info/' + props.row.id" icon="fas fa-info-circle"></q-btn>
+                    <q-btn dense round flat color="grey" :to="{ name: 'med-info', params: {id: props.row.id}}" icon="fas fa-info-circle"></q-btn>
                     <q-btn dense round flat color="grey" @click="deleteRow(props)" icon="delete"></q-btn>
                 </q-td>
             </template>
@@ -114,7 +114,7 @@ import {mapActions, mapGetters} from 'vuex'
 export default {
     data(){
       return {
-        answer: {data: {data: []}},
+      answer: {data: {data: []}},
       distribution_amount: '',
       distribution_branch: '',
       distribution_options: [],

@@ -55,8 +55,8 @@
 
                    {{getMedicines}}
             <div class="q-mt-md">
-              <q-btn push color="white" text-color="primary" label="Добавить" 
-              class="q-mb-xs" :disable="loading" to="/add-info-medicine"/>
+              <q-btn push color="white" text-color="primary" label="Добавить" class="q-mb-xs" :disable="loading"
+               :to="{ name: 'add-info-medicine', params: {id: id}}"/>
             </div>
 
             <div class="q-mt-xs">
@@ -107,6 +107,12 @@
 import {mapActions, mapGetters} from 'vuex'
 
 export default {
+    props:{
+      id: {
+        type: Number,
+        required: true
+      },
+    },
     data(){
         return{
           // this should be commented
@@ -133,8 +139,8 @@ export default {
         }
     },
     async mounted(){
-      await this.GET_MEDICINES();
-      const answer = await this.GET_MEDICINE_INFO();
+      // await this.GET_MEDICINES();
+      const answer = await this.GET_MEDICINE_INFO({id: this.id});
       this.getMedicines.title = answer.data.title;
       this.getMedicines.description = answer.data.description;
       this.getMedicines.barcode = answer.data.barcode;
@@ -158,6 +164,13 @@ export default {
       ...mapActions([
           'GET_MEDICINES', 'GET_MEDICINE_INFO'
       ]),
+      // async getSearchResultByFilter(){
+      //   return await this.GET_SEARCH_RESULT(
+      //     {
+      //       title: this.filter
+      //     }
+      //   )
+      // },
     }
 }
 </script>

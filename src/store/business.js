@@ -8,7 +8,6 @@ export default{
         medicines: [],
         medicine_info: [],
         search_result: [],
-        comments: []
     },
     mutations:{
         SET_BRANCHES_INFO: (state, payload) => {
@@ -40,9 +39,7 @@ export default{
         SET_SEARCH_RESULT_INFO: (state, payload) =>{
           state.search_result = payload;
         },
-        SET_COMMENTS_INFO: (state, payload) => {
-          state.comments = payload;
-        }
+
     },
     actions: {
         GET_BRANCHES({commit, getters}) {
@@ -76,10 +73,10 @@ export default{
             //   return error;
             })
         },
-        GET_MEDICINE_INFO({commit, getters}) {
+        GET_MEDICINE_INFO({commit, getters}, payload) {
           return axios({
               method: "GET",
-              url: baseUrl + getters.getUser.business_id + '/medicines/info/' + 1 + '/',  // payload.business_medicine_id
+              url: baseUrl + getters.getUser.business_id + '/medicines/info/' + payload.id + '/',  // payload.business_medicine_id
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
@@ -91,20 +88,7 @@ export default{
             //   return error;
             })
         },
-        GET_COMMENTS({commit, getters}) {
-          return axios({
-              method: "GET",
-              url: 'https://jsonplaceholder.typicode.com/photos',
-            })
-            .then((e) => {
-              commit('SET_COMMENTS_INFO', e.data);
-            //   return e;
-            })
-            .catch((error) => {
-              console.log(error);
-            //   return error;
-            })
-        },
+    
         async GET_SEARCH_RESULT({commit, getters},payload) {
           return await axios({
               method: "GET",
@@ -194,7 +178,6 @@ export default{
         getBranches: state => state.branches,
         getMedicines: state => state.medicines,
         getMedicinesInfo: state => state.medicine_info,
-        getComments: state => state.comments,
         getSearchResult: state => state.search_result,
     }
 }

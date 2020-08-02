@@ -31,7 +31,14 @@ export default function ({ store }) {
       if(user.token != ''){
         next()
       } else{
-        next('/')
+        if(sessionStorage.getItem('user')){
+          const data = JSON.parse( sessionStorage.getItem('user') );
+          await store.dispatch('STATE_CHANGED', data);
+          next()
+        }else{
+          next('/')
+        }
+        
       }
     }
     else{

@@ -100,28 +100,28 @@
                   
                    <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                      <q-item-section>
-                       <q-input  color="blue" outlined dense v-model="medicine_add.quantity" label="Количество" />
+                       <q-input  color="blue" outlined dense v-model="medicine_info_add.quantity" label="Количество" />
                      </q-item-section>
                    </q-item>
                     <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                      <q-item-section>
-                       <q-input color="blue" outlined dense v-model="medicine_add.purchase_price" label="Цена покупки" />
+                       <q-input color="blue" outlined dense v-model="medicine_info_add.purchase_price" label="Цена покупки" />
                      </q-item-section>
                    </q-item>
                    <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                      <q-item-section>
-                       <q-input color="blue" outlined dense v-model="medicine_add.selling_price" label="Цена продажи" />
+                       <q-input color="blue" outlined dense v-model="medicine_info_add.selling_price" label="Цена продажи" />
                      </q-item-section>
                    </q-item>
 
                    <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                      <q-item-section>
 
-                       <q-input dense color="blue" outlined v-model="medicine_add.expire_date" label="Годен до">
+                       <q-input dense color="blue" outlined v-model="medicine_info_add.expire_date" label="Годен до">
                          <template v-slot:append>
                            <q-icon name="event" class="cursor-pointer">
                              <q-popup-proxy  transition-show="scale" transition-hide="scale">
-                               <q-date color="blue" outlined mask="YYYY-MM-DD" today-btn v-model="medicine_add.expire_date"/>
+                               <q-date color="blue" outlined mask="YYYY-MM-DD" today-btn v-model="medicine_info_add.expire_date"/>
                              </q-popup-proxy>
                            </q-icon>
                          </template>
@@ -200,13 +200,11 @@
                 </q-list>
               </div>
             </div> -->
-{{title_options}}
-{{medicine_add}}
+
 
             <!-- <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 row justify-end q-mt-sm">
               <q-btn class="text-capitalize bg-blue text-white" @click="addMedicine" size="lg">Добавить</q-btn>
           </div> -->
-
         </div>
     </q-page>
 </template>
@@ -216,15 +214,20 @@
 import {mapActions, mapGetters} from 'vuex'
 
 export default {
+    props: {
+      id: {
+        type: Number,
+        required: true
+      }
+    },
     data(){
       return {
           getMedicines: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', vat: '', total_quantity: '', left_quantity: ''},
-          title_options: [],
-          barcode_options: [],
           response: {data: {data: {}}},
-          medicine_add: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', capacity: '',
-           quantity: '', vat: '', description: '', purchase_price: '', selling_price: '', expire_date: ''},
+          // medicine_add: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', capacity: '',
+          //  quantity: '', vat: '', description: '', purchase_price: '', selling_price: '', expire_date: ''},
           medicine_info_add: [{ quantity: '', purchase_price: '', selling_price: '', expire_date: ''}],
+
       }
     },
     watch: {
@@ -243,71 +246,85 @@ export default {
       //   deep: true
       // },
 
-      'medicine_add.title': function (newVal, oldVal) {
-        if (newVal != '') {
-          this.medicine_add = {title: this.medicine_add.title, barcode: this.response.data.data[0].barcode, country: this.response.data.data[0].country, 
-            manufacture: this.response.data.data[0].manufacture, serial_code: this.response.data.data[0].serial_code, capacity: this.response.data.data[0].capacity};
-          // this.$set(this.medicine_add, 0, this.response.data.data[0]);
 
-          //  for(let u=0; u < this.response.data.data.length; u  ++){
-          //    this.$set(this.medicine_add, u, this.response.data.data[u])
-          //  }
-        }
-      },
-      'medicine_add.barcode': function (newVal, oldVal) {
-        if (newVal != '') {
-          this.medicine_add = {title: this.response.data.data[0].title, barcode: this.medicine_add.barcode, country: this.response.data.data[0].country, 
-            manufacture: this.response.data.data[0].manufacture, serial_code: this.response.data.data[0].serial_code, capacity: this.response.data.data[0].capacity};
-          // this.$set(this.medicine_add, 0, this.response.data.data[0]);
 
-          //  for(let u=0; u < this.response.data.data.length; u  ++){
-          //    this.$set(this.medicine_add, u, this.response.data.data[u])
-          //  }
-        }
-      },
+
+
+      // 'medicine_add.title': function (newVal, oldVal) {
+      //   if (newVal != '') {
+      //     this.medicine_add = {title: this.medicine_add.title, barcode: this.response.data.data[0].barcode, country: this.response.data.data[0].country, 
+      //       manufacture: this.response.data.data[0].manufacture, serial_code: this.response.data.data[0].serial_code, capacity: this.response.data.data[0].capacity};
+      //     // this.$set(this.medicine_add, 0, this.response.data.data[0]);
+
+      //     //  for(let u=0; u < this.response.data.data.length; u  ++){
+      //     //    this.$set(this.medicine_add, u, this.response.data.data[u])
+      //     //  }
+      //   }
+      // },
+      // 'medicine_add.barcode': function (newVal, oldVal) {
+      //   if (newVal != '') {
+      //     this.medicine_add = {title: this.response.data.data[0].title, barcode: this.medicine_add.barcode, country: this.response.data.data[0].country, 
+      //       manufacture: this.response.data.data[0].manufacture, serial_code: this.response.data.data[0].serial_code, capacity: this.response.data.data[0].capacity};
+      //     // this.$set(this.medicine_add, 0, this.response.data.data[0]);
+
+      //     //  for(let u=0; u < this.response.data.data.length; u  ++){
+      //     //    this.$set(this.medicine_add, u, this.response.data.data[u])
+      //     //  }
+      //   }
+      // },
     },
     computed:{
       
     },
-    mounted(){
-      
+    async mounted(){
+      const answer = await this.GET_MEDICINE_INFO({id: this.id});
+      console.log(answer); //shuni ko'rish kerak
+      this.getMedicines.title = answer.data.title;
+      this.getMedicines.description = answer.data.description;
+      this.getMedicines.barcode = answer.data.barcode;
+      this.getMedicines.country = answer.data.country;
+      this.getMedicines.manufacture = answer.data.manufacture;
+      this.getMedicines.serial_code = answer.data.serial_code;
+      this.getMedicines.vat = answer.data.vat;
+      this.getMedicines.total_quantity = answer.data.total_quantity;
+      this.getMedicines.left_quantity = answer.data.left_quantity;
     },
     methods:{
       ...mapActions([
-        'ADD_MEDICINES', 'ADD_MEDICINE_INFO', 'GET_SEARCH_RESULT'
+        'ADD_MEDICINES', 'ADD_MEDICINE_INFO', 'GET_MEDICINE_INFO'
       ]),
 
       addInfoForMedicine(){
         this.$set(this.medicine_info_add, this.medicine_info_add.length, { quantity: '', purchase_price: '', selling_price: '', expire_date: ''});
       },
-      async filterTitle (val, update, abort) {
-        if(val.length >= 2){
-          await update(async () => {
-          // const needle = val.toLowerCase()
-          const needle = val;
-          this.response = await this.GET_SEARCH_RESULT({value: needle, type: 'title'});
-          this.title_options = [];
-          for(let i = 0; i < this.response.data.data.length; i++){
-            this.title_options.push(await this.response.data.data[i].title);
-          }
-          // this.options = stringOptions.filter(v => v.toLowerCase().indexOf(needle) > -1)
-          })
-        }
-      },
-      async filterBarcode (val, update, abort) {
-        if(val.length >= 2){
-          await update(async () => {
-          // const needle = val.toLowerCase()
-          const needle = val;
-          this.response = await this.GET_SEARCH_RESULT({value: needle, type: 'barcode'});
-          this.barcode_options = [];
-          for(let i = 0; i < this.response.data.data.length; i++){
-            this.barcode_options.push(await this.response.data.data[i].title);
-          }
-          // this.options = stringOptions.filter(v => v.toLowerCase().indexOf(needle) > -1)
-          })
-        }
-      },
+      // async filterTitle (val, update, abort) {
+      //   if(val.length >= 2){
+      //     await update(async () => {
+      //     // const needle = val.toLowerCase()
+      //     const needle = val;
+      //     this.response = await this.GET_SEARCH_RESULT({value: needle, type: 'title'});
+      //     this.title_options = [];
+      //     for(let i = 0; i < this.response.data.data.length; i++){
+      //       this.title_options.push(await this.response.data.data[i].title);
+      //     }
+      //     // this.options = stringOptions.filter(v => v.toLowerCase().indexOf(needle) > -1)
+      //     })
+      //   }
+      // },
+      // async filterBarcode (val, update, abort) {
+      //   if(val.length >= 2){
+      //     await update(async () => {
+      //     // const needle = val.toLowerCase()
+      //     const needle = val;
+      //     this.response = await this.GET_SEARCH_RESULT({value: needle, type: 'barcode'});
+      //     this.barcode_options = [];
+      //     for(let i = 0; i < this.response.data.data.length; i++){
+      //       this.barcode_options.push(await this.response.data.data[i].title);
+      //     }
+      //     // this.options = stringOptions.filter(v => v.toLowerCase().indexOf(needle) > -1)
+      //     })
+      //   }
+      // },
     
       // async addMedicineInfo(){
       //   await this.ADD_MEDICINE_INFO(
@@ -319,6 +336,9 @@ export default {
       //     }
       //   )
       // },
+
+
+
       async addMedicine(){
         let answer = await this.ADD_MEDICINES(
           {
@@ -340,22 +360,22 @@ export default {
           this.$router.push('/medicines');
         }
       },
-      createTitleValue (val, done) {
-        if (val.length > 0) {
-          if (!this.title_options.includes(val)) {
-            this.title_options.push(val);
-          }
-          done(val, 'toggle')
-        }
-      },
-      createBarcodeValue (val, done) {
-        if (val.length > 0) {
-          if (!this.barcode_options.includes(val)) {
-            this.barcode_options.push(val);
-          }
-          done(val, 'toggle')
-        }
-      },
+      // createTitleValue (val, done) {
+      //   if (val.length > 0) {
+      //     if (!this.title_options.includes(val)) {
+      //       this.title_options.push(val);
+      //     }
+      //     done(val, 'toggle')
+      //   }
+      // },
+      // createBarcodeValue (val, done) {
+      //   if (val.length > 0) {
+      //     if (!this.barcode_options.includes(val)) {
+      //       this.barcode_options.push(val);
+      //     }
+      //     done(val, 'toggle')
+      //   }
+      // },
       
 
 
