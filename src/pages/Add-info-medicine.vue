@@ -66,9 +66,16 @@
 
           <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 q-mt-md" v-for="(medInfo,item) in medicine_info_add" :key="item">
              <q-card class="card-bg text-black">
-               <q-card-section class="text-h6 bg-blue">
-                 <div class="text-h6 text-white">Добавить инфо для лекарства #{{item + 1}}</div>
-                 <div class="text-subtitle2 text-white">Введите данные лекарства</div>
+               <q-card-section class="text-h6 bg-blue row justify-between">
+                 <div>
+                   <div class="text-h6 text-white">Добавить инфо для лекарства #{{item + 1}}</div>
+                   <div class="text-subtitle2 text-white">Введите данные лекарства</div>
+                 </div>
+                 <div>
+                   <q-btn flat @click="removeInfoForMedicine(item)">
+                    <q-icon name="close" class="text-white text-h5"></q-icon>
+                   </q-btn>
+                 </div>
                </q-card-section>
                <q-card-section class="q-pa-sm">
                  <q-list class="row">
@@ -100,28 +107,28 @@
                   
                    <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                      <q-item-section>
-                       <q-input  color="blue" outlined dense v-model="medicine_info_add.quantity" label="Количество" />
+                       <q-input  color="blue" outlined dense v-model="medicine_info_add[item].quantity" label="Количество" />
                      </q-item-section>
                    </q-item>
                     <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                      <q-item-section>
-                       <q-input color="blue" outlined dense v-model="medicine_info_add.purchase_price" label="Цена покупки" />
+                       <q-input color="blue" outlined dense v-model="medicine_info_add[item].purchase_price" label="Цена покупки" />
                      </q-item-section>
                    </q-item>
                    <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                      <q-item-section>
-                       <q-input color="blue" outlined dense v-model="medicine_info_add.selling_price" label="Цена продажи" />
+                       <q-input color="blue" outlined dense v-model="medicine_info_add[item].selling_price" label="Цена продажи" />
                      </q-item-section>
                    </q-item>
 
                    <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                      <q-item-section>
 
-                       <q-input dense color="blue" outlined v-model="medicine_info_add.expire_date" label="Годен до">
+                       <q-input dense color="blue" outlined v-model="medicine_info_add[item].expire_date" label="Годен до">
                          <template v-slot:append>
                            <q-icon name="event" class="cursor-pointer">
                              <q-popup-proxy  transition-show="scale" transition-hide="scale">
-                               <q-date color="blue" outlined mask="YYYY-MM-DD" today-btn v-model="medicine_info_add.expire_date"/>
+                               <q-date color="blue" outlined mask="YYYY-MM-DD" today-btn v-model="medicine_info_add[item].expire_date"/>
                              </q-popup-proxy>
                            </q-icon>
                          </template>
@@ -141,8 +148,8 @@
           
 
            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 q-mt-md row justify-between">
-            <q-btn color="blue" icon="add" label="Добавить информацию о лекарстве" @click="addInfoForMedicine"/>
-            <q-btn class="text-capitalize bg-blue text-white" @click="addMedicine" size="lg">Добавить</q-btn>
+            <q-btn color="blue" icon="add" label="Добавить информацию о лекарстве" size="md" @click="addInfoForMedicine"/>
+            <q-btn class="text-capitalize bg-blue text-white" @click="addMedicine" size="md" v-if="medicine_info_add.length != 0">Добавить</q-btn>
            </div>
            
               
@@ -296,6 +303,9 @@ export default {
 
       addInfoForMedicine(){
         this.$set(this.medicine_info_add, this.medicine_info_add.length, { quantity: '', purchase_price: '', selling_price: '', expire_date: ''});
+      },
+      removeInfoForMedicine(item){
+        this.medicine_info_add.splice(item, 1);
       },
       // async filterTitle (val, update, abort) {
       //   if(val.length >= 2){

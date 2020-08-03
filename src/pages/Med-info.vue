@@ -70,6 +70,7 @@
                 :loading="loading"
                 separator="cell"
                 :pagination.sync="pagination"
+                rows-per-page-options="0"
                 >
                 <template v-slot:body-cell-actions="props">
                     <q-td :props="props">
@@ -78,7 +79,7 @@
                     </q-td>
                 </template>
                 <template v-slot:top="props">
-                    <span class="text-h6">Филиалы</span>
+                    <span class="text-h6">Товары с разной наценкой</span>
                     <!-- <q-btn color="green" :disable="loading" label="Добавить" @click="addRow = !addRow" /> -->
                     <!-- <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" /> -->
                     <q-space />
@@ -97,6 +98,51 @@
                 </template>
                 </q-table>
             </div>
+
+
+
+            <div class="q-mt-md">
+                <q-table
+                dense
+                title="Покупатели"
+                :data="data"
+                :columns="columns"
+                row-key="index"  
+                :filter="filter"
+                :loading="loading"
+                separator="cell"
+                :pagination.sync="pagination"
+                rows-per-page-options="0"
+                >
+                <template v-slot:body-cell-actions="props">
+                    <q-td :props="props">
+                        <q-btn dense round flat color="grey" to="/branch-update" icon="edit"></q-btn>
+                        <q-btn dense round flat color="grey" to="/branch-info" icon="fas fa-info-circle"></q-btn>
+                    </q-td>
+                </template>
+                <template v-slot:top="props">
+                    <span class="text-h6">Лекарства в филиалах</span>
+                    <!-- <q-btn color="green" :disable="loading" label="Добавить" @click="addRow = !addRow" /> -->
+                    <!-- <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" /> -->
+                    <q-space />
+                    <q-input borderless dense debounce="300" color="primary" v-model="filter"
+                    placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; border-radius: 5px;">
+                    <template v-slot:append>
+                        <q-icon name="search" />
+                    </template>
+                    </q-input>
+                    <q-btn
+                    flat round dense
+                    :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+                    @click="props.toggleFullscreen"
+                    class="q-ml-md"
+                    />
+                </template>
+                </q-table>
+            </div>
+
+
+
         </div>
         {{getMedicinesInfo}}
     </q-page>

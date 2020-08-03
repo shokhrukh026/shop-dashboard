@@ -27,6 +27,7 @@
             :loading="loading"
             separator="cell"
             :pagination.sync="pagination"
+            rows-per-page-options="0"
             >
 
             <!-- :rows-per-page-options="[0]"
@@ -36,7 +37,7 @@
             :virtual-scroll-sticky-size-start="48" -->
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
-                    <q-btn dense round flat color="grey" @click="addRow = !addRow" icon="add_circle"></q-btn>
+                    <q-btn dense round flat color="grey" @click="(addRow = !addRow) && (temp = props.row)" icon="add_circle"></q-btn>
                     <q-btn dense round flat color="grey" :to="{ name: 'edit-product', params: {id: props.row.id, row: props.row}}" icon="edit"></q-btn>
                     <q-btn dense round flat color="grey" :to="{ name: 'med-info', params: {id: props.row.id}}" icon="fas fa-info-circle"></q-btn>
                     <q-btn dense round flat color="grey" @click="deleteRow(props)" icon="delete"></q-btn>
@@ -90,13 +91,13 @@
                <q-separator />
                <q-card-section class="q-pt-none q-pa-lg">
                 <q-select outlined v-model="distribution_branch" :options="distribution_options" label="Филиал" class="q-mb-sm"/>
-                <q-input outlined v-model="distribution_amount" label="Кол-во"  class="q-mb-sm"/>
+                <q-input outlined v-model="distribution_amount" label="Кол-во" class="q-mb-sm"/>
                 
                </q-card-section>
                <q-separator />
                <q-card-actions align="right" class="bg-white text-teal">
                  <q-btn flat label="Отменить" v-close-popup />
-                 <q-btn flat label="Распределить" v-close-popup  />
+                 <q-btn flat label="Распределить" v-close-popup  @click="addToCart"/>
                </q-card-actions>
              </q-card>
            </q-dialog>
@@ -114,12 +115,13 @@ import {mapActions, mapGetters} from 'vuex'
 export default {
     data(){
       return {
+      temp: {},
       answer: {data: {data: []}},
       distribution_amount: '',
       distribution_branch: '',
       distribution_options: [],
       pagination: {
-        rowsPerPage: 1,
+        rowsPerPage: 4,
         page: 1,
       },
       row: {
@@ -215,6 +217,10 @@ export default {
       ...mapActions([
         'GET_MEDICINES', 'GET_COMMENTS', 'GET_SEARCH_RESULT', 'GET_NEXT_PAGE'
       ]),
+      async addToCart(){
+        let data = { id: this.temp.id, branch: this.distribution_branch, amount: this.distribution_amount }
+        this.$emit('medicines', data);
+      },
       async getSearchResultByFilter(){
         return await this.GET_SEARCH_RESULT(
           {
