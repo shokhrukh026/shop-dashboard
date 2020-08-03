@@ -27,7 +27,7 @@
             :loading="loading"
             separator="cell"
             :pagination.sync="pagination"
-            rows-per-page-options="0"
+            :rows-per-page-options="[0]"
             >
 
             <!-- :rows-per-page-options="[0]"
@@ -37,7 +37,6 @@
             :virtual-scroll-sticky-size-start="48" -->
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
-                    <q-btn dense round flat color="grey" @click="(addRow = !addRow) && (temp = props.row)" icon="add_circle"></q-btn>
                     <q-btn dense round flat color="grey" :to="{ name: 'edit-product', params: {id: props.row.id, row: props.row}}" icon="edit"></q-btn>
                     <q-btn dense round flat color="grey" :to="{ name: 'med-info', params: {id: props.row.id}}" icon="fas fa-info-circle"></q-btn>
                     <q-btn dense round flat color="grey" @click="deleteRow(props)" icon="delete"></q-btn>
@@ -83,24 +82,7 @@
            </q-dialog>
 
 
-           <q-dialog v-model="addRow">
-             <q-card style="width: 300px">
-               <q-card-section class="bg-info">
-                 <div class="text-h6 text-white">Распределение</div>
-               </q-card-section>
-               <q-separator />
-               <q-card-section class="q-pt-none q-pa-lg">
-                <q-select outlined v-model="distribution_branch" :options="distribution_options" label="Филиал" class="q-mb-sm"/>
-                <q-input outlined v-model="distribution_amount" label="Кол-во" class="q-mb-sm"/>
-                
-               </q-card-section>
-               <q-separator />
-               <q-card-actions align="right" class="bg-white text-teal">
-                 <q-btn flat label="Отменить" v-close-popup />
-                 <q-btn flat label="Распределить" v-close-popup  @click="addToCart"/>
-               </q-card-actions>
-             </q-card>
-           </q-dialog>
+           
            <!-- {{distribution_options}}
            {{answer.data.data[0]}} -->
            {{getMedicines}}
@@ -115,11 +97,9 @@ import {mapActions, mapGetters} from 'vuex'
 export default {
     data(){
       return {
-      temp: {},
+      
       answer: {data: {data: []}},
-      distribution_amount: '',
-      distribution_branch: '',
-      distribution_options: [],
+      
       pagination: {
         rowsPerPage: 4,
         page: 1,
@@ -133,7 +113,6 @@ export default {
         vat: '',
       },
       editRowVar: false,
-      addRow: false,
       deleteRowVar: false,
       rowDelete: {},
       loading: false,
@@ -190,13 +169,23 @@ export default {
     },
     async mounted(){
       await this.GET_MEDICINES();
+      for(let k = 0; k < this.getMedicines.results.length; k++){
+        let capacity = await this.getMedicines.results[k].capacity;
+        let total_quantity_box = await this.getMedicines.results[k].total_quantity_box;
+        let total_quantity_piece = await this.getMedicines.results[k].total_quantity_piece;
+        let left_quantity_box = await this.getMedicines.results[k].left_quantity_box;
+        let left_quantity_piece = await this.getMedicines.results[k].left_quantity_piece;
+        let sum = total_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + left_quantity_piece + ' шт'
+        console.log(sum);
+      }
+      
       this.data = await this.getMedicines.results;
       //this.$set(this.data, this.data.length, {id: 1, products: 'Тримол', barcode: '2313141', total_quantity: '100', left_quantity: '50', vat: '10%'});
       //this.$set(this.data, this.data.length, {id: 2, products: 'Тримол', barcode: '2313141', total_quantity: '100', left_quantity: '50', vat: '10%'});
 
       // await this.GET_COMMENTS();
       // this.data = await this.getComments
-      this.distribution_options = await this.getBranchNames;
+      
     },
     computed:{
       ...mapGetters([
@@ -205,22 +194,13 @@ export default {
       pagesNumber () {
         return Math.ceil(this.data.length / this.pagination.rowsPerPage)
       },
-      getBranchNames() {
-        let a = [];
-        for(let i = 0; i<this.getBranches.length; i++){
-          a.push(this.getBranches[i].name);
-        }
-        return a;
-      },
+      
     },
     methods: {
       ...mapActions([
         'GET_MEDICINES', 'GET_COMMENTS', 'GET_SEARCH_RESULT', 'GET_NEXT_PAGE'
       ]),
-      async addToCart(){
-        let data = { id: this.temp.id, branch: this.distribution_branch, amount: this.distribution_amount }
-        this.$emit('medicines', data);
-      },
+      
       async getSearchResultByFilter(){
         return await this.GET_SEARCH_RESULT(
           {

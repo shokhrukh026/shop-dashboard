@@ -11,7 +11,7 @@
             :loading="loading"
             separator="cell"
             :pagination.sync="pagination"
-            rows-per-page-options="0"
+            :rows-per-page-options="[1]"
             >
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">

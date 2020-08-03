@@ -27,13 +27,20 @@
               />
 
               <q-input
-                type="password"
                 filled
                 v-model="password"
                 label="Пароль"
                 lazy-rules
-
-              />
+                :type="isPwd ? 'password' : 'text'"
+              >
+              <template v-slot:append>
+                <q-icon
+                  :name="isPwd ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="isPwd = !isPwd"
+                />
+              </template>
+              </q-input>
               
               <div>
                 <q-btn label="Вход" type="button" color="primary" @click="Login"/>
@@ -67,6 +74,7 @@ import router from '../router/index'
 export default {
     data() {
         return {
+            isPwd: true,
             username: 'admin',
             password: 'admin',
             error: false,

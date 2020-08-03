@@ -70,10 +70,11 @@
                 :loading="loading"
                 separator="cell"
                 :pagination.sync="pagination"
-                rows-per-page-options="0"
+                :rows-per-page-options="[0]"
                 >
                 <template v-slot:body-cell-actions="props">
                     <q-td :props="props">
+                        <q-btn dense round flat color="grey" @click="(addRow = !addRow) && (temp = props.row)" icon="add_circle"></q-btn>
                         <q-btn dense round flat color="grey" to="/branch-update" icon="edit"></q-btn>
                         <q-btn dense round flat color="grey" to="/branch-info" icon="fas fa-info-circle"></q-btn>
                     </q-td>
@@ -112,7 +113,7 @@
                 :loading="loading"
                 separator="cell"
                 :pagination.sync="pagination"
-                rows-per-page-options="0"
+                :rows-per-page-options="[0]"
                 >
                 <template v-slot:body-cell-actions="props">
                     <q-td :props="props">
@@ -144,6 +145,31 @@
 
 
         </div>
+
+
+
+        <q-dialog v-model="addRow" persistent >
+             <q-card style="width: 300px">
+               <q-card-section class="bg-info">
+                 <div class="text-h6 text-white">Распределение</div>
+               </q-card-section>
+               <q-separator />
+               <q-card-section class="q-pt-none q-pa-lg">
+                <q-select outlined v-model="distribution_branch" :options="distribution_options" label="Филиал" class="q-mb-sm"/>
+                <q-input outlined v-model="distribution_amount" label="Кол-во" class="q-mb-sm" :suffix="temp_total_quantity" 
+                :rules="[
+                  val => val !== null && val !== '' || 'Заполните поле пожалуйста',
+                  val => val > 0 && val <= temp.total_qauntity || 'В складе имеется ' + temp.total_qauntity + ' товара'
+                ]"/>
+                
+               </q-card-section>
+               <q-separator />
+               <q-card-actions align="right" class="bg-white text-teal">
+                 <q-btn flat label="Отменить" v-close-popup />
+                 <q-btn flat label="Распределить" v-close-popup  @click="addToCart"/>
+               </q-card-actions>
+             </q-card>
+           </q-dialog>
         {{getMedicinesInfo}}
     </q-page>
 </template>
@@ -161,6 +187,13 @@ export default {
     },
     data(){
         return{
+            temp: {},
+            temp_total_quantity: '',
+            addRow: false,
+            distribution_amount: '',
+            distribution_branch: '',  
+            distribution_options: [],
+
           // this should be commented
             getMedicines: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', vat: '', total_quantity: '', left_quantity: ''},
             pagination: {
@@ -180,36 +213,75 @@ export default {
                 { name: 'actions', label: 'Действия', field: '', align:'center' },
             ],
             data: [
+              {
+                "business_medicine_id":1,
+                "total_qauntity":1000,
+                "left_quantity": 200,
+                "purchase_price":1500,
+                "selling_price":1700,
+                "expire_date":"2020-08-30"
+              }
             ],  
             
         }
     },
+    watch:{ 
+      // 'distribution_amount': function (newVal, oldVal){
+      //    if(newVal){
+      //      this.temp_total_quantity = this.temp.total_qauntity - newVal;
+      //    }
+      // },
+      'temp.total_qauntity': function (newVal, oldVal){
+        this.temp_total_quantity = this.temp.total_qauntity.toString();
+      },
+        
+    },
     async mounted(){
-      // await this.GET_MEDICINES();
-      const answer = await this.GET_MEDICINE_INFO({id: this.id});
-      this.getMedicines.title = answer.data.title;
-      this.getMedicines.description = answer.data.description;
-      this.getMedicines.barcode = answer.data.barcode;
-      this.getMedicines.country = answer.data.country;
-      this.getMedicines.manufacture = answer.data.manufacture;
-      this.getMedicines.serial_code = answer.data.serial_code;
-      this.getMedicines.vat = answer.data.vat;
-      this.getMedicines.total_quantity = answer.data.total_quantity;
-      this.getMedicines.left_quantity = answer.data.left_quantity;
+      await this.GET_BRANCHES();
+      this.distribution_options = await this.getBranchNames;
 
-      for(let i = 0; i < answer.data.medicines_info.length; i++ ){
-        this.$set(this.data, this.data.length, answer.data.medicines_info[i]);
-      }
+
+      // await this.GET_MEDICINES();
+      // const answer = await this.GET_MEDICINE_INFO({id: this.id});
+      // console.log(data);
+      // this.getMedicines.title = answer.data.title;
+      // this.getMedicines.description = answer.data.description;
+      // this.getMedicines.barcode = answer.data.barcode;
+      // this.getMedicines.country = answer.data.country;
+      // this.getMedicines.manufacture = answer.data.manufacture;
+      // this.getMedicines.serial_code = answer.data.serial_code;
+      // this.getMedicines.vat = answer.data.vat;
+      // this.getMedicines.total_quantity = answer.data.total_quantity;
+      // this.getMedicines.left_quantity = answer.data.left_quantity;
+
+      // for(let i = 0; i < answer.data.medicines_info.length; i++ ){
+      //   this.$set(this.data, this.data.length, answer.data.medicines_info[i]);
+      // }
+      
+       
+      
+      
     },
     computed:{
       ...mapGetters([
-        '', 'getUser', 'getMedicinesInfo'
-      ])
+        'getBranches', 'getUser', 'getMedicinesInfo'
+      ]),
+      getBranchNames() {
+        let a = [];
+        for(let i = 0; i<this.getBranches.length; i++){
+          a.push(this.getBranches[i].name);
+        }
+        return a;
+      },
     },
     methods: {
       ...mapActions([
-          'GET_MEDICINES', 'GET_MEDICINE_INFO'
+          'GET_MEDICINES', 'GET_MEDICINE_INFO', 'GET_BRANCHES'
       ]),
+      async addToCart(){
+        let data = { id: this.id, branch: this.distribution_branch, amount: this.distribution_amount }
+        await this.$emit('medicines', data);
+      },
       // async getSearchResultByFilter(){
       //   return await this.GET_SEARCH_RESULT(
       //     {

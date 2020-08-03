@@ -127,8 +127,8 @@
                        <q-input dense color="blue" outlined v-model="medicine_info_add[item].expire_date" label="Годен до">
                          <template v-slot:append>
                            <q-icon name="event" class="cursor-pointer">
-                             <q-popup-proxy  transition-show="scale" transition-hide="scale">
-                               <q-date color="blue" outlined mask="YYYY-MM-DD" today-btn v-model="medicine_info_add[item].expire_date"/>
+                             <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                               <q-date color="blue" outlined mask="YYYY-MM-DD" today-btn v-model="medicine_info_add[item].expire_date" @input="() => $refs.qDateProxy[item].hide()"/>          
                              </q-popup-proxy>
                            </q-icon>
                          </template>
@@ -149,7 +149,7 @@
 
            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 q-mt-md row justify-between">
             <q-btn color="blue" icon="add" label="Добавить информацию о лекарстве" size="md" @click="addInfoForMedicine"/>
-            <q-btn class="text-capitalize bg-blue text-white" @click="addMedicine" size="md" v-if="medicine_info_add.length != 0">Добавить</q-btn>
+            <q-btn class="text-capitalize bg-blue text-white" @click="addMedicineInfo" size="md" v-if="medicine_info_add.length != 0">Добавить</q-btn>
            </div>
            
               
@@ -300,6 +300,7 @@ export default {
       ...mapActions([
         'ADD_MEDICINES', 'ADD_MEDICINE_INFO', 'GET_MEDICINE_INFO'
       ]),
+     
 
       addInfoForMedicine(){
         this.$set(this.medicine_info_add, this.medicine_info_add.length, { quantity: '', purchase_price: '', selling_price: '', expire_date: ''});
@@ -336,40 +337,44 @@ export default {
       //   }
       // },
     
-      // async addMedicineInfo(){
-      //   await this.ADD_MEDICINE_INFO(
+      async addMedicineInfo(){
+        for (let i = 0; i < this.medicine_info_add.length; i++) {
+          await this.ADD_MEDICINE_INFO({
+            business_medicine_id: this.id,
+            quantity: this.medicine_info_add[i].quantity,
+            purchase_price: this.medicine_info_add[i].purchase_price,
+            selling_price: this.medicine_info_add[i].selling_price,
+            expire_date: this.medicine_info_add[i].expire_date,
+          })
+        }
+        
+      },
+
+
+
+      // async addMedicine(){
+      //   let answer = await this.ADD_MEDICINES(
       //     {
-      //       quantity: this.medicine_info_add.quantity,
-      //       purchase_price: this.medicine_info_add.purchase_price,
-      //       selling_price: this.medicine_info_add.selling_price,
-      //       expire_date: this.medicine_info_add.expire_date,
+      //       title: this.medicine_add.title,
+      //       barcode: this.medicine_add.barcode,
+      //       country: this.medicine_add.country,
+      //       manufacture: this.medicine_add.manufacture,
+      //       serial_code: this.medicine_add.serial_code,
+      //       quantity: this.medicine_add.quantity,
+      //       capacity: this.medicine_add.capacity,
+      //       vat: this.medicine_add.vat,
+      //       description: this.medicine_add.description,
+      //       purchase_price: this.medicine_add.purchase_price,
+      //       selling_price: this.medicine_add.selling_price,
+      //       expire_date: this.medicine_add.expire_date,
       //     }
       //   )
+      //   if(answer){
+      //     this.$router.push('/medicines');
+      //   }
       // },
 
 
-
-      async addMedicine(){
-        let answer = await this.ADD_MEDICINES(
-          {
-            title: this.medicine_add.title,
-            barcode: this.medicine_add.barcode,
-            country: this.medicine_add.country,
-            manufacture: this.medicine_add.manufacture,
-            serial_code: this.medicine_add.serial_code,
-            quantity: this.medicine_add.quantity,
-            capacity: this.medicine_add.capacity,
-            vat: this.medicine_add.vat,
-            description: this.medicine_add.description,
-            purchase_price: this.medicine_add.purchase_price,
-            selling_price: this.medicine_add.selling_price,
-            expire_date: this.medicine_add.expire_date,
-          }
-        )
-        if(answer){
-          this.$router.push('/medicines');
-        }
-      },
       // createTitleValue (val, done) {
       //   if (val.length > 0) {
       //     if (!this.title_options.includes(val)) {

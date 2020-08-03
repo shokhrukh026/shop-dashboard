@@ -34,7 +34,7 @@
           </q-btn> -->
           <q-btn round flat to="/shopping-cart">
             <q-icon name="shopping_cart"></q-icon>
-            <q-badge color="red" floating>1</q-badge>
+            <q-badge color="red" floating v-if="cart > 0">{{cart}}</q-badge>
           </q-btn>
           
 
@@ -91,7 +91,7 @@
     </q-drawer>
 
     <q-page-container class="bg-grey-2">
-      <router-view />
+      <router-view @medicines="distributeMedicines"/>
     </q-page-container>
   </q-layout>
 </template>
@@ -108,6 +108,7 @@ export default {
   },
   data() {
     return {
+      cart: '0',
       leftDrawerOpen: false,
       sideBar: [
         {title: 'Главная', icon: 'dashboard', url: '/main'},
@@ -123,11 +124,17 @@ export default {
 
     }
   },
+  watch: {
+
+  },
   methods: {
     //clears Session
     async logout(){
       await this.$store.dispatch('LOGOUT');
     },
+    distributeMedicines(amount){
+      this.cart++;
+    }
 
   }
 }

@@ -234,8 +234,8 @@
                        <q-input dense color="blue" outlined v-model="medicine_add.expire_date" label="Годен до">
                          <template v-slot:append>
                            <q-icon name="event" class="cursor-pointer">
-                             <q-popup-proxy  transition-show="scale" transition-hide="scale">
-                               <q-date color="blue" outlined mask="YYYY-MM-DD" today-btn v-model="medicine_add.expire_date"/>
+                             <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
+                               <q-date color="blue" outlined mask="YYYY-MM-DD" today-btn v-model="medicine_add.expire_date" @input="() => $refs.qDateProxy.hide()"/>
                              </q-popup-proxy>
                            </q-icon>
                          </template>
@@ -253,7 +253,7 @@
            </div>
 
           <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 row justify-end q-mt-sm">
-              <q-btn class="text-capitalize bg-blue text-white" @click="addMedicine" size="lg">Добавить</q-btn>
+              <q-btn class="text-capitalize bg-blue text-white" @click="addMedicine" size="md">Добавить</q-btn>
           </div>
 
            <!-- <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
