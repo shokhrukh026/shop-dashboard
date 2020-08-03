@@ -73,6 +73,7 @@
                       </q-list> -->
                      </q-item-section>
                    </q-item>
+                    
                    <q-item class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                      <q-item-section>
                         <q-select
@@ -119,26 +120,26 @@
                        <q-input  color="blue" outlined dense v-model="medicine_add.serial_code" label="Серийный номер" />
                      </q-item-section>
                    </q-item>
-                   <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                   <q-item class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                      <q-item-section>
                        <q-input  color="blue" outlined dense v-model="medicine_add.capacity" label="Вместимость" />
                      </q-item-section>
                    </q-item>
-                   <!-- <q-item class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                   <q-item class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                      <q-item-section>
-                       <q-input color="blue" outlined dense v-model="medicine_add[0].vat" label="НДС" />
+                       <q-input color="blue" outlined dense v-model="medicine_add.vat" label="НДС" />
                      </q-item-section>
-                   </q-item> -->
+                   </q-item>
+                   <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+                      <q-item-section>
+                        <q-input color="blue" outlined autogrow dense v-model="medicine_add.description" label="Описание" />
+                      </q-item-section>
+                    </q-item>
                    <!-- <q-item class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                      <q-item-section>
                        <q-input  color="blue" outlined dense v-model="medicine_add[0].quantity" label="Количество" />
                      </q-item-section>
                    </q-item>
-                    <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                      <q-item-section>
-                        <q-input color="blue" outlined autogrow dense v-model="medicine_add[0].description" label="Описание" />
-                      </q-item-section>
-                    </q-item>
                     <q-item class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                      <q-item-section>
                        <q-input color="blue" outlined dense v-model="medicine_add[0].purchase_price" label="Цена покупки" />
