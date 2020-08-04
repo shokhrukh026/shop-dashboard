@@ -124,7 +124,7 @@ export default {
         { name: 'country', align: 'center', label: 'Страна', field: 'country', sortable: true },
         { name: 'manufacture', align: 'center', label: 'Производитель', field: 'manufacture', sortable: true },
         { name: 'serial_code', align: 'center', label: 'Серийный номер', field: 'serial_code', sortable: true },
-        { name: 'capacity', align: 'center', label: 'Вместимость', field: 'capacity', sortable: true },
+        // { name: 'capacity', align: 'center', label: 'Вместимость', field: 'capacity', sortable: true },
         // {
         //   name: 'name',
         //   required: true,
@@ -137,6 +137,7 @@ export default {
         { name: 'total_quantity', align: 'center', label: 'Кол-во', field: 'total_quantity', sortable: true },
         { name: 'left_quantity', align: 'center', label: 'Остаток', field: 'left_quantity', sortable: true },
         { name: 'vat', align: 'center', label: 'НДС', field: 'vat', sortable: true },
+        { name: 'sales_quantity_in_30_days', align: 'center', label: 'Продажи за 30 дней', field: 'sales_quantity_in_30_days', sortable: true },
        
         { name: 'actions', label: 'Действия', field: '', align:'center' },
       ],

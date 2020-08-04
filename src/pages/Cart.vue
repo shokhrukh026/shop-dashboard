@@ -13,6 +13,7 @@
             separator="cell"
             :pagination.sync="pagination"
             :rows-per-page-options="[0]"
+            style="min-width: 700px"
             >
 
             <!-- :rows-per-page-options="[0]"
@@ -48,7 +49,8 @@
             </q-table>
         </div>
 
-
+    {{medicine}}
+    {{data}}
            <q-dialog v-model="deleteRowVar">
              <q-card style="width: 300px">
                <q-card-section class="bg-warning">
@@ -74,6 +76,12 @@
 import {mapActions, mapGetters} from 'vuex'
 
 export default {
+    props:{
+      medicine:{
+        type: Array,
+        required: true,
+      }
+    },
     data(){
       return {
         answer: {data: {data: []}},
@@ -97,12 +105,14 @@ export default {
         filter: '',
         columns: [
           { name: 'index', align: 'center', label: 'No#', field: 'index', sortable: true},
-          { name: 'products', align: 'center', label: 'Лекарство', field: 'title', sortable: true },
-          { name: 'barcode', align: 'center', label: 'Штрих-код', field: 'barcode', sortable: true },
-          { name: 'country', align: 'center', label: 'Страна', field: 'country', sortable: true },
-          { name: 'manufacture', align: 'center', label: 'Производитель', field: 'manufacture', sortable: true },
-          { name: 'serial_code', align: 'center', label: 'Серийный номер', field: 'serial_code', sortable: true },
-          { name: 'capacity', align: 'center', label: 'Вместимость', field: 'capacity', sortable: true },
+          { name: 'branch', align: 'center', label: 'Филиал', field: 'branch', sortable: true },
+          { name: 'amount', align: 'center', label: 'Кол-во', field: 'amount', sortable: true },
+          // { name: 'products', align: 'center', label: 'Лекарство', field: 'title', sortable: true },
+          // { name: 'barcode', align: 'center', label: 'Штрих-код', field: 'barcode', sortable: true },
+          // { name: 'country', align: 'center', label: 'Страна', field: 'country', sortable: true },
+          // { name: 'manufacture', align: 'center', label: 'Производитель', field: 'manufacture', sortable: true },
+          // { name: 'serial_code', align: 'center', label: 'Серийный номер', field: 'serial_code', sortable: true },
+          // { name: 'capacity', align: 'center', label: 'Вместимость', field: 'capacity', sortable: true },
           // {
           //   name: 'name',
           //   required: true,
@@ -112,9 +122,9 @@ export default {
           //   format: val => ${val},
           //   sortable: true
           // },
-          { name: 'total_quantity', align: 'center', label: 'Кол-во', field: 'total_quantity', sortable: true },
-          { name: 'left_quantity', align: 'center', label: 'Остаток', field: 'left_quantity', sortable: true },
-          { name: 'vat', align: 'center', label: 'НДС', field: 'vat', sortable: true },
+          // { name: 'total_quantity', align: 'center', label: 'Кол-во', field: 'total_quantity', sortable: true },
+          // { name: 'left_quantity', align: 'center', label: 'Остаток', field: 'left_quantity', sortable: true },
+          // { name: 'vat', align: 'center', label: 'НДС', field: 'vat', sortable: true },
         
           { name: 'actions', label: 'Действия', field: '', align:'center' },
         ],
@@ -128,8 +138,13 @@ export default {
       }
     },
     async created(){
-      await this.GET_BRANCHES();
-      this.data = await this.getBranches;
+      // await this.GET_BRANCHES();
+      // this.data = await this.getBranches;
+    },
+    async mounted(){
+      for(let i = 0; i < this.medicine.length; i++){
+        this.$set(this.data, this.data.length, await this.medicine[i]);
+      }
     },
     computed:{
       ...mapGetters([

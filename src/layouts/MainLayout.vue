@@ -91,7 +91,7 @@
     </q-drawer>
 
     <q-page-container class="bg-grey-2">
-      <router-view @medicines="distributeMedicines"/>
+      <router-view @medicines="distributeMedicines" :medicine="shopping_cart"/>
     </q-page-container>
   </q-layout>
 </template>
@@ -110,6 +110,7 @@ export default {
     return {
       cart: '0',
       leftDrawerOpen: false,
+      shopping_cart: [],
       sideBar: [
         {title: 'Главная', icon: 'dashboard', url: '/main'},
         {title: 'Филиалы', icon: 'fas fa-building', url: '/branches'},
@@ -132,7 +133,8 @@ export default {
     async logout(){
       await this.$store.dispatch('LOGOUT');
     },
-    distributeMedicines(amount){
+    async distributeMedicines(value){
+      this.$set(this.shopping_cart, this.shopping_cart.length, await value);
       this.cart++;
     }
 

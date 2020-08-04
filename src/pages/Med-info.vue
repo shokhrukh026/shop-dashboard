@@ -241,22 +241,22 @@ export default {
       this.distribution_options = await this.getBranchNames;
 
 
-      // await this.GET_MEDICINES();
-      // const answer = await this.GET_MEDICINE_INFO({id: this.id});
-      // console.log(data);
-      // this.getMedicines.title = answer.data.title;
-      // this.getMedicines.description = answer.data.description;
-      // this.getMedicines.barcode = answer.data.barcode;
-      // this.getMedicines.country = answer.data.country;
-      // this.getMedicines.manufacture = answer.data.manufacture;
-      // this.getMedicines.serial_code = answer.data.serial_code;
-      // this.getMedicines.vat = answer.data.vat;
-      // this.getMedicines.total_quantity = answer.data.total_quantity;
-      // this.getMedicines.left_quantity = answer.data.left_quantity;
+      await this.GET_MEDICINES();
+      const answer = await this.GET_MEDICINE_INFO({id: this.id});
+      console.log(answer);
+      this.getMedicines.title = answer.data.title;
+      this.getMedicines.description = answer.data.description;
+      this.getMedicines.barcode = answer.data.barcode;
+      this.getMedicines.country = answer.data.country;
+      this.getMedicines.manufacture = answer.data.manufacture;
+      this.getMedicines.serial_code = answer.data.serial_code;
+      this.getMedicines.vat = answer.data.vat;
+      this.getMedicines.total_quantity = answer.data.total_quantity;
+      this.getMedicines.left_quantity = answer.data.left_quantity;
 
-      // for(let i = 0; i < answer.data.medicines_info.length; i++ ){
-      //   this.$set(this.data, this.data.length, answer.data.medicines_info[i]);
-      // }
+      for(let i = 0; i < answer.data.medicines_info.length; i++ ){
+        this.$set(this.data, this.data.length, answer.data.medicines_info[i]);
+      }
       
        
       
