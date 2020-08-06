@@ -27,8 +27,59 @@
             :loading="loading"
             separator="cell"
             :pagination.sync="pagination"
-            :rows-per-page-options="[0]"
+            :rows-per-page-options="[3]"
+            :pagination-label="(firstRowIndex, endRowIndex, totalRowsNumber) => firstRowIndex + '-' + endRowIndex + ' из ' + rowsNumber"
+
+
             >
+            <!-- <template v-slot:pagination="scope">
+
+              <span>{{(pagination.page == 1) ? 1 : (1 + pagination.rowsPerPage * (pagination.page - 1))}}-{{((pagination.page * (rowsNumber/4)))}} из {{rowsNumber}}</span>
+
+              <q-btn
+                v-if="scope.pagesNumber > 2"
+                icon="first_page"
+                color="grey-8"
+                round
+                dense
+                flat
+                :disable="scope.isFirstPage"
+                @click="scope.firstPage"
+              />
+
+              <q-btn
+                icon="chevron_left"
+                color="grey-8"
+                round
+                dense
+                flat
+                :disable="scope.isFirstPage"
+                @click="scope.prevPage"
+              />
+
+              <q-btn
+                icon="chevron_right"
+                color="grey-8"
+                round
+                dense
+                flat
+                :disable="scope.isLastPage"
+                @click="scope.nextPage"
+              />
+
+              <q-btn
+                v-if="pagesNumber > 2"
+                icon="last_page"
+                color="grey-8"
+                round
+                dense
+                flat
+                :disable="scope.isLastPage"
+                @click="scope.lastPage"
+              />
+            </template> -->
+
+
 
             <!-- :rows-per-page-options="[0]"
             virtual-scroll
@@ -82,10 +133,8 @@
            </q-dialog>
 
 
-           
-           <!-- {{distribution_options}}
-           {{answer.data.data[0]}} -->
-           {{getMedicines}}
+        
+           {{data}}
          
     </q-page>
 </template>
@@ -97,13 +146,13 @@ import {mapActions, mapGetters} from 'vuex'
 export default {
     data(){
       return {
-      
       answer: {data: {data: []}},
       
       pagination: {
         rowsPerPage: 4,
         page: 1,
       },
+      rowsNumber: null,
       row: {
         index: '',
         products: '',
@@ -134,10 +183,10 @@ export default {
         //   format: val => ${val},
         //   sortable: true
         // },
-        { name: 'total_quantity', align: 'center', label: 'Кол-во', field: 'total_quantity', sortable: true },
-        { name: 'left_quantity', align: 'center', label: 'Остаток', field: 'left_quantity', sortable: true },
+        { name: 'total_quantity_med', align: 'center', label: 'Кол-во', field: 'total_quantity_med', sortable: true },
+        { name: 'left_quantity_med', align: 'center', label: 'Остаток', field: 'left_quantity_med', sortable: true },
         { name: 'vat', align: 'center', label: 'НДС', field: 'vat', sortable: true },
-        { name: 'sales_quantity_in_30_days', align: 'center', label: 'Продажи за 30 дней', field: 'sales_quantity_in_30_days', sortable: true },
+        { name: '30_day_sales', align: 'center', label: 'Продажи за 30 дней', field: '30_day_sales', sortable: true },
        
         { name: 'actions', label: 'Действия', field: '', align:'center' },
       ],
@@ -151,11 +200,42 @@ export default {
       }
     },
     watch: {
-       'pagination.page': function (newVal, oldVal){
+       'pagination.page': async function (newVal, oldVal){
          if(newVal == this.pagesNumber){
-           this.GET_NEXT_PAGE();
+           await this.GET_NEXT_PAGE();
+           
          }
         },
+        data: {
+          handler: async function (val, oldVal) {
+            this.data.forEach((row, index) => {
+              row.index = index + 1
+            })
+
+            // let amount = [], left = [];
+            // for(let k = 0; k < this.getMedicines.results.length; k++){
+            //   let capacity = await this.getMedicines.results[k].capacity;
+            //   let total_quantity_box = await this.getMedicines.results[k].total_quantity_box;
+            //   let total_quantity_piece = await this.getMedicines.results[k].total_quantity_piece;
+            //   let left_quantity_box = await this.getMedicines.results[k].left_quantity_box;
+            //   let left_quantity_piece = await this.getMedicines.results[k].left_quantity_piece;
+            //   left.push(left_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + left_quantity_piece + ' шт');
+            //   amount.push(total_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + total_quantity_piece + ' шт');
+            // }
+           
+            // this.data.forEach((row, index) => {
+            //   this.$set(this.data[index], 'total_quantity_med', amount[index]);
+            //   // row.total_quantity_med = amount[index]
+            // })
+            // this.data.forEach((row, index) => {
+            //   this.$set(this.data[index], 'left_quantity_med', left[index]);
+            //   // row.left_quantity_med = left[index]
+            // })
+            
+
+          },
+          deep: true
+        }
         // filter: async function(newVal, oldVal) {
         //   if(newVal.length >= 3){
         //     this.answer = await this.getSearchResultByFilter();
@@ -170,23 +250,48 @@ export default {
     },
     async mounted(){
       await this.GET_MEDICINES();
+      this.rowsNumber = await this.getMedicines.count;
+
+
+      let amount = [], left = [];
       for(let k = 0; k < this.getMedicines.results.length; k++){
         let capacity = await this.getMedicines.results[k].capacity;
         let total_quantity_box = await this.getMedicines.results[k].total_quantity_box;
         let total_quantity_piece = await this.getMedicines.results[k].total_quantity_piece;
         let left_quantity_box = await this.getMedicines.results[k].left_quantity_box;
         let left_quantity_piece = await this.getMedicines.results[k].left_quantity_piece;
-        let sum = total_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + left_quantity_piece + ' шт'
-        console.log(sum);
+        left.push(left_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + left_quantity_piece + ' шт');
+        amount.push(total_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + total_quantity_piece + ' шт');
       }
-      
-      this.data = await this.getMedicines.results;
-      //this.$set(this.data, this.data.length, {id: 1, products: 'Тримол', barcode: '2313141', total_quantity: '100', left_quantity: '50', vat: '10%'});
-      //this.$set(this.data, this.data.length, {id: 2, products: 'Тримол', barcode: '2313141', total_quantity: '100', left_quantity: '50', vat: '10%'});
 
-      // await this.GET_COMMENTS();
-      // this.data = await this.getComments
+      this.data = await this.getMedicines.results;
+
+      // this.data.forEach((row, index) => {
+      //   this.$set(row, index, this.getMedicines.results[index]);
+      //   // row.total_quantity_med = amount[index]
+      // })
+
+
+
+      await this.$store.commit('MEDICINE_COMMIT', {name: 'total_quantity_med', amount: amount});
+      // med = 'left_quantity_med';
+      // await this.$store.commit('MEDICINE_COMMIT', left);
+
+      // this.data.forEach((row, index) => {
+      //   this.$set(this.data[index], 'total_quantity_med', amount[index]);
+      //   // row.total_quantity_med = amount[index]
+      // })
+
+      // this.data.forEach((row, index) => {
+      //   this.$set(this.data[index], 'left_quantity_med', left[index]);
+      //   // row.left_quantity_med = left[index]
+      // })
       
+      
+      
+      this.data.forEach((row, index) => {
+        row.index = index
+      })
     },
     computed:{
       ...mapGetters([

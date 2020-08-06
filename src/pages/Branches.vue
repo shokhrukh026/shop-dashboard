@@ -17,7 +17,7 @@
                 <q-td :props="props">
                     <q-btn dense round flat color="grey" :to="{ name: 'branch-update', params: {id: props.row.id, row: props.row}}"
                      icon="edit"></q-btn>
-                    <q-btn dense round flat color="grey" to="/branch-info" icon="fas fa-info-circle"></q-btn>
+                    <q-btn dense round flat color="grey" :to="{ name: 'branch-info', params: {id: props.row.id}}" icon="fas fa-info-circle"></q-btn>
                 </q-td>
             </template>
             <template v-slot:top="props">
@@ -71,7 +71,6 @@ export default {
         { name: 'city', align: 'center', label: 'Город', field: 'city', sortable: true },
         // { name: 'owner', align: 'center', label: 'Владелец', field: 'owner', sortable: true },
         { name: 'status', align: 'center', label: 'Статус', field: 'status', sortable: true },
-        { name: 'virtual_number', align: 'center', label: 'Виртуальный номер', field: 'virtual_number', sortable: true },
         { name: 'contact_person', align: 'center', label: 'Контактное лицо', field: 'contact_person', sortable: true },
         { name: 'contact_phone', align: 'center', label: 'Контактный телефон', field: 'contact_phone', sortable: true },
        
@@ -89,6 +88,16 @@ export default {
           // {index: 9, branch_name: 'Арзон аптека #9', city: 'Тошкент вилояти', owner: 'Олим ака', status: 'новый'},
           // {index: 10, branch_name: 'Арзон аптека #10', city: 'Тошкент вилояти', owner: 'Олим ака', status: 'новый'},
       ],
+      }
+    },
+    watch: {
+      data: {
+        handler: function (val, oldVal) {
+          this.data.forEach((row, index) => {
+            row.index = index + 1
+          })
+        },
+        deep: true
       }
     },
     async created(){

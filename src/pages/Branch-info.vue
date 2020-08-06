@@ -11,6 +11,7 @@
             :loading="loading"
             separator="cell"
             :pagination.sync="pagination"
+            :rows-per-page-options="[0]"
             >
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
@@ -46,6 +47,12 @@
 import {mapActions, mapGetters} from 'vuex'
 
 export default {
+    props: {
+      id: {
+        type: Number,
+        required: true
+      }
+    },
     data(){
       return {
       pagination: {
@@ -62,37 +69,69 @@ export default {
       filter: '',
       columns: [
         { name: 'index', align: 'center', label: 'No#', field: 'index', sortable: true},
-        { name: 'medicine_name', align: 'center', label: 'Название лекарства', field: 'medicine_name', sortable: true },
-        { name: 'quantity', align: 'center', label: 'Кол-во', field: 'quantity', sortable: true },
-        { name: 'price', align: 'center', label: 'Цена', field: 'price', sortable: true },
+        { name: 'products', align: 'center', label: 'Лекарство', field: 'title', sortable: true },
+        { name: 'barcode', align: 'center', label: 'Штрих-код', field: 'barcode', sortable: true },
+        { name: 'country', align: 'center', label: 'Страна', field: 'country', sortable: true },
+        { name: 'manufacture', align: 'center', label: 'Производитель', field: 'manufacture', sortable: true },
+        { name: 'serial_code', align: 'center', label: 'Серийный номер', field: 'serial_code', sortable: true },
+        // { name: 'capacity', align: 'center', label: 'Вместимость', field: 'capacity', sortable: true },
+        // {
+        //   name: 'name',
+        //   required: true,
+        //   label: 'Покупатель',
+        //   align: 'left',
+        //   field: row => row.name,
+        //   format: val => ${val},
+        //   sortable: true
+        // },
+        { name: 'total_quantity', align: 'center', label: 'Кол-во', field: 'total_quantity', sortable: true },
+        { name: 'left_quantity', align: 'center', label: 'Остаток', field: 'left_quantity', sortable: true },
+        { name: 'vat', align: 'center', label: 'НДС', field: 'vat', sortable: true },
+        { name: 'sales_quantity_in_30_days', align: 'center', label: 'Продажи за 30 дней', field: 'sales_quantity_in_30_days', sortable: true },
        
         { name: 'actions', label: 'Действия', field: '', align:'center' },
       ],
       data: [
-          {index: 1, medicine_name: 'Ношпа', quantity: '10', price: '400000'},
-          {index: 2, medicine_name: 'Ношпа', quantity: '15', price: '400000'},
-          {index: 3, medicine_name: 'Ношпа', quantity: '12', price: '400000'},
-          {index: 4, medicine_name: 'Ношпа', quantity: '13', price: '400000'},
-          {index: 5, medicine_name: 'Ношпа', quantity: '15', price: '400000'},
-          {index: 6, medicine_name: 'Ношпа', quantity: '20', price: '400000'},
-          {index: 7, medicine_name: 'Ношпа', quantity: '29', price: '400000'},
-          {index: 8, medicine_name: 'Ношпа', quantity: '134', price: '400000'},
-          {index: 9, medicine_name: 'Ношпа', quantity: '14', price: '400000'},
-          {index: 10, medicine_name: 'Ношпа', quantity: '16', price: '400000'},
+          // {index: 1, medicine_name: 'Ношпа', quantity: '10', price: '400000'},
+          // {index: 2, medicine_name: 'Ношпа', quantity: '15', price: '400000'},
+          // {index: 3, medicine_name: 'Ношпа', quantity: '12', price: '400000'},
+          // {index: 4, medicine_name: 'Ношпа', quantity: '13', price: '400000'},
+          // {index: 5, medicine_name: 'Ношпа', quantity: '15', price: '400000'},
+          // {index: 6, medicine_name: 'Ношпа', quantity: '20', price: '400000'},
+          // {index: 7, medicine_name: 'Ношпа', quantity: '29', price: '400000'},
+          // {index: 8, medicine_name: 'Ношпа', quantity: '134', price: '400000'},
+          // {index: 9, medicine_name: 'Ношпа', quantity: '14', price: '400000'},
+          // {index: 10, medicine_name: 'Ношпа', quantity: '16', price: '400000'},
       ],
       }
     },
-    mounted(){
-      this.GET_BRANCHES();
+    watch:{
+      data: {
+        handler: function (val, oldVal) {
+          this.data.forEach((row, index) => {
+            row.index = index + 1
+          })
+        },
+        deep: true
+      }
+    },
+    async mounted(){
+      await this.GET_BRANCHES();
+      // this.$set(this.data, this.data.length, )
+      const answer = await this.GET_MEDICINES_BY_BRANCH({virtual_number: this.id});
+      console.log(answer.data);
+      for(let i = 0; i < answer.data.results.length; i++ ){
+        this.$set(this.data, this.data.length, answer.data.results[i]);
+      }
     },
     computed:{
       ...mapGetters([
-        'getBranches', 'getUser'
+        'getBranches', 'getUser', 
       ])
     },
     methods: {
       ...mapActions([
-          'GET_BRANCHES',
+          'GET_BRANCHES', 'GET_MEDICINES_BY_BRANCH'
       ]),
     }
 }

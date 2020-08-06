@@ -71,6 +71,8 @@
                 separator="cell"
                 :pagination.sync="pagination"
                 :rows-per-page-options="[0]"
+                :pagination-label="(firstRowIndex, endRowIndex, totalRowsNumber) => firstRowIndex + '-' + endRowIndex + ' из ' + rowsNumber"
+
                 >
                 <template v-slot:body-cell-actions="props">
                     <q-td :props="props">
@@ -170,7 +172,8 @@
                </q-card-actions>
              </q-card>
            </q-dialog>
-        {{getMedicinesInfo}}
+        <!-- {{getMedicinesInfo}} -->
+        {{data}}
     </q-page>
 </template>
 
@@ -187,6 +190,7 @@ export default {
     },
     data(){
         return{
+            rowsNumber: null,
             temp: {},
             temp_total_quantity: '',
             addRow: false,
@@ -205,7 +209,7 @@ export default {
                 { name: 'index', align: 'center', label: '№', field: 'index', sortable: true},
                 { name: 'expire_date', align: 'center', label: 'Годен до', field: 'expire_date', sortable: true },
 
-                { name: 'total_qauntity', align: 'center', label: 'Общее кол-во', field: 'total_qauntity', sortable: true },
+                { name: 'total_quantity', align: 'center', label: 'Общее кол-во', field: 'total_quantity', sortable: true },
                 { name: 'left_quantity', align: 'center', label: 'Остаток', field: 'left_quantity', sortable: true },
                 { name: 'purchase_price', align: 'center', label: 'Цена покупки', field: 'purchase_price', sortable: true },
                 { name: 'selling_price', align: 'center', label: 'Цена продажи', field: 'selling_price', sortable: true },
@@ -213,14 +217,14 @@ export default {
                 { name: 'actions', label: 'Действия', field: '', align:'center' },
             ],
             data: [
-              {
-                "business_medicine_id":1,
-                "total_qauntity":1000,
-                "left_quantity": 200,
-                "purchase_price":1500,
-                "selling_price":1700,
-                "expire_date":"2020-08-30"
-              }
+              // {
+              //   "business_medicine_id":1,
+              //   "total_qauntity":1000,
+              //   "left_quantity": 200,
+              //   "purchase_price":1500,
+              //   "selling_price":1700,
+              //   "expire_date":"2020-08-30"
+              // }
             ],  
             
         }
@@ -234,32 +238,59 @@ export default {
       'temp.total_qauntity': function (newVal, oldVal){
         this.temp_total_quantity = this.temp.total_qauntity.toString();
       },
+      data: {
+        handler: function (val, oldVal) {
+          this.data.forEach((row, index) => {
+            row.index = index + 1
+          })
+          // let amount = [], left = [];
+          // for(let k = 0; k < this.getMedicinesInfo.results.length; k++){
+          //   let capacity = await this.getMedicinesInfo.results[k].capacity;
+          //   let total_quantity_box = await this.getMedicinesInfo.results[k].total_qauntity;
+          //   let total_quantity_piece = await this.getMedicinesInfo.results[k].total_quantity_piece;
+          //   let left_quantity_box = await this.getMedicinesInfo.results[k].left_quantity;
+          //   let left_quantity_piece = await this.getMedicinesInfo.results[k].left_quantity_piece;
+          //   left.push(left_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + left_quantity_piece + ' шт');
+          //   amount.push(total_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + total_quantity_piece + ' шт');
+          // }
+          // console.log(amount);
+
+          // this.data.forEach((row, index) => {
+          //   row.total_quantity = amount[index]
+          // })
+          // this.data.forEach((row, index) => {
+          //   row.left_quantity = left[index]
+          // })
+      
+        },
+        deep: true
+      }
         
     },
     async mounted(){
-      await this.GET_BRANCHES();
-      this.distribution_options = await this.getBranchNames;
+      const details = await this.GET_MEDICINE_DETAIL({id: this.id});
+      this.getMedicines.title = details.data.title;
+      this.getMedicines.description = details.data.description;
+      this.getMedicines.barcode = details.data.barcode;
+      this.getMedicines.country = details.data.country;
+      this.getMedicines.manufacture = details.data.manufacture;
+      this.getMedicines.serial_code = details.data.serial_code;
+      this.getMedicines.vat = details.data.vat;
+      this.getMedicines.total_quantity = details.data.total_quantity;
+      this.getMedicines.left_quantity = details.data.left_quantity;
 
 
-      await this.GET_MEDICINES();
+
       const answer = await this.GET_MEDICINE_INFO({id: this.id});
-      console.log(answer);
-      this.getMedicines.title = answer.data.title;
-      this.getMedicines.description = answer.data.description;
-      this.getMedicines.barcode = answer.data.barcode;
-      this.getMedicines.country = answer.data.country;
-      this.getMedicines.manufacture = answer.data.manufacture;
-      this.getMedicines.serial_code = answer.data.serial_code;
-      this.getMedicines.vat = answer.data.vat;
-      this.getMedicines.total_quantity = answer.data.total_quantity;
-      this.getMedicines.left_quantity = answer.data.left_quantity;
-
-      for(let i = 0; i < answer.data.medicines_info.length; i++ ){
-        this.$set(this.data, this.data.length, answer.data.medicines_info[i]);
+      // console.log(answer);
+      // this.rowsNumber = this.answer.data.count;
+      for(let i = 0; i < answer.data.results.length; i++ ){
+        this.$set(this.data, this.data.length, answer.data.results[i]);
       }
       
        
-      
+      await this.GET_BRANCHES();
+      this.distribution_options = await this.getBranchNames;
       
     },
     computed:{
@@ -276,7 +307,7 @@ export default {
     },
     methods: {
       ...mapActions([
-          'GET_MEDICINES', 'GET_MEDICINE_INFO', 'GET_BRANCHES'
+          'GET_MEDICINE_DETAIL', 'GET_MEDICINE_INFO', 'GET_BRANCHES'
       ]),
       async addToCart(){
         let data = { id: this.id, branch: this.distribution_branch, amount: this.distribution_amount }

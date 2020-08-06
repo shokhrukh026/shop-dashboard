@@ -284,8 +284,10 @@ export default {
       
     },
     async mounted(){
-      const answer = await this.GET_MEDICINE_INFO({id: this.id});
-      console.log(answer); //shuni ko'rish kerak
+
+      const answer = await this.GET_MEDICINE_DETAIL({id: this.id});
+      // console.log(answer); //shuni ko'rish kerak
+      
       this.getMedicines.title = answer.data.title;
       this.getMedicines.description = answer.data.description;
       this.getMedicines.barcode = answer.data.barcode;
@@ -298,7 +300,7 @@ export default {
     },
     methods:{
       ...mapActions([
-        'ADD_MEDICINES', 'ADD_MEDICINE_INFO', 'GET_MEDICINE_INFO'
+        'ADD_MEDICINES', 'ADD_MEDICINE_INFO', 'GET_MEDICINE_DETAIL'
       ]),
      
 
