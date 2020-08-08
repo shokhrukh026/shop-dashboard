@@ -98,12 +98,17 @@
                 <!-- <q-btn color="green" :disable="loading" label="Добавить" @click="addRow = !addRow" /> -->
                 <!-- <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" /> -->
                 <q-space />
-                <q-input borderless dense debounce="100" color="primary" v-model="filter" @keydown="filterFunc"
-                placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; border-radius: 5px;">
-                  <template v-slot:append>
-                      <q-icon name="search" />
-                  </template>
-                </q-input>
+               <div class="row">
+                  <q-input square borderless dense debounce="500" color="primary" v-model="filter"  
+                  placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; min-width: 20vw;">
+                    <!-- <template v-slot:append>
+                        <q-icon name="search" />
+                    </template> -->
+                  </q-input>
+                  <q-btn flat square color="white" class="bg-blue" style="border-radius: 0px;" @click="d">
+                    <q-icon name="search" />
+                  </q-btn>
+               </div>
                 <q-btn
                 flat round dense
                 :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
@@ -134,14 +139,14 @@
 
 
         
-           {{data}}
+           {{getMedicines}}
          
     </q-page>
 </template>
 
 
 <script>
-import {mapActions, mapGetters} from 'vuex'
+import {mapActions, mapGetters} from 'vuex';
 
 export default {
     data(){
@@ -149,9 +154,11 @@ export default {
       answer: {data: {data: []}},
       
       pagination: {
-        rowsPerPage: 4,
+        rowsPerPage: 8,
         page: 1,
       },
+      amount: [],
+      left: [],
       rowsNumber: null,
       row: {
         index: '',
@@ -206,11 +213,17 @@ export default {
            
          }
         },
+        // filter: {
+        //   handler(search) {
+        //     this.setIconsDebounced(search);
+        //   },
+        //   immediate: true
+        // },
         data: {
           handler: async function (val, oldVal) {
-            this.data.forEach((row, index) => {
-              row.index = index + 1
-            })
+            // this.data.forEach((row, index) => {
+            //   row.index = index + 1
+            // })
 
             // let amount = [], left = [];
             // for(let k = 0; k < this.getMedicines.results.length; k++){
@@ -235,67 +248,39 @@ export default {
 
           },
           deep: true
-        }
-        // filter: async function(newVal, oldVal) {
-        //   if(newVal.length >= 3){
-        //     this.answer = await this.getSearchResultByFilter();
-        //     this.data = []
-        //     this.data.push(await this.answer.data.data[0])
-        //   }
-        //   else{
-        //     this.data = []
-        //     this.data = await this.getMedicines.results
-        //   }
-        // },
+        },
+        filter: async function(newVal, oldVal) {
+          if(newVal.length >= 2){
+            this.data = []
+            this.answer = await this.getSearchResultByFilter();
+            this.data.push(await this.answer.data.data[0])
+          }
+          else{
+            this.data = []
+            this.data = await this.getMedicines.results
+          }
+        },
     },
     async mounted(){
       await this.GET_MEDICINES();
       this.rowsNumber = await this.getMedicines.count;
-
-
-      let amount = [], left = [];
-      for(let k = 0; k < this.getMedicines.results.length; k++){
-        let capacity = await this.getMedicines.results[k].capacity;
-        let total_quantity_box = await this.getMedicines.results[k].total_quantity_box;
-        let total_quantity_piece = await this.getMedicines.results[k].total_quantity_piece;
-        let left_quantity_box = await this.getMedicines.results[k].left_quantity_box;
-        let left_quantity_piece = await this.getMedicines.results[k].left_quantity_piece;
-        left.push(left_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + left_quantity_piece + ' шт');
-        amount.push(total_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + total_quantity_piece + ' шт');
-      }
-
+      this.getTotalAndLeftQuantities();
       this.data = await this.getMedicines.results;
 
-      // this.data.forEach((row, index) => {
-      //   this.$set(row, index, this.getMedicines.results[index]);
-      //   // row.total_quantity_med = amount[index]
-      // })
 
+      // await this.$store.commit('MEDICINE_COMMIT', {name: 'total_quantity_med', amount: this.amount});
+      // await this.$store.commit('MEDICINE_COMMIT', {name: 'left_quantity_med', amount: this.left});
 
-
-      await this.$store.commit('MEDICINE_COMMIT', {name: 'total_quantity_med', amount: amount});
-      // med = 'left_quantity_med';
-      // await this.$store.commit('MEDICINE_COMMIT', left);
-
-      // this.data.forEach((row, index) => {
-      //   this.$set(this.data[index], 'total_quantity_med', amount[index]);
-      //   // row.total_quantity_med = amount[index]
-      // })
-
-      // this.data.forEach((row, index) => {
-      //   this.$set(this.data[index], 'left_quantity_med', left[index]);
-      //   // row.left_quantity_med = left[index]
-      // })
+     
       
       
-      
-      this.data.forEach((row, index) => {
-        row.index = index
-      })
+      // this.data.forEach((row, index) => {
+      //   row.index = index
+      // })
     },
     computed:{
       ...mapGetters([
-        'getMedicines', 'getComments', 'getBranches'
+        'getMedicines', 'getComments', 'getBranches', 'getSearchResult'
       ]),
       pagesNumber () {
         return Math.ceil(this.data.length / this.pagination.rowsPerPage)
@@ -306,7 +291,22 @@ export default {
       ...mapActions([
         'GET_MEDICINES', 'GET_COMMENTS', 'GET_SEARCH_RESULT', 'GET_NEXT_PAGE'
       ]),
-      
+      async getTotalAndLeftQuantities(){
+        for(let k = 0; k < this.getMedicines.results.length; k++){
+          let capacity = await this.getMedicines.results[k].capacity;
+          let total_quantity_box = await this.getMedicines.results[k].total_quantity_box;
+          let total_quantity_piece = await this.getMedicines.results[k].total_quantity_piece;
+          let left_quantity_box = await this.getMedicines.results[k].left_quantity_box;
+          let left_quantity_piece = await this.getMedicines.results[k].left_quantity_piece;
+          this.left.push(left_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + left_quantity_piece + ' шт');
+          this.amount.push(total_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + total_quantity_piece + ' шт');
+        }
+      },
+      // setIconsDebounced: debounce(function(search) {
+      //   this.filteredIcons = this.icons.filter(icon =>
+      //     icon.name.toLowerCase().includes(search.toLowerCase())
+      //   );
+      // }, 5000),
       async getSearchResultByFilter(){
         return await this.GET_SEARCH_RESULT(
           {
@@ -314,18 +314,18 @@ export default {
           }
         )
       },
-      async filterFunc(){
-         if(this.filter.length >= 1){     
-            this.data = await []
-            this.answer = await this.getSearchResultByFilter();
-            this.data.push(await this.answer.data.data[0])
-          }
-         if(this.filter == ''){
-            this.data = await []
-            this.data = await []
-            this.data = await this.getMedicines.results
-          }
-      },
+      // async filterFunc(){
+      //    if(this.filter.length >= 1){     
+      //       this.data = await []
+      //       this.answer = await this.getSearchResultByFilter();
+      //       this.data.push(await this.answer.data.data[0])
+      //     } 
+      //    if(this.filter == ''){
+      //       this.data = await []
+      //       this.data = await []
+      //       this.data = await this.getMedicines.results
+      //     }
+      // },
 
 
        deleteRow(props){

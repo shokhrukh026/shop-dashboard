@@ -44,11 +44,11 @@
                    <q-item-label class="text-h6 text-blue-9">Общее количество в бизнесе: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.total_quantity}}</span></q-item-label>
                  </q-item-section>
                </q-item>
-               <q-item v-ripple >
+               <!-- <q-item v-ripple >
                  <q-item-section>
                    <q-item-label class="text-h6 text-blue-9">Оставшееся количество в бизнесе: <span class="text-subtitle1 text-black">{{getMedicines.left_quantity}}</span></q-item-label>
                  </q-item-section>
-               </q-item>
+               </q-item> -->
                 
              </q-list>
       </q-expansion-item>
@@ -86,12 +86,12 @@
                     <!-- <q-btn color="green" :disable="loading" label="Добавить" @click="addRow = !addRow" /> -->
                     <!-- <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" /> -->
                     <q-space />
-                    <!-- <q-input borderless dense debounce="300" color="primary" v-model="filter"
+                    <q-input borderless dense debounce="300" color="primary" v-model="filter"
                     placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; border-radius: 5px;">
                     <template v-slot:append>
                         <q-icon name="search" />
                     </template>
-                    </q-input> -->
+                    </q-input>
                     <q-btn
                     flat round dense
                     :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
@@ -104,7 +104,7 @@
 
 
 
-            <div class="q-mt-md">
+            <!-- <div class="q-mt-md">
                 <q-table
                 dense
                 title="Покупатели"
@@ -116,7 +116,7 @@
                 separator="cell"
                 :pagination.sync="pagination"
                 :rows-per-page-options="[0]"
-                :pagination-label="(firstRowIndex, endRowIndex, totalRowsNumber) => firstRowIndex + '-' + endRowIndex + ' из ' + totalRowsNumber"
+                :pagination-label="(firstRowIndex, endRowIndex, totalRowsNumber) => firstRowIndex + '-' + endRowIndex + ' из ' + rowsNumber2"
                 >
                 <template v-slot:body-cell-actions="props">
                     <q-td :props="props">
@@ -126,15 +126,15 @@
                 </template>
                 <template v-slot:top="props">
                     <span class="text-h6">Лекарства в филиалах</span>
-                    <!-- <q-btn color="green" :disable="loading" label="Добавить" @click="addRow = !addRow" /> -->
-                    <!-- <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" /> -->
+                    <q-btn color="green" :disable="loading" label="Добавить" @click="addRow = !addRow" />
+                    <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" />
                     <q-space />
-                    <!-- <q-input borderless dense debounce="300" color="primary" v-model="filter"
+                    <q-input borderless dense debounce="300" color="primary" v-model="filter"
                     placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; border-radius: 5px;">
                     <template v-slot:append>
                         <q-icon name="search" />
                     </template>
-                    </q-input> -->
+                    </q-input>
                     <q-btn
                     flat round dense
                     :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
@@ -143,7 +143,7 @@
                     />
                 </template>
                 </q-table>
-            </div>
+            </div> -->
 
 
 
@@ -173,8 +173,7 @@
                </q-card-actions>
              </q-card>
            </q-dialog>
-        <!-- {{getMedicinesInfo}} -->
-        {{data2}}
+        {{getBranchMedicineInfo}}
     </q-page>
 </template>
 
@@ -184,14 +183,20 @@ import {mapActions, mapGetters} from 'vuex'
 
 export default {
     props:{
-      id: {
+      business_medicine_id: {
         type: Number,
         required: true
       },
+      branch_id: {
+        type: Number,
+        required: true
+      }
     },
     data(){
         return{
+            id: '',
             rowsNumber: null,
+            rowsNumber2: null,
             temp: {},
             temp_total_quantity: '',
             addRow: false,
@@ -219,20 +224,7 @@ export default {
             ],
 
 
-            columns2: [
-                { name: 'index', align: 'center', label: '№', field: 'index', sortable: true},
-                { name: 'name', align: 'center', label: 'Имя', field: 'name', sortable: true },
-                { name: 'address', align: 'center', label: 'Адрес', field: 'address', sortable: true },
-                { name: 'city', align: 'center', label: 'Город', field: 'city', sortable: true },
-                { name: 'contact_person', align: 'center', label: 'Контактное лицо', field: 'contact_person', sortable: true },
-                { name: 'contact_phone', align: 'center', label: 'Контактный телефон', field: 'contact_phone', sortable: true },
-                { name: 'status', align: 'center', label: 'Статус', field: 'status', sortable: true },
-                { name: 'street', align: 'center', label: 'Улица', field: 'street', sortable: true },
-                { name: 'total_quantity_medicine_in_branch', align: 'center', label: 'Кол-во', field: 'total_quantity_medicine_in_branch', sortable: true },
 
-
-                { name: 'actions', label: 'Действия', field: '', align:'center' },
-            ],
             data: [
               // {
               //   "business_medicine_id":1,
@@ -243,9 +235,7 @@ export default {
               //   "expire_date":"2020-08-30"
               // }
             ],  
-            data2: [
-
-            ]
+            
             
         }
     },
@@ -285,19 +275,12 @@ export default {
         },
         deep: true
       },
-      data2: {
-        handler: function (val, oldVal) {
-          this.data2.forEach((row, index) => {
-            row.index = index + 1
-          })
-        },
-        deep: true
-      },
-
+    
         
     },
     async mounted(){
-      const details = await this.GET_MEDICINE_DETAIL({id: this.id});
+      const details = await this.GET_BRANCH_MEDICINE_DETAIL({branch_id: this.branch_id,  business_medicine_id: this.business_medicine_id});
+      // console.log(details);
       this.getMedicines.title = details.data.title;
       this.getMedicines.description = details.data.description;
       this.getMedicines.barcode = details.data.barcode;
@@ -305,23 +288,23 @@ export default {
       this.getMedicines.manufacture = details.data.manufacture;
       this.getMedicines.serial_code = details.data.serial_code;
       this.getMedicines.vat = details.data.vat;
-      this.getMedicines.total_quantity = details.data.total_quantity;
-      this.getMedicines.left_quantity = details.data.left_quantity;
+      this.getMedicines.total_quantity = details.data.total_quantity_box + ' упаковок ( по ' + details.data.capacity + ' ) + ' + details.data.total_quantity_piece + ' шт';
 
 
 
-      const answer = await this.GET_MEDICINE_INFO({id: this.id});
+      const answer = await this.GET_BRANCH_MEDICINE_INFO({branch_id: this.branch_id,  business_medicine_id: this.business_medicine_id});
       // console.log(answer.data);
       this.rowsNumber = answer.data.count;
       for(let i = 0; i < answer.data.results.length; i++ ){
         this.$set(this.data, this.data.length, answer.data.results[i]);
       }
       
-      const answer2 = await this.GET_BRANCHES_IN_MED_INFO_PAGE({id: this.id});
-      console.log(answer2.data);
-      for(let i = 0; i < answer2.data.length; i++ ){
-        this.$set(this.data2, this.data2.length, answer2.data[i]);
-      }
+      // const answer2 = await this.GET_BRANCHES_IN_MED_INFO_PAGE({id: this.id});
+      // console.log(answer2.data);
+      // // this.rowsNumber2 = answer2.data.count;
+      // for(let i = 0; i < answer2.data.length; i++ ){
+      //   this.$set(this.data2, this.data2.length, answer2.data[i]);
+      // }
 
 
       await this.GET_BRANCHES();
@@ -330,7 +313,7 @@ export default {
     },
     computed:{
       ...mapGetters([
-        'getBranches', 'getUser', 'getMedicinesInfo'
+        'getBranches', 'getBranchMedicineInfo'
       ]),
       getBranchNames() {
         let a = [];
@@ -342,7 +325,7 @@ export default {
     },
     methods: {
       ...mapActions([
-          'GET_MEDICINE_DETAIL', 'GET_MEDICINE_INFO', 'GET_BRANCHES', 'GET_BRANCHES_IN_MED_INFO_PAGE'
+          'GET_BRANCHES', 'GET_BRANCH_MEDICINE_DETAIL', 'GET_BRANCH_MEDICINE_INFO'
       ]),
       async addToCart(){
         let data = { id: this.id, branch: this.distribution_branch, amount: this.distribution_amount }

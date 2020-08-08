@@ -12,6 +12,7 @@
             separator="cell"
             :pagination.sync="pagination"
             :rows-per-page-options="[1]"
+            :pagination-label="(firstRowIndex, endRowIndex, totalRowsNumber) => firstRowIndex + '-' + endRowIndex + ' из ' + totalRowsNumber"
             >
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">

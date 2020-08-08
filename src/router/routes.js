@@ -13,6 +13,7 @@ const routes = [
       {path: '/medicines', component: () => import('pages/Medicines.vue'), meta: {authRequired: true}},
       {path: '/med-info/:id', name: 'med-info', component: () => import('pages/Med-info.vue'), props:true, meta: {authRequired: true}},
       {path: '/branch-info/:id', name: 'branch-info', component: () => import('pages/Branch-info.vue'), props: true, meta: {authRequired: true}},
+      {path: '/branch-info-detail/:branch_id/:business_medicine_id', name: 'branch-info-detail', component: () => import('pages/Branch-info-detail.vue'), props: true, meta: {authRequired: true}},
       {path: '/branch-update/:id', name: 'branch-update', component: () => import('pages/Branch-update.vue'), props: true, meta: {authRequired: true}},
       {path: '/add-medicine', component: () => import('pages/Add-medicine.vue'), meta: {authRequired: true}},
       {path: '/add-info-medicine/:id', name: 'add-info-medicine', component: () => import('pages/Add-info-medicine.vue'), props: true, meta: {authRequired: true}},

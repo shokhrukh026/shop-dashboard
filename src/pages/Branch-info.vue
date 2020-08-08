@@ -12,11 +12,13 @@
             separator="cell"
             :pagination.sync="pagination"
             :rows-per-page-options="[0]"
+            :pagination-label="(firstRowIndex, endRowIndex, totalRowsNumber) => firstRowIndex + '-' + endRowIndex + ' из ' + rowsNumber"
+
             >
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
                     <q-btn dense round flat color="grey" @click="editRow(props)" icon="edit"></q-btn>
-                    <q-btn dense round flat color="grey" @click="deleteRow(props)" icon="fas fa-info-circle"></q-btn>
+                    <q-btn dense round flat color="grey" :to="{ name: 'branch-info-detail', params: {business_medicine_id: props.row.business_medicine_id, branch_id: id}}"  icon="fas fa-info-circle"></q-btn>
                 </q-td>
             </template>
             <template v-slot:top="props">
@@ -39,6 +41,7 @@
             </template>
             </q-table>
         </div>
+        {{getMedicinesByBranch}}
     </q-page>
 </template>
 
@@ -55,6 +58,7 @@ export default {
     },
     data(){
       return {
+      rowsNumber: '',
       pagination: {
         rowsPerPage: 8
       },
@@ -119,20 +123,21 @@ export default {
       await this.GET_BRANCHES();
       // this.$set(this.data, this.data.length, )
       const answer = await this.GET_MEDICINES_BY_BRANCH({virtual_number: this.id});
-      console.log(answer.data);
+      // console.log(answer.data);
       for(let i = 0; i < answer.data.results.length; i++ ){
         this.$set(this.data, this.data.length, answer.data.results[i]);
       }
     },
     computed:{
       ...mapGetters([
-        'getBranches', 'getUser', 
+        'getBranches', 'getUser', 'getMedicinesByBranch'
       ])
     },
     methods: {
       ...mapActions([
           'GET_BRANCHES', 'GET_MEDICINES_BY_BRANCH'
       ]),
+      
     }
 }
 </script>
