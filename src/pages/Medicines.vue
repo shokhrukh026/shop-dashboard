@@ -98,17 +98,17 @@
                 <!-- <q-btn color="green" :disable="loading" label="Добавить" @click="addRow = !addRow" /> -->
                 <!-- <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" /> -->
                 <q-space />
-               <div class="row">
+                <form @submit.prevent.stop="getSearchResultByFilter"  class="row">
                   <q-input square borderless dense debounce="500" color="primary" v-model="filter"  
                   placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; min-width: 20vw;">
                     <!-- <template v-slot:append>
                         <q-icon name="search" />
                     </template> -->
                   </q-input>
-                  <q-btn flat square color="white" class="bg-blue" style="border-radius: 0px;" @click="d">
-                    <q-icon name="search" />
+                  <q-btn flat square color="white" class="bg-blue" style="border-radius: 0px;" type="submit">
+                    <q-icon name="search" />  
                   </q-btn>
-               </div>
+                </form>
                 <q-btn
                 flat round dense
                 :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
@@ -139,7 +139,7 @@
 
 
         
-           {{getMedicines}}
+           {{data}}
          
     </q-page>
 </template>
@@ -219,12 +219,18 @@ export default {
         //   },
         //   immediate: true
         // },
+        getMedicines: {
+          handler: function (newValue, oldVal) {
+            console.log(newValue);
+          },
+          deep: true
+        },
         data: {
           handler: async function (val, oldVal) {
             // this.data.forEach((row, index) => {
             //   row.index = index + 1
             // })
-
+            
             // let amount = [], left = [];
             // for(let k = 0; k < this.getMedicines.results.length; k++){
             //   let capacity = await this.getMedicines.results[k].capacity;
@@ -249,17 +255,17 @@ export default {
           },
           deep: true
         },
-        filter: async function(newVal, oldVal) {
-          if(newVal.length >= 2){
-            this.data = []
-            this.answer = await this.getSearchResultByFilter();
-            this.data.push(await this.answer.data.data[0])
-          }
-          else{
-            this.data = []
-            this.data = await this.getMedicines.results
-          }
-        },
+        // filter: async function(newVal, oldVal) {
+        //   if(newVal.length >= 2){
+        //     this.data = []
+        //     this.answer = await this.getSearchResultByFilter();
+        //     this.data.push(await this.answer.data.data[0])
+        //   }
+        //   else{
+        //     this.data = []
+        //     this.data = await this.getMedicines.results
+        //   }
+        // },
     },
     async mounted(){
       await this.GET_MEDICINES();

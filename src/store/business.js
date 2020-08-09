@@ -53,9 +53,10 @@ export default{
           state.branch_medicine_info = payload;
         },
         SET_NEXT_PAGE: (state, payload) => {
-          let final;
+          let final = false;
           state.medicines.links = payload.links;
           state.medicines.count = payload.count;
+          
           for(let i = 0; i<payload.results.length; i++){
             for(let k = 0; k<state.medicines.results.length; k++){
               let answer = lodash.isEqual(state.medicines.results[k], payload.results[i]);
@@ -63,27 +64,42 @@ export default{
                 final = answer;
               }
             }
-            if(!final)
-              state.medicines.results.push(payload.results[i]);
             
+            console.log(final);
+            if(!final){
+              state.medicines.results.push(payload.results[i]);
+            }
+            final = false;
     
           }
         },
         SET_SEARCH_RESULT: (state, payload) =>{
+          let same = false;
           // console.log(payload.results);
-          payload.results.forEach((row, index) => {
-            console.log(state.medicines.results[index]);
-            console.log(row);
-
-            if(lodash.isEqual(row, state.medicines.results[index])){
-              console.log('They are same!');
-            }else{
-              state.medicines.results.push(payload.results);
+          if(payload.results.length != 0){
+            state.medicines.results.forEach((row, index) => {
+              console.log(row);
+              
+              for(let a = 0; a < payload.results.length; a++){
+                if(lodash.isEqual(row, payload.results[a])){
+                  same = true;
+                }
+              }
+              // if(lodash.isEqual(row, payload.results.forEach((item  ) => {
+              //   console.log(item);
+              //   return item
+              // }))){
+              //   console.log('They are same!');
+              //   same = true;
+              // }
+            })
+            if(!same){
+              state.medicines.results.push(payload.results[0]);
             }
-          })
-          // if(payload.results)
-          // state.medicines.results = payload;
-          state.search_result = payload;
+            // state.search_result = payload;
+          }else{
+            console.log('Array is empty!')
+          }
         },
 
     },

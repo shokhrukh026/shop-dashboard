@@ -41,7 +41,8 @@
 
           <q-btn round flat>
             <q-avatar size="26px">
-              <img src="https://cdn.quasar.dev/img/boy-avatar.png">
+              <!-- <img src="https://cdn.quasar.dev/img/boy-avatar.png"> -->
+              <q-icon name="fas fa-user-circle"></q-icon>
             </q-avatar>
 
             <q-menu transition-show="jump-down" transition-hide="jump-up">
