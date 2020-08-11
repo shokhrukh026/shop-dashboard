@@ -84,7 +84,7 @@
                         use-input
                         hide-selected
                         fill-input
-                        input-debounce="100"
+                        input-debounce="1000"
                         :options="barcode_options"
                         @new-value="createBarcodeValue"
                         @filter="filterBarcode"
