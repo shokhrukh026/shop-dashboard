@@ -10,20 +10,19 @@ export default{
         medicines_by_branch: [],
         medicine_info: [],
         medicine_details: [],
-        search_result: [],
         branches_in_med_info_page: [],
         branch_medicine_detail: [],
         branch_medicine_info: []
     },
     mutations:{
-        MEDICINE_COMMIT: (state, payload) => {
-          // console.log(payload.amount);
-          // console.log(payload.name);
+        // MEDICINE_COMMIT: (state, payload) => {
+        //   // console.log(payload.amount);
+        //   // console.log(payload.name);
 
-            state.medicines.results.forEach((row, index) => {
-              Vue.set(row, payload.name, payload.amount[index]);
-            })
-        },
+        //     state.medicines.results.forEach((row, index) => {
+        //       Vue.set(row, payload.name, payload.amount[index]);
+        //     })
+        // },
 
         SET_BRANCHES: (state, payload) => {
           state.branches = payload;
@@ -33,6 +32,9 @@ export default{
           // console.log(array.results);
           // let array2 = array.results.map()
           state.medicines = payload;
+          state.medicines.results.forEach((row, index) => {
+            row.index = index + 1
+          })
         },
         SET_MEDICINES_BY_BRANCH: (state, payload) => {
           state.medicines_by_branch = payload;
@@ -64,20 +66,64 @@ export default{
                 final = answer;
               }
             }
-            
-            console.log(final);
+     
             if(!final){
+              // payload.results[i].index
               state.medicines.results.push(payload.results[i]);
             }
             final = false;
     
           }
+          // payload.results.forEach((row, index) => {
+          //   row.index = index + 1
+          // })
+
+          //O'zgartirish kerak bo'lishi mumkun
+          state.medicines.results.forEach((row, index) => {
+            row.index = index + 1
+          })
         },
         SET_SEARCH_RESULT: (state, payload) =>{
           let same = false;
-          // console.log(payload.results);
+          console.log(payload.results);
+          let results = payload.results
+
           if(payload.results.length != 0){
             state.medicines.results.forEach((row, index) => {
+              // console.log(row);
+              
+              for(let a = 0; a < results.length; a++){
+                if(lodash.isEqual(row, results[a])){
+                  same = true;
+                  results.splice(a, 1);
+                }
+              }
+              
+              // if(lodash.isEqual(row, payload.results.forEach((item  ) => {
+              //   console.log(item);
+              //   return item
+              // }))){
+              //   console.log('They are same!');
+              //   same = true;
+              // }
+            })
+            if(!same){
+              for(let i = 0; i < results.length; i++){
+                Vue.set(state.medicines.results, state.medicines.results.length, results[i]);
+              }
+              // state.medicines.results.push();
+            }
+            // state.search_result = payload;
+          }else{
+            console.log('Array is empty!')
+          }
+        },
+        SET_SEARCH_RESULT_BY_BRANCH: (state, payload) =>{
+          let same = false;
+          // console.log(payload.results);
+
+          if(payload.results.length != 0){
+            state.medicines_by_branch.results.forEach((row, index) => {
               console.log(row);
               
               for(let a = 0; a < payload.results.length; a++){
@@ -94,7 +140,7 @@ export default{
               // }
             })
             if(!same){
-              state.medicines.results.push(payload.results[0]);
+              state.medicines_by_branch.results.push(JSON.parse(JSON.stringify(payload.results[0])));
             }
             // state.search_result = payload;
           }else{
@@ -107,7 +153,7 @@ export default{
         GET_BRANCHES({commit, getters}) {
           return axios({
               method: "GET",
-              url: baseUrl + getters.getUser.business_id + '/branches/',
+              url: baseUrl + '/branches/',
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
@@ -119,26 +165,26 @@ export default{
             //   return error;
             })
         },
-        GET_MEDICINES_IN_BRANCHES({commit, getters}, payload) {
-          return axios({
-              method: "GET",
-              url: baseUrl + getters.getUser.business_id + '/branches/', // http://dev.epos.uz/v1/business/medicine/1/branches/
-              headers: {Authorization: getters.getUser.token}
-            })
-            .then((e) => {
-              commit('SET_BRANCHES', e.data);
-              return e;
-            })
-            .catch((error) => {
-              console.log(error);
-            //   return error;
-            })    
-        },
+        // GET_MEDICINES_IN_BRANCHES({commit, getters}, payload) {
+        //   return axios({
+        //       method: "GET",
+        //       url: baseUrl + getters.getUser.business_id + '/branches/', // http://dev.epos.uz/v1/business/medicine/1/branches/
+        //       headers: {Authorization: getters.getUser.token}
+        //     })
+        //     .then((e) => {
+        //       commit('SET_BRANCHES', e.data);
+        //       return e;
+        //     })
+        //     .catch((error) => {
+        //       console.log(error);
+        //     //   return error;
+        //     })    
+        // },
         
         GET_MEDICINES({commit, getters}) {
           return axios({
               method: "GET",
-              url: baseUrl + getters.getUser.business_id + '/medicines/',
+              url: baseUrl + '/medicines/',
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
@@ -165,10 +211,25 @@ export default{
             //   return error;
             })
         },
+        async GET_SEARCH_RESULT_BY_BRANCH({commit, getters},payload) {
+          return await axios({
+              method: "GET",
+              url: 'http://dev.epos.uz/v1/branches/' + payload.virtual_number + '/medicines/?search=' + payload.title,
+              headers: {Authorization: getters.getUser.token}
+            })
+            .then((e) => {
+              commit('SET_SEARCH_RESULT_BY_BRANCH', e.data);
+               //return e;
+            })
+            .catch((error) => {
+              console.log(error);
+            //   return error;
+            })
+        },
         GET_MEDICINE_DETAIL({commit, getters}, payload) {
           return axios({
               method: "GET",
-              url: baseUrl + getters.getUser.business_id + '/medicines/detail/' + payload.id + '/',  // payload.business_medicine_id
+              url: baseUrl + '/medicines/detail/' + payload.id + '/',  // payload.business_medicine_id
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
@@ -183,7 +244,7 @@ export default{
         GET_MEDICINE_INFO({commit, getters}, payload) {
           return axios({
               method: "GET",
-              url: baseUrl + getters.getUser.business_id + '/medicines/detail/info/' + payload.id + '/',  // payload.business_medicine_id
+              url: baseUrl + '/medicines/detail/info/' + payload.id + '/',  // payload.business_medicine_id
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
@@ -198,7 +259,7 @@ export default{
         GET_BRANCHES_IN_MED_INFO_PAGE({commit, getters}, payload) {
           return axios({
               method: "GET",
-              url: baseUrl + getters.getUser.business_id + '/medicine/' + payload.id + '/branches/',  // payload.business_medicine_id   
+              url: baseUrl + '/medicine/' + payload.id + '/branches/',  // payload.business_medicine_id   
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
@@ -245,15 +306,16 @@ export default{
         // http://127.0.0.1:8000/v1/branch/2333/business_medicine/1/branch_medicine_info/
     
         async GET_SEARCH_RESULT({commit, getters},payload) {
-          return await axios({
+           await axios({
               method: "GET",
-              url: baseUrl + getters.getUser.business_id + '/medicines/?search=' + payload.title,
-              // url: 'http://dev.epos.uz/v1/medicine/list?' + payload.type + '=' + payload.value,
+              // url: baseUrl + getters.getUser.business_id + '/medicines/?search=' + payload.title,
+              url: 'http://dev.epos.uz/v1/medicine/list?' + payload.type + '=' + payload.value,
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
               commit('SET_SEARCH_RESULT', e.data);
-               return e;
+              console.log(e);
+               //return e;
             })
             .catch((error) => {
               console.log(error);
@@ -288,6 +350,7 @@ export default{
                 manufacture: payload.manufacture,
                 serial_code: payload.serial_code,
                 quantity: payload.quantity,
+                piece: payload.piece,
                 capacity: payload.capacity,
                 vat: payload.vat,
                 description: payload.description,
@@ -313,6 +376,7 @@ export default{
               data:{
                 business_medicine_id: payload.business_medicine_id  ,
                 quantity: payload.quantity,
+                piece: payload.piece,
                 purchase_price: payload.purchase_price,
                 selling_price: payload.selling_price,
                 expire_date: payload.expire_date
@@ -335,7 +399,6 @@ export default{
         getMedicineDetails: state => state.medicine_details,
         getMedicinesByBranch: state => state.medicines_by_branch,
         getMedicinesInfo: state => state.medicine_info,
-        getSearchResult: state => state.search_result,
         getBranchesInMedInfoPage: state => state.branches_in_med_info_page,
         getBranchMedicineDetail: state => state.branch_medicine_detail,
         getBranchMedicineInfo: state => state.branch_medicine_info,

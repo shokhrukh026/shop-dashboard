@@ -26,12 +26,17 @@
                 <!-- <q-btn color="green" :disable="loading" label="Добавить" @click="addRow = !addRow" /> -->
                 <!-- <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" /> -->
                 <q-space />
-                <q-input borderless dense debounce="300" color="primary" v-model="filter"
-                placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; border-radius: 5px;">
-                <template v-slot:append>
-                    <q-icon name="search" />
-                </template>
-                </q-input>
+               <form @submit.prevent.stop="getSearchResultByFilter"  class="row">
+                  <q-input square borderless dense debounce="500" color="primary" v-model="filter"  
+                  placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; min-width: 20vw;">
+                    <!-- <template v-slot:append>
+                        <q-icon name="search" />
+                    </template> -->
+                  </q-input>
+                  <q-btn flat square color="white" class="bg-blue" style="border-radius: 0px;" type="submit">
+                    <q-icon name="search" />  
+                  </q-btn>
+                </form>
                 <q-btn
                 flat round dense
                 :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
@@ -110,14 +115,14 @@ export default {
       }
     },
     watch:{
-      data: {
-        handler: function (val, oldVal) {
-          this.data.forEach((row, index) => {
-            row.index = index + 1
-          })
-        },
-        deep: true
-      }
+      // data: {
+      //   handler: function (val, oldVal) {
+      //     this.data.forEach((row, index) => {
+      //       row.index = index + 1
+      //     })
+      //   },
+      //   deep: true
+      // }
     },
     async mounted(){
       await this.GET_BRANCHES();
@@ -135,9 +140,16 @@ export default {
     },
     methods: {
       ...mapActions([
-          'GET_BRANCHES', 'GET_MEDICINES_BY_BRANCH'
+          'GET_BRANCHES', 'GET_MEDICINES_BY_BRANCH', 'GET_SEARCH_RESULT_BY_BRANCH'
       ]),
-      
+      async getSearchResultByFilter(){
+        return await this.GET_SEARCH_RESULT_BY_BRANCH(
+          {
+            virtual_number: this.id,
+            title: this.filter
+          }
+        )
+      },
     }
 }
 </script>

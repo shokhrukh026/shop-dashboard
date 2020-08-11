@@ -61,7 +61,7 @@
              </q-card>
            </div>
 
-
+{{getMedicineDetails}}
 
 
           <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 q-mt-md" v-for="(medInfo,item) in medicine_info_add" :key="item">
@@ -107,7 +107,12 @@
                   
                    <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                      <q-item-section>
-                       <q-input  color="blue" outlined dense v-model="medicine_info_add[item].quantity" label="Количество" />
+                       <q-input  color="blue" outlined dense v-model="medicine_info_add[item].quantity" label="Кол-во упаковок" />
+                     </q-item-section>
+                   </q-item>
+                   <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                     <q-item-section>
+                       <q-input  color="blue" outlined dense v-model="medicine_info_add[item].piece" label="Кол-во штук" />
                      </q-item-section>
                    </q-item>
                     <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
@@ -121,7 +126,7 @@
                      </q-item-section>
                    </q-item>
 
-                   <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                   <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                      <q-item-section>
 
                        <q-input dense color="blue" outlined v-model="medicine_info_add[item].expire_date" label="Годен до">
@@ -145,7 +150,7 @@
              </q-card>
            </div>
 
-          
+          {{medicine_info_add}}
 
            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 q-mt-md row justify-between">
             <q-btn color="blue" icon="add" label="Добавить информацию о лекарстве" size="md" @click="addInfoForMedicine"/>
@@ -213,6 +218,17 @@
               <q-btn class="text-capitalize bg-blue text-white" @click="addMedicine" size="lg">Добавить</q-btn>
           </div> -->
         </div>
+
+
+
+           <q-dialog v-model="addedMedInfo" position="top">
+             <q-card class="bg-green">
+
+               <q-card-section class="row justify-center no-wrap">
+                 <div class="text-white text-subtitle2">Успешно добавлено!</div>
+               </q-card-section>
+             </q-card>
+           </q-dialog>
     </q-page>
 </template>
 
@@ -229,11 +245,12 @@ export default {
     },
     data(){
       return {
+          addedMedInfo: true,
           getMedicines: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', vat: '', total_quantity: '', left_quantity: ''},
           response: {data: {data: {}}},
           // medicine_add: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', capacity: '',
           //  quantity: '', vat: '', description: '', purchase_price: '', selling_price: '', expire_date: ''},
-          medicine_info_add: [{ quantity: '', purchase_price: '', selling_price: '', expire_date: ''}],
+          medicine_info_add: [{ quantity: '', piece: '', purchase_price: '', selling_price: '', expire_date: ''}],
 
       }
     },
@@ -281,7 +298,9 @@ export default {
       // },
     },
     computed:{
-      
+      ...mapGetters([
+        'getMedicineDetails', '', 
+      ]),
     },
     async mounted(){
 
@@ -344,12 +363,14 @@ export default {
           await this.ADD_MEDICINE_INFO({
             business_medicine_id: this.id,
             quantity: this.medicine_info_add[i].quantity,
+            piece: this.medicine_info_add[i].piece,
             purchase_price: this.medicine_info_add[i].purchase_price,
             selling_price: this.medicine_info_add[i].selling_price,
             expire_date: this.medicine_info_add[i].expire_date,
           })
+          this.medicine_info_add[i] = {quantity: '', piece: '', purchase_price: '', selling_price: '', expire_date: ''}
         }
-        
+        this.addedMedInfo = true;
       },
 
 

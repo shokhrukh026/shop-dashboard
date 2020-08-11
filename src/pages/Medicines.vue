@@ -105,10 +105,15 @@
                         <q-icon name="search" />
                     </template> -->
                   </q-input>
-                  <q-btn flat square color="white" class="bg-blue" style="border-radius: 0px;" type="submit">
+                  <q-btn flat square color="white" :class="scan ? 'bg-green' : 'bg-blue'" style="border-radius: 0px;" type="submit">
                     <q-icon name="search" />  
                   </q-btn>
                 </form>
+                <q-toggle
+                  v-model="scan"
+                  icon="fas fa-barcode"
+                  color="green"
+                />
                 <q-btn
                 flat round dense
                 :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
@@ -139,7 +144,7 @@
 
 
         
-           {{data}}
+           {{getMedicines}}
          
     </q-page>
 </template>
@@ -152,13 +157,11 @@ export default {
     data(){
       return {
       answer: {data: {data: []}},
-      
+      scan: false,
       pagination: {
         rowsPerPage: 8,
         page: 1,
       },
-      amount: [],
-      left: [],
       rowsNumber: null,
       row: {
         index: '',
@@ -190,10 +193,10 @@ export default {
         //   format: val => ${val},
         //   sortable: true
         // },
-        { name: 'total_quantity_med', align: 'center', label: 'Кол-во', field: 'total_quantity_med', sortable: true },
-        { name: 'left_quantity_med', align: 'center', label: 'Остаток', field: 'left_quantity_med', sortable: true },
+        { name: 'total_quantity', align: 'center', label: 'Кол-во', field: 'total_quantity', sortable: true },
+        { name: 'left_quantity', align: 'center', label: 'Остаток', field: 'left_quantity', sortable: true },
         { name: 'vat', align: 'center', label: 'НДС', field: 'vat', sortable: true },
-        { name: '30_day_sales', align: 'center', label: 'Продажи за 30 дней', field: '30_day_sales', sortable: true },
+        { name: 'sold_quantity', align: 'center', label: 'Продажи за 30 дней', field: 'sold_quantity', sortable: true },
        
         { name: 'actions', label: 'Действия', field: '', align:'center' },
       ],
@@ -219,12 +222,7 @@ export default {
         //   },
         //   immediate: true
         // },
-        getMedicines: {
-          handler: function (newValue, oldVal) {
-            console.log(newValue);
-          },
-          deep: true
-        },
+        
         data: {
           handler: async function (val, oldVal) {
             // this.data.forEach((row, index) => {
@@ -255,22 +253,20 @@ export default {
           },
           deep: true
         },
-        // filter: async function(newVal, oldVal) {
-        //   if(newVal.length >= 2){
-        //     this.data = []
-        //     this.answer = await this.getSearchResultByFilter();
-        //     this.data.push(await this.answer.data.data[0])
-        //   }
-        //   else{
-        //     this.data = []
-        //     this.data = await this.getMedicines.results
-        //   }
-        // },
+        filter: async function(newVal, oldVal) {
+          if(this.scan == false){
+            if(newVal.length >= 2){          
+              await this.getSearchResultByFilter();
+            }
+            else{
+              console.log('Search input has less than 2 characters')
+            }
+          }
+        },
     },
     async mounted(){
       await this.GET_MEDICINES();
       this.rowsNumber = await this.getMedicines.count;
-      this.getTotalAndLeftQuantities();
       this.data = await this.getMedicines.results;
 
 
@@ -286,7 +282,7 @@ export default {
     },
     computed:{
       ...mapGetters([
-        'getMedicines', 'getComments', 'getBranches', 'getSearchResult'
+        'getMedicines', 'getBranches', 'getSearchResult'
       ]),
       pagesNumber () {
         return Math.ceil(this.data.length / this.pagination.rowsPerPage)
@@ -295,28 +291,29 @@ export default {
     },
     methods: {
       ...mapActions([
-        'GET_MEDICINES', 'GET_COMMENTS', 'GET_SEARCH_RESULT', 'GET_NEXT_PAGE'
+        'GET_MEDICINES', 'GET_SEARCH_RESULT', 'GET_NEXT_PAGE'
       ]),
-      async getTotalAndLeftQuantities(){
-        for(let k = 0; k < this.getMedicines.results.length; k++){
-          let capacity = await this.getMedicines.results[k].capacity;
-          let total_quantity_box = await this.getMedicines.results[k].total_quantity_box;
-          let total_quantity_piece = await this.getMedicines.results[k].total_quantity_piece;
-          let left_quantity_box = await this.getMedicines.results[k].left_quantity_box;
-          let left_quantity_piece = await this.getMedicines.results[k].left_quantity_piece;
-          this.left.push(left_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + left_quantity_piece + ' шт');
-          this.amount.push(total_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + total_quantity_piece + ' шт');
-        }
-      },
+      // async getTotalAndLeftQuantities(){
+      //   for(let k = 0; k < this.getMedicines.results.length; k++){
+      //     let capacity = await this.getMedicines.results[k].capacity;
+      //     let total_quantity_box = await this.getMedicines.results[k].total_quantity_box;
+      //     let total_quantity_piece = await this.getMedicines.results[k].total_quantity_piece;
+      //     let left_quantity_box = await this.getMedicines.results[k].left_quantity_box;
+      //     let left_quantity_piece = await this.getMedicines.results[k].left_quantity_piece;
+      //     this.left.push(left_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + left_quantity_piece + ' шт');
+      //     this.amount.push(total_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + total_quantity_piece + ' шт');
+      //   }
+      // },
       // setIconsDebounced: debounce(function(search) {
       //   this.filteredIcons = this.icons.filter(icon =>
       //     icon.name.toLowerCase().includes(search.toLowerCase())
       //   );
       // }, 5000),
       async getSearchResultByFilter(){
-        return await this.GET_SEARCH_RESULT(
+         await this.GET_SEARCH_RESULT(
           {
-            title: this.filter
+            type: this.scan ? 'barcode' : 'title',
+            value: this.filter
           }
         )
       },

@@ -101,7 +101,7 @@
                 </template>
                 </q-table>
             </div>
-
+  {{getMedicinesInfo}}
 
 
             <div class="q-mt-md">
@@ -145,7 +145,7 @@
                 </q-table>
             </div>
 
-
+          {{getBranchesInMedInfoPage}}
 
         </div>
 
@@ -174,7 +174,6 @@
              </q-card>
            </q-dialog>
         <!-- {{getMedicinesInfo}} -->
-        {{data2}}
     </q-page>
 </template>
 
@@ -330,7 +329,7 @@ export default {
     },
     computed:{
       ...mapGetters([
-        'getBranches', 'getUser', 'getMedicinesInfo'
+        'getBranches', 'getUser', 'getMedicinesInfo', 'getBranchesInMedInfoPage'
       ]),
       getBranchNames() {
         let a = [];

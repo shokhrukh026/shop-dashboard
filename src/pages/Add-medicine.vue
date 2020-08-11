@@ -214,7 +214,12 @@
                   
                    <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                      <q-item-section>
-                       <q-input  color="blue" outlined dense v-model="medicine_add.quantity" label="Количество" />
+                       <q-input  color="blue" outlined dense v-model="medicine_add.quantity" label="Кол-во упаковок" />
+                     </q-item-section>
+                   </q-item>
+                   <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                     <q-item-section>
+                       <q-input  color="blue" outlined dense v-model="medicine_add.piece" label="Кол-во штук" />
                      </q-item-section>
                    </q-item>
                     <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
@@ -228,7 +233,7 @@
                      </q-item-section>
                    </q-item>
 
-                   <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                   <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                      <q-item-section>
 
                        <q-input dense color="blue" outlined v-model="medicine_add.expire_date" label="Годен до">
@@ -348,8 +353,8 @@ export default {
           title_options: [],
           barcode_options: [],
           response: {data: {data: {}}},
-          medicine_add: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', capacity: '',
-           quantity: '', vat: '', description: '', purchase_price: '', selling_price: '', expire_date: ''},
+          medicine_add: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', capacity: '', quantity: '',
+           piece: '', vat: '', description: '', purchase_price: '', selling_price: '', expire_date: ''},
           // medicine_info_add: [{ quantity: '', purchase_price: '', selling_price: '', expire_date: ''}],
       }
     },
@@ -454,6 +459,7 @@ export default {
             manufacture: this.medicine_add.manufacture,
             serial_code: this.medicine_add.serial_code,
             quantity: this.medicine_add.quantity,
+            piece: this.medicine_add.piece,
             capacity: this.medicine_add.capacity,
             vat: this.medicine_add.vat,
             description: this.medicine_add.description,
