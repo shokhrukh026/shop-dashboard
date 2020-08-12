@@ -245,7 +245,7 @@ export default {
     },
     data(){
       return {
-          addedMedInfo: true,
+          addedMedInfo: false,
           getMedicines: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', vat: '', total_quantity: '', left_quantity: ''},
           response: {data: {data: {}}},
           // medicine_add: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', capacity: '',

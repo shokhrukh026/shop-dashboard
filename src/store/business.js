@@ -153,7 +153,7 @@ export default{
         GET_BRANCHES({commit, getters}) {
           return axios({
               method: "GET",
-              url: baseUrl + '/branches/',
+              url: baseUrl + 'branches/',
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
@@ -184,7 +184,7 @@ export default{
         GET_MEDICINES({commit, getters}) {
           return axios({
               method: "GET",
-              url: baseUrl + '/medicines/',
+              url: baseUrl + 'medicines/',
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
@@ -199,7 +199,7 @@ export default{
         GET_MEDICINES_BY_BRANCH({commit, getters}, payload) {
           return axios({
               method: "GET",
-              url: 'http://dev.epos.uz/v1/branches/' + payload.virtual_number + '/medicines/',
+              url: 'http://dev.epos.uz/v1/branch/' + payload.virtual_number + '/medicines/',
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
@@ -229,7 +229,7 @@ export default{
         GET_MEDICINE_DETAIL({commit, getters}, payload) {
           return axios({
               method: "GET",
-              url: baseUrl + '/medicines/detail/' + payload.id + '/',  // payload.business_medicine_id
+              url: baseUrl + 'medicines/detail/' + payload.id + '/',  // payload.business_medicine_id
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
@@ -244,7 +244,7 @@ export default{
         GET_MEDICINE_INFO({commit, getters}, payload) {
           return axios({
               method: "GET",
-              url: baseUrl + '/medicines/detail/info/' + payload.id + '/',  // payload.business_medicine_id
+              url: baseUrl + 'medicines/detail/info/' + payload.id + '/',  // payload.business_medicine_id
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
@@ -259,7 +259,7 @@ export default{
         GET_BRANCHES_IN_MED_INFO_PAGE({commit, getters}, payload) {
           return axios({
               method: "GET",
-              url: baseUrl + '/medicine/' + payload.id + '/branches/',  // payload.business_medicine_id   
+              url: baseUrl + 'medicine/' + payload.id + '/branches/',  // payload.business_medicine_id   
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {

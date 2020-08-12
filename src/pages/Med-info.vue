@@ -227,7 +227,7 @@ export default {
                 { name: 'contact_phone', align: 'center', label: 'Контактный телефон', field: 'contact_phone', sortable: true },
                 { name: 'status', align: 'center', label: 'Статус', field: 'status', sortable: true },
                 { name: 'street', align: 'center', label: 'Улица', field: 'street', sortable: true },
-                { name: 'total_quantity_medicine_in_branch', align: 'center', label: 'Кол-во', field: 'total_quantity_medicine_in_branch', sortable: true },
+                { name: 'total_quantity', align: 'center', label: 'Кол-во', field: 'total_quantity', sortable: true },
 
 
                 { name: 'actions', label: 'Действия', field: '', align:'center' },
