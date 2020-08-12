@@ -41,7 +41,7 @@
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6 text-blue-9">Общее количество в бизнесе: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.total_quantity}}</span></q-item-label>
+                   <q-item-label class="text-h6 text-blue-9">Общее количество в филиале: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.total_quantity}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <!-- <q-item v-ripple >
@@ -53,11 +53,11 @@
              </q-list>
       </q-expansion-item>
 
-                   {{getMedicines}}
-            <div class="q-mt-md">
+                   {{getBranchMedicineDetail}}
+            <!-- <div class="q-mt-md">
               <q-btn push color="white" text-color="primary" label="Добавить" class="q-mb-xs" :disable="loading"
                :to="{ name: 'add-info-medicine', params: {id: id}}"/>
-            </div>
+            </div> -->
 
             <div class="q-mt-xs">
                 <q-table
@@ -215,8 +215,8 @@ export default {
                 { name: 'index', align: 'center', label: '№', field: 'index', sortable: true},
                 { name: 'expire_date', align: 'center', label: 'Годен до', field: 'expire_date', sortable: true },
 
-                { name: 'total_quantity', align: 'center', label: 'Общее кол-во', field: 'total_quantity', sortable: true },
-                { name: 'left_quantity', align: 'center', label: 'Остаток', field: 'left_quantity', sortable: true },
+                { name: 'quantity', align: 'center', label: 'Кол-во', field: 'quantity', sortable: true },
+                // { name: 'left_quantity', align: 'center', label: 'Остаток', field: 'left_quantity', sortable: true },
                 { name: 'purchase_price', align: 'center', label: 'Цена покупки', field: 'purchase_price', sortable: true },
                 { name: 'selling_price', align: 'center', label: 'Цена продажи', field: 'selling_price', sortable: true },
 
@@ -280,15 +280,16 @@ export default {
     },
     async mounted(){
       const details = await this.GET_BRANCH_MEDICINE_DETAIL({branch_id: this.branch_id,  business_medicine_id: this.business_medicine_id});
-      // console.log(details);
+      console.log(details);
       this.getMedicines.title = details.data.title;
       this.getMedicines.description = details.data.description;
       this.getMedicines.barcode = details.data.barcode;
       this.getMedicines.country = details.data.country;
       this.getMedicines.manufacture = details.data.manufacture;
       this.getMedicines.serial_code = details.data.serial_code;
-      this.getMedicines.vat = details.data.vat;
-      this.getMedicines.total_quantity = details.data.total_quantity_box + ' упаковок ( по ' + details.data.capacity + ' ) + ' + details.data.total_quantity_piece + ' шт';
+      this.getMedicines.vat = details.data.vat; 
+      this.getMedicines.total_quantity = details.data.total_quantity
+      // this.getMedicines.total_quantity = details.data.total_quantity_box + ' упаковок ( по ' + details.data.capacity + ' ) + ' + details.data.total_quantity_piece + ' шт';
 
 
 
@@ -313,7 +314,7 @@ export default {
     },
     computed:{
       ...mapGetters([
-        'getBranches', 'getBranchMedicineInfo'
+        'getBranches', 'getBranchMedicineInfo', 'getBranchMedicineDetail'
       ]),
       getBranchNames() {
         let a = [];

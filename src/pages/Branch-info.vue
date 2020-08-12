@@ -94,9 +94,9 @@ export default {
         //   sortable: true
         // },
         { name: 'total_quantity', align: 'center', label: 'Кол-во', field: 'total_quantity', sortable: true },
-        { name: 'left_quantity', align: 'center', label: 'Остаток', field: 'left_quantity', sortable: true },
+        // { name: 'left_quantity', align: 'center', label: 'Остаток', field: 'left_quantity', sortable: true },
         { name: 'vat', align: 'center', label: 'НДС', field: 'vat', sortable: true },
-        { name: 'sales_quantity_in_30_days', align: 'center', label: 'Продажи за 30 дней', field: 'sales_quantity_in_30_days', sortable: true },
+        { name: 'sold_quantity', align: 'center', label: 'Продажи за 30 дней', field: 'sold_quantity', sortable: true },
        
         { name: 'actions', label: 'Действия', field: '', align:'center' },
       ],
