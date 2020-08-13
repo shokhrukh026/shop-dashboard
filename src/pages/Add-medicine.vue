@@ -222,7 +222,7 @@
                        <q-input  color="blue" outlined dense v-model="medicine_add.quantity" label="Кол-во упаковок" />
                      </q-item-section>
                    </q-item>
-                   <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                   <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12" v-if="medicine_add.capacity > 1">
                      <q-item-section>
                        <q-input  color="blue" outlined dense v-model="medicine_add.piece" label="Кол-во штук" />
                      </q-item-section>
@@ -378,7 +378,11 @@ export default {
       //   },
       //   deep: true
       // },
-
+      'medicine_add.capacity': function (newVal, oldVal) {
+        if (newVal <= 1) {
+          this.medicine_add.piece = 0
+        }
+      },
       'medicine_add.title': function (newVal, oldVal) {
         if (newVal != '') {
           this.medicine_add = {title: this.medicine_add.title, barcode: this.response.data.data[0].barcode, country: this.response.data.data[0].country, 

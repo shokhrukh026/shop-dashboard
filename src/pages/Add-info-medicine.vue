@@ -110,7 +110,7 @@
                        <q-input  color="blue" outlined dense v-model="medicine_info_add[item].quantity" label="Кол-во упаковок" />
                      </q-item-section>
                    </q-item>
-                   <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
+                   <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12" v-if="getMedicineDetails.capacity > 1">
                      <q-item-section>
                        <q-input  color="blue" outlined dense v-model="medicine_info_add[item].piece" label="Кол-во штук" />
                      </q-item-section>
@@ -246,7 +246,7 @@ export default {
     data(){
       return {
           addedMedInfo: false,
-          getMedicines: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', vat: '', total_quantity: '', left_quantity: ''},
+          getMedicines: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', vat: '', total_quantity: '', left_quantity: '', capacity: ''},
           response: {data: {data: {}}},
           // medicine_add: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', capacity: '',
           //  quantity: '', vat: '', description: '', purchase_price: '', selling_price: '', expire_date: ''},
@@ -316,6 +316,11 @@ export default {
       this.getMedicines.vat = answer.data.vat;
       this.getMedicines.total_quantity = answer.data.total_quantity;
       this.getMedicines.left_quantity = answer.data.left_quantity;
+      this.getMedicines.capacity = answer.data.capacity;
+
+      if(this.getMedicines.capacity <= 1){
+        this.medicine_info_add[0].piece = 0; 
+      }
     },
     methods:{
       ...mapActions([
@@ -324,7 +329,11 @@ export default {
      
 
       addInfoForMedicine(){
-        this.$set(this.medicine_info_add, this.medicine_info_add.length, { quantity: '', purchase_price: '', selling_price: '', expire_date: ''});
+        if(this.getMedicines.capacity <= 1){
+          this.$set(this.medicine_info_add, this.medicine_info_add.length, { quantity: '', piece: 0, purchase_price: '', selling_price: '', expire_date: ''});
+        }else{
+          this.$set(this.medicine_info_add, this.medicine_info_add.length, { quantity: '', piece: '', purchase_price: '', selling_price: '', expire_date: ''});
+        }
       },
       removeInfoForMedicine(item){
         this.medicine_info_add.splice(item, 1);

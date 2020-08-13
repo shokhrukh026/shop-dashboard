@@ -33,12 +33,12 @@
                 <!-- <q-btn color="green" :disable="loading" label="Добавить" @click="addRow = !addRow" /> -->
                 <!-- <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" /> -->
                 <q-space />
-                <q-input borderless dense debounce="100" color="primary" v-model="filter" @keydown="filterFunc"
+                <!-- <q-input borderless dense debounce="100" color="primary" v-model="filter" @keydown="filterFunc"
                 placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; border-radius: 5px;">
                   <template v-slot:append>
                       <q-icon name="search" />
                   </template>
-                </q-input>
+                </q-input> -->
                 <q-btn
                 flat round dense
                 :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
@@ -49,7 +49,6 @@
             </q-table>
         </div>
 
-    {{medicine}}
     {{data}}
            <q-dialog v-model="deleteRowVar">
              <q-card style="width: 300px">
@@ -77,10 +76,10 @@ import {mapActions, mapGetters} from 'vuex'
 
 export default {
     props:{
-      medicine:{
-        type: Array,
-        required: true,
-      }
+      // medicine:{
+      //   type: Array,
+      //   required: true,
+      // }
     },
     data(){
       return {
@@ -106,6 +105,7 @@ export default {
         columns: [
           { name: 'index', align: 'center', label: 'No#', field: 'index', sortable: true},
           { name: 'branch', align: 'center', label: 'Филиал', field: 'branch', sortable: true },
+          { name: 'name', align: 'center', label: 'Филиал', field: 'branch', sortable: true },
           { name: 'amount', align: 'center', label: 'Кол-во', field: 'amount', sortable: true },
           // { name: 'products', align: 'center', label: 'Лекарство', field: 'title', sortable: true },
           // { name: 'barcode', align: 'center', label: 'Штрих-код', field: 'barcode', sortable: true },
@@ -134,26 +134,24 @@ export default {
             // {index: 3, products: 'Ибуклин', barcode: '2313141', total_quantity: '80', left_quantity: '10', vat: '5%'},
             // {index: 4, products: 'Арбидол', barcode: '2313141', total_quantity: '14', left_quantity: '0', vat: '7%'},
         ],
-        data2: [],
       }
     },
-    async created(){
-      // await this.GET_BRANCHES();
-      // this.data = await this.getBranches;
-    },
+
     async mounted(){
-      for(let i = 0; i < this.medicine.length; i++){
-        this.$set(this.data, this.data.length, await this.medicine[i]);
-      }
+      this.data = await this.GET_SHOPPING_CART_MEDICINES();
+      console.log(this.data);
+      // for(let i = 0; i < this.medicine.length; i++){
+      //   this.$set(this.data, this.data.length, await this.medicine[i]);
+      // }
     },
     computed:{
       ...mapGetters([
-        'getBranches', 'getUser', 
+        'getBranches', 'getShoppingCartMedicines', 
       ])
     },
     methods: {
       ...mapActions([
-        'GET_BRANCHES'
+        'GET_BRANCHES', 'GET_SHOPPING_CART_MEDICINES'
       ]),
 
     }

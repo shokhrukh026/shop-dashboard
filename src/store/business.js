@@ -12,7 +12,8 @@ export default{
         medicine_details: [],
         branches_in_med_info_page: [],
         branch_medicine_detail: [],
-        branch_medicine_info: []
+        branch_medicine_info: [],
+        shopping_cart: [],
     },
     mutations:{
         // MEDICINE_COMMIT: (state, payload) => {
@@ -23,7 +24,9 @@ export default{
         //       Vue.set(row, payload.name, payload.amount[index]);
         //     })
         // },
-
+        SET_SHOPPING_CART_MEDICINES:(state, payload) => {
+          state.shopping_cart = payload;
+        },
         SET_BRANCHES: (state, payload) => {
           state.branches = payload;
         },
@@ -412,6 +415,21 @@ export default{
             //   return error;
             })
         },
+        async GET_SHOPPING_CART_MEDICINES({commit, getters},payload) {
+          await axios({
+              method: "GET",
+              url: baseUrl + 'cart/',
+              headers: {Authorization: getters.getUser.token}
+            })
+            .then((e) => {
+              commit('SET_SHOPPING_CART_MEDICINES', e.data);
+               //return e;
+            })
+            .catch((error) => {
+              console.log(error);
+            //   return error;
+            })
+        },
 
         
     },
@@ -424,5 +442,6 @@ export default{
         getBranchesInMedInfoPage: state => state.branches_in_med_info_page,
         getBranchMedicineDetail: state => state.branch_medicine_detail,
         getBranchMedicineInfo: state => state.branch_medicine_info,
+        getShoppingCartMedicines: state => state.shopping_cart,
     }
 }

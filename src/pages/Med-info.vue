@@ -58,7 +58,7 @@
               <q-btn push color="white" text-color="primary" label="Добавить" class="q-mb-xs" :disable="loading"
                :to="{ name: 'add-info-medicine', params: {id: id}}"/>
             </div>
-            {{temp}}
+            {{getBranches}}
 
             <div class="q-mt-xs">
                 <q-table
@@ -102,8 +102,7 @@
                 </template>
                 </q-table>
             </div>
-  {{getMedicinesInfo}}
-
+          {{data}}
 
             <div class="q-mt-md">
                 <q-table
@@ -154,7 +153,7 @@
 
         <q-dialog v-model="addRow" persistent >
        
-             <q-card>
+             <q-card style="min-width: 50vw;">
                
                <q-card-section class="bg-info">
                  <div class="text-h6 text-white">Распределение</div>
@@ -166,20 +165,25 @@
                   class="q-pt-md"
                   ref="myForm"
                 >
-               <q-card-section class="q-pt-none row">
-                <q-select outlined v-model="distribution_branch" :options="distribution_options" label="Филиал" class="q-mb-sm col-12"/>
-                <q-input outlined v-model="distribution_amount.box" label="Кол-во упаковок" class="col-6" :suffix="left_quantity_box" 
-                :rules="[
-                  val => val !== null && val !== '' || 'Заполните поле пожалуйста',
-                  val => val > 0 && val <= temp.left_quantity_box || 'В складе имеется ' + temp.left_quantity_box + ' упаковок'
-                ]"/>
+               <q-card-section class="q-pt-none">
+                 <div class="row">
+                  <q-select outlined v-model="distribution_branch" :options="distribution_options" label="Филиал" class="q-mb-sm col-12"/>
+                 </div>
+                 <div class="row q-mb-xs content-stretch">
+                  <q-input outlined v-model="distribution_amount.box" label="Кол-во упаковок" class="col" :suffix="left_quantity_box" 
+                  :rules="[
+                    val => val !== null && val !== '' || 'Заполните поле пожалуйста',
+                    val => val > 0 && val <= temp.left_quantity_box || 'В складе имеется ' + temp.left_quantity_box + ' упаковок'
+                  ]"/>
 
 
-                <q-input outlined v-model="distribution_amount.piece" label="Кол-во штук" class="q-pl-xs col-6" :suffix="left_quantity_piece" 
-                :rules="[
-                  val => val !== null && val !== '' || 'Заполните поле пожалуйста',
-                  val => val > 0 && val <= temp.left_quantity_piece || 'В складе имеется ' + temp.left_quantity_piece + ' штук'
-                ]"/>
+                  <q-input outlined v-model="distribution_amount.piece" label="Кол-во штук" class="q-pl-xs col" :suffix="left_quantity_piece" 
+                  v-if="temp.capacity > 1"
+                  :rules="[
+                    val => val !== null && val !== '' || 'Заполните поле пожалуйста',
+                    val => val > 0 && val <= temp.left_quantity_piece || 'В складе имеется ' + temp.left_quantity_piece + ' штук'
+                  ]"/>
+                 </div>
             </q-card-section>
                 
                
@@ -340,7 +344,7 @@ export default {
       }
       
       const answer2 = await this.GET_BRANCHES_IN_MED_INFO_PAGE({id: this.id});
-      console.log(answer2.data);
+      // console.log(answer2.data);
       for(let i = 0; i < answer2.data.length; i++ ){
         this.$set(this.data2, this.data2.length, answer2.data[i]);
       }
@@ -367,32 +371,40 @@ export default {
           'GET_MEDICINE_DETAIL', 'GET_MEDICINE_INFO', 'GET_BRANCHES', 'GET_BRANCHES_IN_MED_INFO_PAGE', 'ADD_TO_CART'
       ]),
       async addToCart(){
-        let data = { id: this.id, branch: this.distribution_branch, amount: this.distribution_amount }
-        await this.$emit('medicines', data);
+        // let data = { id: this.id, branch: this.distribution_branch, amount: this.distribution_amount }
+        // await this.$emit('medicines', data);
 
-        await this.$refs.myForm.validate().then( async (success) => {
-          if (success) {
-            console.log('Success');
+        const branch_id = this.getBranches.filter(el => el.name == this.distribution_branch);
+        console.log(branch_id);
+
+        if(!this.$refs.myForm.validate()){
+          console.log('Error!!!');
+        }
+        // this.$refs.myForm.validate().then((success) => {
+        //   console.log(success);
+        //   if (success) {
+        //     console.log('Success');
+
             // yay, models are correct
             await this.ADD_TO_CART({
               business_medicine_info_id: this.temp.business_medicine_info_id,
-              quantity_box: this.temp.quantity_box,
-              quantity_piece: this.temp.quantity_piece,
-              branch_id: this.distribution_branch,
+              quantity_box: this.temp.left_quantity_box,
+              quantity_piece: this.temp.left_quantity_piece,
+              branch_id: branch_id[0].id,
             })
-          }
-          else {
-            // oh no, user has filled in
-            // at least one invalid value
-            console.log('ERROR!');
-            this.$q.notify({
-              color: 'red-5',
-              textColor: 'white',
-              icon: 'warning',
-              message: 'Ошибка!'
-            })
-          }
-        })
+        //   }
+        //   else {
+        //     // oh no, user has filled in
+        //     // at least one invalid value
+        //     console.log('ERROR!');
+        //     this.$q.notify({
+        //       color: 'red-5',
+        //       textColor: 'white',
+        //       icon: 'warning',
+        //       message: 'Ошибка!'
+        //     })
+        //   }
+        // })
 
 
         
