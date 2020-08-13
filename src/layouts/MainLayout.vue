@@ -92,7 +92,7 @@
     </q-drawer>
 
     <q-page-container class="bg-grey-2">
-      <router-view /> 
+      <router-view @medicines="distributeMedicines"/> 
       <!-- @medicines="distributeMedicines" :medicine="shopping_cart" -->
     </q-page-container>
   </q-layout>

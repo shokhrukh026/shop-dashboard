@@ -156,7 +156,7 @@
              <q-card style="min-width: 50vw;">
                
                <q-card-section class="bg-info">
-                 <div class="text-h6 text-white">Распределение</div>
+                 <div class="text-h6 text-white">Добавить в корзину</div>
                </q-card-section>
                <q-separator />
                 <q-form
@@ -181,7 +181,7 @@
                   v-if="temp.capacity > 1"
                   :rules="[
                     val => val !== null && val !== '' || 'Заполните поле пожалуйста',
-                    val => val > 0 && val <= temp.left_quantity_piece || 'В складе имеется ' + temp.left_quantity_piece + ' штук'
+                    val => val >= 0 && val <= temp.left_quantity_piece || 'В складе имеется ' + temp.left_quantity_piece + ' штук'
                   ]"/>
                  </div>
             </q-card-section>
@@ -189,7 +189,7 @@
                
                <q-card-actions align="right" class="bg-white text-white">
                    <q-btn class="bg-info" label="Отменить" type="reset" v-close-popup />
-                   <q-btn class="bg-info" label="Распределить" v-close-popup type="submit" />
+                   <q-btn class="bg-info" label="Добавить" v-close-popup type="submit" />
                </q-card-actions>
               
             </q-form>
@@ -372,7 +372,7 @@ export default {
       ]),
       async addToCart(){
         // let data = { id: this.id, branch: this.distribution_branch, amount: this.distribution_amount }
-        // await this.$emit('medicines', data);
+         await this.$emit('medicines', true);
 
         const branch_id = this.getBranches.filter(el => el.name == this.distribution_branch);
         console.log(branch_id);
@@ -388,8 +388,8 @@ export default {
             // yay, models are correct
             await this.ADD_TO_CART({
               business_medicine_info_id: this.temp.business_medicine_info_id,
-              quantity_box: this.temp.left_quantity_box,
-              quantity_piece: this.temp.left_quantity_piece,
+              quantity_box: this.distribution_amount.box,
+              quantity_piece: this.distribution_amount.piece,
               branch_id: branch_id[0].id,
             })
         //   }

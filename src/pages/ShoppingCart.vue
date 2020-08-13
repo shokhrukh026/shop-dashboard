@@ -1,7 +1,7 @@
 <template>
     <q-page class="bg-grey-3">
         <div class="q-pa-md">
-         <div class="row q-mb-xs">
+         <div class="row justify-end q-mb-xs">
             <q-table
             dense
             title=""
@@ -13,7 +13,8 @@
             separator="cell"
             :pagination.sync="pagination"
             :rows-per-page-options="[0]"
-            style="min-width: 700px"
+            style="min-width: 70vw;"
+            class="col-12"
             >
 
             <!-- :rows-per-page-options="[0]"
@@ -47,7 +48,9 @@
                 />
             </template>
             </q-table>
+            <q-btn color="blue" class="q-my-sm" @click="ADD_ARRIVAL_ALL()">Распределить</q-btn>
         </div>
+        
 
     {{data}}
            <q-dialog v-model="deleteRowVar">
@@ -104,9 +107,9 @@ export default {
         filter: '',
         columns: [
           { name: 'index', align: 'center', label: 'No#', field: 'index', sortable: true},
-          { name: 'branch', align: 'center', label: 'Филиал', field: 'branch', sortable: true },
-          { name: 'name', align: 'center', label: 'Филиал', field: 'branch', sortable: true },
-          { name: 'amount', align: 'center', label: 'Кол-во', field: 'amount', sortable: true },
+          { name: 'branch_name', align: 'center', label: 'Филиал', field: 'branch_name', sortable: true },
+          { name: 'title', align: 'center', label: 'Лекарство', field: 'title', sortable: true },
+          { name: 'quantity', align: 'center', label: 'Кол-во', field: 'quantity', sortable: true },
           // { name: 'products', align: 'center', label: 'Лекарство', field: 'title', sortable: true },
           // { name: 'barcode', align: 'center', label: 'Штрих-код', field: 'barcode', sortable: true },
           // { name: 'country', align: 'center', label: 'Страна', field: 'country', sortable: true },
@@ -140,6 +143,8 @@ export default {
     async mounted(){
       this.data = await this.GET_SHOPPING_CART_MEDICINES();
       console.log(this.data);
+
+      await this.GET_BRANCHES();
       // for(let i = 0; i < this.medicine.length; i++){
       //   this.$set(this.data, this.data.length, await this.medicine[i]);
       // }
@@ -151,8 +156,14 @@ export default {
     },
     methods: {
       ...mapActions([
-        'GET_BRANCHES', 'GET_SHOPPING_CART_MEDICINES'
+        'GET_BRANCHES', 'GET_SHOPPING_CART_MEDICINES', 'ADD_ARRIVAL_ALL', 'DELETE_ARRIVAL_ONE'
       ]),
+      async deleteRow(props){
+        const branch_id = this.getBranches.filter(el => el.name == props.row.branch_name);
+
+        await this.DELETE_ARRIVAL_ONE({branch_id: branch_id[0].id, cart_id: props.row.cart_id})
+        console.log(props.row);
+      },
 
     }
 }

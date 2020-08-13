@@ -24,8 +24,11 @@ export default{
         //       Vue.set(row, payload.name, payload.amount[index]);
         //     })
         // },
-        SET_SHOPPING_CART_MEDICINES:(state, payload) => {
+        SET_SHOPPING_CART_MEDICINES: (state, payload) => {
           state.shopping_cart = payload;
+          state.shopping_cart.forEach((row, index) => {
+            row.index = index + 1
+          })
         },
         SET_BRANCHES: (state, payload) => {
           state.branches = payload;
@@ -87,36 +90,29 @@ export default{
           })
         },
         SET_SEARCH_RESULT: (state, payload) =>{
-          let same = false;
-          console.log(payload.results);
-          let results = payload.results
+          // let same = false;
+          let results = payload.data
+          console.log(results);
 
-          if(payload.results.length != 0){
+          if(results.length != 0){
             state.medicines.results.forEach((row, index) => {
               // console.log(row);
               
               for(let a = 0; a < results.length; a++){
                 if(lodash.isEqual(row, results[a])){
-                  same = true;
+                  // same = true;
                   results.splice(a, 1);
                 }
               }
               
-              // if(lodash.isEqual(row, payload.results.forEach((item  ) => {
-              //   console.log(item);
-              //   return item
-              // }))){
-              //   console.log('They are same!');
-              //   same = true;
-              // }
+            
             })
-            if(!same){
+            console.log(results);
+             if(results){
               for(let i = 0; i < results.length; i++){
                 Vue.set(state.medicines.results, state.medicines.results.length, results[i]);
               }
-              // state.medicines.results.push();
-            }
-            // state.search_result = payload;
+             }
           }else{
             console.log('Array is empty!')
           }
@@ -416,20 +412,57 @@ export default{
             })
         },
         async GET_SHOPPING_CART_MEDICINES({commit, getters},payload) {
-          await axios({
+          return await axios({
               method: "GET",
               url: baseUrl + 'cart/',
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
               commit('SET_SHOPPING_CART_MEDICINES', e.data);
-               //return e;
+               return e.data;
             })
             .catch((error) => {
               console.log(error);
             //   return error;
             })
         },
+        async ADD_ARRIVAL_ALL({commit, getters}, payload) {
+          await axios({
+             method: "POST",
+             url: 'http://dev.epos.uz/v1/branches/arrival/add/',
+             headers: {Authorization: getters.getUser.token},
+             data:{
+              send: 'True'
+             }
+           })
+           .then((e) => {
+             console.log('Successfully distributed!')
+           //   return e;
+           })
+           .catch((error) => {
+             console.log(error);
+           //   return error;
+           })
+       },
+       async DELETE_ARRIVAL_ONE({commit, getters}, payload) {
+        await axios({
+           method: "POST",
+           url: 'http://dev.epos.uz/v1/business/cart/' + payload.branch_id + '/delete ',
+           headers: {Authorization: getters.getUser.token},
+           data:{
+              cart_id: payload.cart_id
+           }
+         })
+         .then((e) => {
+           console.log('Successfully deleted!')
+         //   return e;
+         })
+         .catch((error) => {
+           console.log(error);
+         //   return error;
+         })
+     },
+        
 
         
     },

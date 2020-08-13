@@ -331,7 +331,7 @@ export default {
       // },
 
 
-       deleteRow(props){
+      deleteRow(props){
         this.rowDelete = props.row
         this.deleteRowVar = !this.deleteRowVar
       },
