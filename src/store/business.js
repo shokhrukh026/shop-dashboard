@@ -391,6 +391,28 @@ export default{
             //   return error;
             })
         },
+        async ADD_TO_CART({commit, getters}, payload) {
+           await axios({
+              method: "POST",
+              url: baseUrl + 'cart/add/',
+              headers: {Authorization: getters.getUser.token},
+              data:{
+                business_medicine_info_id: payload.business_medicine_info_id,
+                quantity_box: payload.quantity_box,
+                quantity_piece: payload.quantity_piece,
+                branch_id: payload.branch_id
+              }
+            })
+            .then((e) => {
+              console.log('Successfully added into cart!')
+            //   return e;
+            })
+            .catch((error) => {
+              console.log(error);
+            //   return error;
+            })
+        },
+
         
     },
     getters:{

@@ -86,10 +86,15 @@
                         fill-input
                         input-debounce="1000"
                         :options="barcode_options"
+                        @keypress="isKeyPressed(event)"
                         @new-value="createBarcodeValue"
                         @filter="filterBarcode"
                         color="blue"
                       >
+                       
+                        <!-- @click.enter="filterBarcode" -->
+
+
                         <template v-slot:no-option>
                           <q-item>
                             <q-item-section class="text-grey">

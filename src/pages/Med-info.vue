@@ -58,6 +58,7 @@
               <q-btn push color="white" text-color="primary" label="Добавить" class="q-mb-xs" :disable="loading"
                :to="{ name: 'add-info-medicine', params: {id: id}}"/>
             </div>
+            {{temp}}
 
             <div class="q-mt-xs">
                 <q-table
@@ -152,26 +153,44 @@
 
 
         <q-dialog v-model="addRow" persistent >
-             <q-card style="width: 300px">
+       
+             <q-card>
+               
                <q-card-section class="bg-info">
                  <div class="text-h6 text-white">Распределение</div>
                </q-card-section>
                <q-separator />
-               <q-card-section class="q-pt-none q-pa-lg">
-                <q-select outlined v-model="distribution_branch" :options="distribution_options" label="Филиал" class="q-mb-sm"/>
-                <q-input outlined v-model="distribution_amount" label="Кол-во" class="q-mb-sm" :suffix="temp_total_quantity" 
+                <q-form
+                  @submit="addToCart"
+                  @reset="onReset"
+                  class="q-pt-md"
+                  ref="myForm"
+                >
+               <q-card-section class="q-pt-none row">
+                <q-select outlined v-model="distribution_branch" :options="distribution_options" label="Филиал" class="q-mb-sm col-12"/>
+                <q-input outlined v-model="distribution_amount.box" label="Кол-во упаковок" class="col-6" :suffix="left_quantity_box" 
                 :rules="[
                   val => val !== null && val !== '' || 'Заполните поле пожалуйста',
-                  val => val > 0 && val <= temp.total_qauntity || 'В складе имеется ' + temp.total_qauntity + ' товара'
+                  val => val > 0 && val <= temp.left_quantity_box || 'В складе имеется ' + temp.left_quantity_box + ' упаковок'
                 ]"/>
+
+
+                <q-input outlined v-model="distribution_amount.piece" label="Кол-во штук" class="q-pl-xs col-6" :suffix="left_quantity_piece" 
+                :rules="[
+                  val => val !== null && val !== '' || 'Заполните поле пожалуйста',
+                  val => val > 0 && val <= temp.left_quantity_piece || 'В складе имеется ' + temp.left_quantity_piece + ' штук'
+                ]"/>
+            </q-card-section>
                 
-               </q-card-section>
-               <q-separator />
-               <q-card-actions align="right" class="bg-white text-teal">
-                 <q-btn flat label="Отменить" v-close-popup />
-                 <q-btn flat label="Распределить" v-close-popup  @click="addToCart"/>
+               
+               <q-card-actions align="right" class="bg-white text-white">
+                   <q-btn class="bg-info" label="Отменить" type="reset" v-close-popup />
+                   <q-btn class="bg-info" label="Распределить" v-close-popup type="submit" />
                </q-card-actions>
+              
+            </q-form>
              </q-card>
+
            </q-dialog>
         <!-- {{getMedicinesInfo}} -->
     </q-page>
@@ -192,9 +211,10 @@ export default {
         return{
             rowsNumber: null,
             temp: {},
-            temp_total_quantity: '',
+            left_quantity_box: '',
+            left_quantity_piece: '',
             addRow: false,
-            distribution_amount: '',
+            distribution_amount: {box: '', piece: ''},
             distribution_branch: '',  
             distribution_options: [],
 
@@ -254,8 +274,11 @@ export default {
       //      this.temp_total_quantity = this.temp.total_qauntity - newVal;
       //    }
       // },
-      'temp.total_qauntity': function (newVal, oldVal){
-        this.temp_total_quantity = this.temp.total_qauntity.toString();
+      'temp.left_quantity_box': function (newVal, oldVal){
+        this.left_quantity_box = this.temp.left_quantity_box.toString();
+      },
+      'temp.left_quantity_piece': function (newVal, oldVal){
+        this.left_quantity_piece = this.temp.left_quantity_piece.toString();
       },
       data: {
         handler: function (val, oldVal) {
@@ -341,12 +364,43 @@ export default {
     },
     methods: {
       ...mapActions([
-          'GET_MEDICINE_DETAIL', 'GET_MEDICINE_INFO', 'GET_BRANCHES', 'GET_BRANCHES_IN_MED_INFO_PAGE'
+          'GET_MEDICINE_DETAIL', 'GET_MEDICINE_INFO', 'GET_BRANCHES', 'GET_BRANCHES_IN_MED_INFO_PAGE', 'ADD_TO_CART'
       ]),
       async addToCart(){
         let data = { id: this.id, branch: this.distribution_branch, amount: this.distribution_amount }
         await this.$emit('medicines', data);
+
+        await this.$refs.myForm.validate().then( async (success) => {
+          if (success) {
+            console.log('Success');
+            // yay, models are correct
+            await this.ADD_TO_CART({
+              business_medicine_info_id: this.temp.business_medicine_info_id,
+              quantity_box: this.temp.quantity_box,
+              quantity_piece: this.temp.quantity_piece,
+              branch_id: this.distribution_branch,
+            })
+          }
+          else {
+            // oh no, user has filled in
+            // at least one invalid value
+            console.log('ERROR!');
+            this.$q.notify({
+              color: 'red-5',
+              textColor: 'white',
+              icon: 'warning',
+              message: 'Ошибка!'
+            })
+          }
+        })
+
+
+        
       },
+      onReset () {
+        this.distribution_branch = '';
+        this.distribution_amount = {box: '', piece: ''};
+      }
       // async getSearchResultByFilter(){
       //   return await this.GET_SEARCH_RESULT(
       //     {
