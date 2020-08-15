@@ -48,7 +48,7 @@
                 />
             </template>
             </q-table>
-            <q-btn color="blue" class="q-my-sm" @click="ADD_ARRIVAL_ALL()">Распределить</q-btn>
+            <q-btn color="blue" class="q-my-sm" @click="distribute" :disable="data.length == 0">Распределить</q-btn>
         </div>
         
 
@@ -65,7 +65,7 @@
                <q-separator />
                <q-card-actions align="right" class="bg-white text-teal">
                  <q-btn flat label="Нет" v-close-popup />
-                 <q-btn flat label="Да" v-close-popup  />
+                 <q-btn flat label="Да" v-close-popup  @click="deleteProcess"/>
                </q-card-actions>
              </q-card>
            </q-dialog>
@@ -142,28 +142,38 @@ export default {
 
     async mounted(){
       this.data = await this.GET_SHOPPING_CART_MEDICINES();
-      console.log(this.data);
-
-      await this.GET_BRANCHES();
+      console.log(this.data.length);
       // for(let i = 0; i < this.medicine.length; i++){
       //   this.$set(this.data, this.data.length, await this.medicine[i]);
       // }
     },
     computed:{
       ...mapGetters([
-        'getBranches', 'getShoppingCartMedicines', 
+        'getShoppingCartMedicines', 
       ])
     },
     methods: {
       ...mapActions([
-        'GET_BRANCHES', 'GET_SHOPPING_CART_MEDICINES', 'ADD_ARRIVAL_ALL', 'DELETE_ARRIVAL_ONE'
+        'GET_SHOPPING_CART_MEDICINES', 'ADD_ARRIVAL_ALL', 'DELETE_ARRIVAL_ONE'
       ]),
       async deleteRow(props){
-        const branch_id = this.getBranches.filter(el => el.name == props.row.branch_name);
-
-        await this.DELETE_ARRIVAL_ONE({branch_id: branch_id[0].id, cart_id: props.row.cart_id})
-        console.log(props.row);
+        this.deleteRowVar = !this.deleteRowVar
+        this.rowDelete = props.row
       },
+      async deleteProcess(){
+        await this.DELETE_ARRIVAL_ONE({cart_id: this.rowDelete.cart_id})
+        console.log(this.rowDelete);
+        this.data = [];
+        this.data = await this.GET_SHOPPING_CART_MEDICINES();
+        await this.$emit('medicines', false);
+      },
+      async distribute(){
+        await this.ADD_ARRIVAL_ALL();
+        await this.$emit('medicines', 'distribute_all');
+        this.data = [];
+        this.data = await this.GET_SHOPPING_CART_MEDICINES();
+      }
+
 
     }
 }

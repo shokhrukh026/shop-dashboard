@@ -439,7 +439,7 @@ export default {
           await update(async () => {
           // const needle = val.toLowerCase()
           const needle = val;
-          this.response = await this.GET_SEARCH_RESULT({value: needle, type: 'barcode'});
+          this.response = await this.GET_SEARCH_RESULT_ADD_MEDICINE({value: needle, type: 'barcode'});
           this.barcode_options = [];
           for(let i = 0; i < this.response.data.data.length; i++){
             this.barcode_options.push(await this.response.data.data[i].title);

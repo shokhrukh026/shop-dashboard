@@ -284,6 +284,11 @@ export default {
       'temp.left_quantity_piece': function (newVal, oldVal){
         this.left_quantity_piece = this.temp.left_quantity_piece.toString();
       },
+      'temp.capacity': function (newVal, oldVal){
+        if(newVal <= 1){
+          this.distribution_amount.piece = 0
+        }
+      },
       data: {
         handler: function (val, oldVal) {
           this.data.forEach((row, index) => {
@@ -372,7 +377,14 @@ export default {
       ]),
       async addToCart(){
         // let data = { id: this.id, branch: this.distribution_branch, amount: this.distribution_amount }
-         await this.$emit('medicines', true);
+        await this.$emit('medicines', true);
+        // let cart_amount = sessionStorage.getItem('cart');
+        // if(cart_amount !== null){
+        //    sessionStorage.setItem('cart', Number(cart_amount) + 1);
+        // }else{
+        //    sessionStorage.setItem('cart', 1);
+        // }
+
 
         const branch_id = this.getBranches.filter(el => el.name == this.distribution_branch);
         console.log(branch_id);
@@ -406,7 +418,7 @@ export default {
         //   }
         // })
 
-
+        this.onReset();
         
       },
       onReset () {

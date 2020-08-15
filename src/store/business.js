@@ -14,6 +14,7 @@ export default{
         branch_medicine_detail: [],
         branch_medicine_info: [],
         shopping_cart: [],
+        arrival_all: [],
     },
     mutations:{
         // MEDICINE_COMMIT: (state, payload) => {
@@ -24,6 +25,12 @@ export default{
         //       Vue.set(row, payload.name, payload.amount[index]);
         //     })
         // },
+        SET_ARRIVAL_ALL: (state, payload) => {
+          state.arrival_all = payload
+          state.arrival_all.forEach((row, index) => {
+            row.index = index + 1
+          })
+        },
         SET_SHOPPING_CART_MEDICINES: (state, payload) => {
           state.shopping_cart = payload;
           state.shopping_cart.forEach((row, index) => {
@@ -89,7 +96,35 @@ export default{
             row.index = index + 1
           })
         },
-        SET_SEARCH_RESULT: (state, payload) =>{
+        SET_SEARCH_RESULT_ADD_MEDICINE: (state, payload) =>{
+          // let same = false;
+          let results = payload.data
+          console.log(results);
+
+          if(results.length != 0){
+            state.medicines.results.forEach((row, index) => {
+              // console.log(row);
+              
+              for(let a = 0; a < results.length; a++){
+                if(lodash.isEqual(row, results[a])){
+                  // same = true;
+                  results.splice(a, 1);
+                }
+              }
+              
+            
+            })
+            console.log(results);
+             if(results){
+              for(let i = 0; i < results.length; i++){
+                Vue.set(state.medicines.results, state.medicines.results.length, results[i]);
+              }
+             }
+          }else{
+            console.log('Array is empty!')
+          }
+        },
+        SET_SEARCH_RESULT_ALL_MEDICINES: (state, payload) =>{
           // let same = false;
           let results = payload.data
           console.log(results);
@@ -149,8 +184,8 @@ export default{
 
     },
     actions: {
-        GET_BRANCHES({commit, getters}) {
-          return axios({
+        async GET_BRANCHES({commit, getters}) {
+          return await axios({
               method: "GET",
               url: baseUrl + 'branches/',
               headers: {Authorization: getters.getUser.token}
@@ -180,8 +215,8 @@ export default{
         //     })    
         // },
         
-        GET_MEDICINES({commit, getters}) {
-          return axios({
+        async GET_MEDICINES({commit, getters}) {
+          return await axios({
               method: "GET",
               url: baseUrl + 'medicines/',
               headers: {Authorization: getters.getUser.token}
@@ -195,8 +230,8 @@ export default{
             //   return error;
             })
         },
-        GET_MEDICINES_BY_BRANCH({commit, getters}, payload) {
-          return axios({
+        async GET_MEDICINES_BY_BRANCH({commit, getters}, payload) {
+          return await axios({
               method: "GET",
               url: 'http://dev.epos.uz/v1/branch/' + payload.virtual_number + '/medicines/',
               headers: {Authorization: getters.getUser.token}
@@ -225,8 +260,8 @@ export default{
             //   return error;
             })
         },
-        GET_MEDICINE_DETAIL({commit, getters}, payload) {
-          return axios({
+        async GET_MEDICINE_DETAIL({commit, getters}, payload) {
+          return await axios({
               method: "GET",
               url: baseUrl + 'medicines/detail/' + payload.id + '/',  // payload.business_medicine_id
               headers: {Authorization: getters.getUser.token}
@@ -240,8 +275,8 @@ export default{
             //   return error;
             })
         },
-        GET_MEDICINE_INFO({commit, getters}, payload) {
-          return axios({
+        async GET_MEDICINE_INFO({commit, getters}, payload) {
+          return await axios({
               method: "GET",
               url: baseUrl + 'medicines/detail/info/' + payload.id + '/',  // payload.business_medicine_id
               headers: {Authorization: getters.getUser.token}
@@ -255,8 +290,8 @@ export default{
             //   return error;
             })
         },
-        GET_BRANCHES_IN_MED_INFO_PAGE({commit, getters}, payload) {
-          return axios({
+        async GET_BRANCHES_IN_MED_INFO_PAGE({commit, getters}, payload) {
+          return await axios({
               method: "GET",
               url: baseUrl + 'medicine/' + payload.id + '/branches/',  // payload.business_medicine_id   
               headers: {Authorization: getters.getUser.token}
@@ -270,8 +305,8 @@ export default{
             //   return error;
             })
         },
-        GET_BRANCH_MEDICINE_DETAIL({commit, getters}, payload) {
-          return axios({
+        async GET_BRANCH_MEDICINE_DETAIL({commit, getters}, payload) {
+          return await axios({
               method: "GET",
               url: 'http://dev.epos.uz/v1/branch/' + payload.branch_id + '/business_medicine/' + payload.business_medicine_id + '/branch_medicine_detail/',
               // url: baseUrl + getters.getUser.business_id + '/medicine/' + payload.id + '/branches/',  // payload.business_medicine_id   
@@ -286,8 +321,8 @@ export default{
             //   return error;
             })
         },
-        GET_BRANCH_MEDICINE_INFO({commit, getters}, payload) {
-          return axios({
+        async GET_BRANCH_MEDICINE_INFO({commit, getters}, payload) {
+          return await axios({
               method: "GET",
               url: 'http://dev.epos.uz/v1/branch/' + payload.branch_id + '/business_medicine/' + payload.business_medicine_id + '/branch_medicine_info/',
               // url: baseUrl + getters.getUser.business_id + '/medicine/' + payload.id + '/branches/',  // payload.business_medicine_id   
@@ -304,7 +339,7 @@ export default{
         },
         // http://127.0.0.1:8000/v1/branch/2333/business_medicine/1/branch_medicine_info/
     
-        async GET_SEARCH_RESULT({commit, getters},payload) {
+        async GET_SEARCH_RESULT_ADD_MEDICINE({commit, getters},payload) {
            await axios({
               method: "GET",
               // url: baseUrl + getters.getUser.business_id + '/medicines/?search=' + payload.title,
@@ -312,7 +347,7 @@ export default{
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
-              commit('SET_SEARCH_RESULT', e.data);
+              commit('SET_SEARCH_RESULT_ADD_MEDICINE', e.data);
               console.log(e);
                //return e;
             })
@@ -321,9 +356,26 @@ export default{
             //   return error;
             })
         },
+        async GET_SEARCH_RESULT_ALL_MEDICINES({commit, getters},payload) {
+          await axios({
+             method: "GET",
+             url: baseUrl + getters.getUser.business_id + '/medicines/?search=' + payload.title,
+             //url: 'http://dev.epos.uz/v1/medicine/list?' + payload.type + '=' + payload.value,
+             headers: {Authorization: getters.getUser.token}
+           })
+           .then((e) => {
+             commit('SET_SEARCH_RESULT_ALL_MEDICINES', e.data);
+             console.log(e);
+              //return e;
+           })
+           .catch((error) => {
+             console.log(error);
+           //   return error;
+           })
+       },
 
-        GET_NEXT_PAGE({commit, getters},payload) {
-          return axios({
+        async GET_NEXT_PAGE({commit, getters},payload) {
+          return await axios({
               method: "GET",
               url: getters.getMedicines.links.next,
               headers: {Authorization: getters.getUser.token}
@@ -334,11 +386,41 @@ export default{
             })
             .catch((error) => {
               console.log(error);
+              //   return error;
+            })
+        },
+        async GET_SHOPPING_CART_MEDICINES({commit, getters},payload) {
+          return await axios({
+              method: "GET",
+              url: baseUrl + 'cart/',
+              headers: {Authorization: getters.getUser.token}
+            })
+            .then((e) => {
+              commit('SET_SHOPPING_CART_MEDICINES', e.data);
+                return e.data;
+            })
+            .catch((error) => {
+              console.log(error);
             //   return error;
             })
         },
-        ADD_MEDICINES({commit, getters}, payload) {
-          return axios({
+        async GET_ARRIVAL_ALL({commit, getters},payload) {
+          return await axios({
+              method: "GET",
+              url: baseUrl + 'arrivals/info/',
+              headers: {Authorization: getters.getUser.token}
+            })
+            .then((e) => {
+              commit('SET_ARRIVAL_ALL', e.data);
+               return e.data;
+            })
+            .catch((error) => {
+              console.log(error);
+            //   return error;
+            })
+        },
+        async ADD_MEDICINES({commit, getters}, payload) {
+          return await axios({
               method: "POST",
               url: baseUrl + 'medicines/add/',
               headers: {Authorization: getters.getUser.token},
@@ -367,8 +449,8 @@ export default{
             //   return error;
             })
         },
-        ADD_MEDICINE_INFO({commit, getters}, payload) {
-          return axios({
+        async ADD_MEDICINE_INFO({commit, getters}, payload) {
+          return await axios({
               method: "POST",
               url: baseUrl + 'medicines/info/add/',
               headers: {Authorization: getters.getUser.token},
@@ -411,21 +493,6 @@ export default{
             //   return error;
             })
         },
-        async GET_SHOPPING_CART_MEDICINES({commit, getters},payload) {
-          return await axios({
-              method: "GET",
-              url: baseUrl + 'cart/',
-              headers: {Authorization: getters.getUser.token}
-            })
-            .then((e) => {
-              commit('SET_SHOPPING_CART_MEDICINES', e.data);
-               return e.data;
-            })
-            .catch((error) => {
-              console.log(error);
-            //   return error;
-            })
-        },
         async ADD_ARRIVAL_ALL({commit, getters}, payload) {
           await axios({
              method: "POST",
@@ -447,7 +514,7 @@ export default{
        async DELETE_ARRIVAL_ONE({commit, getters}, payload) {
         await axios({
            method: "POST",
-           url: 'http://dev.epos.uz/v1/business/cart/' + payload.branch_id + '/delete ',
+           url: 'http://dev.epos.uz/v1/business/cart/delete ',
            headers: {Authorization: getters.getUser.token},
            data:{
               cart_id: payload.cart_id
@@ -476,5 +543,6 @@ export default{
         getBranchMedicineDetail: state => state.branch_medicine_detail,
         getBranchMedicineInfo: state => state.branch_medicine_info,
         getShoppingCartMedicines: state => state.shopping_cart,
+        getArrivalAll: state => state.arrival_all,
     }
 }

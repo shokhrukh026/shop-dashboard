@@ -101,6 +101,7 @@
 <script>
 import EssentialLink from 'components/EssentialLink'
 import Messages from "./Messages";
+import {mapActions, mapGetters} from 'vuex'
 
 export default {
   name: 'MainLayout',
@@ -117,9 +118,10 @@ export default {
         {title: 'Главная', icon: 'dashboard', url: '/main'},
         {title: 'Филиалы', icon: 'fas fa-building', url: '/branches'},
         {title: 'Лекарства', icon: 'fas fa-box-open', url: '/medicines'},
+        {title: 'История', icon: 'fas fa-history', url: '/history'},
         {title: 'Панель приборов', icon: 'fas fa-chart-pie ', url: '/medicines'},
         {title: 'Лучшие продажи', icon: 'fas fa-chart-line', url: '/medicines'},
-        {title: 'Остаток средств', icon: 'fas fa-chart-bar', url: 'Uzpos_logo_rectangle'},
+        {title: 'Остаток средств', icon: 'fas fa-chart-bar', url: '/medicines'},
 
 
 
@@ -130,14 +132,36 @@ export default {
   watch: {
 
   },
+  async mounted(){
+    await this.GET_SHOPPING_CART_MEDICINES();
+    console.log(this.getShoppingCartMedicines.length);
+    // sessionStorage.setItem('cart', this.getShoppingCartMedicines.length);
+    // this.cart = sessionStorage.getItem('cart');
+    this.cart = this.getShoppingCartMedicines.length;
+  },
+  computed:{
+    ...mapGetters([
+      'getShoppingCartMedicines'
+    ])
+  },
   methods: {
+    ...mapActions([
+      'GET_SHOPPING_CART_MEDICINES'
+    ]),
     //clears Session
     async logout(){
       await this.$store.dispatch('LOGOUT');
     },
     async distributeMedicines(value){
       // this.$set(this.shopping_cart, this.shopping_cart.length, await value);
-      this.cart++;
+      console.log(value);
+      if(value == true){
+        this.cart++;
+      }else if(value == false){
+        this.cart--;
+      }else if(value == 'distribute_all'){
+        this.cart = 0;
+      }
     }
 
   }
