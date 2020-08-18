@@ -118,7 +118,9 @@ export default {
         {title: 'Главная', icon: 'dashboard', url: '/main'},
         {title: 'Филиалы', icon: 'fas fa-building', url: '/branches'},
         {title: 'Лекарства', icon: 'fas fa-box-open', url: '/medicines'},
+        {title: 'Возврат', icon: 'fas fa-exchange-alt', url: '/return'},
         {title: 'История', icon: 'fas fa-history', url: '/history'},
+
         {title: 'Панель приборов', icon: 'fas fa-chart-pie ', url: '/medicines'},
         {title: 'Лучшие продажи', icon: 'fas fa-chart-line', url: '/medicines'},
         {title: 'Остаток средств', icon: 'fas fa-chart-bar', url: '/medicines'},

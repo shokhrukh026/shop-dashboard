@@ -18,8 +18,7 @@
             <template v-slot:body-cell-actions="props">
                 <q-td :props="props">
                     <q-btn dense round flat color="grey" @click="editRow(props)" icon="edit"></q-btn>
-                    <q-btn dense round flat color="grey" :to="{ name: 'history-info', params: {id: props.row.id}}"  icon="fas fa-info-circle"></q-btn>
-                    <q-btn dense round flat color="grey" @click="deleteRow(props)" icon="delete" v-if="props.row.is_received == 'ложь'"></q-btn>
+                    <q-btn dense round flat color="grey" :to="{ name: 'branch-info-detail', params: {business_medicine_id: props.row.business_medicine_id, branch_id: id}}"  icon="fas fa-info-circle"></q-btn>
                 </q-td>
             </template>
             <template v-slot:top="props">
@@ -76,7 +75,6 @@ export default {
       filter: '',
       columns: [
         { name: 'index', align: 'center', label: 'No#', field: 'index', sortable: true},
-        { name: 'id', align: 'center', label: 'Идентификатор', field: 'id', sortable: true },
         { name: 'branch_name', align: 'center', label: 'Филиал', field: 'branch_name', sortable: true },
         { name: 'is_received', align: 'center', label: 'Получено', field: 'is_received', sortable: true },
         { name: 'added_at', align: 'center', label: 'Добавлено в', field: 'added_at', sortable: true },
@@ -96,7 +94,6 @@ export default {
     },
     async mounted(){
       this.data = await this.GET_ARRIVAL_ALL();
-      
       
     },
     computed:{

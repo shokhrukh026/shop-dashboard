@@ -15,6 +15,7 @@ export default{
         branch_medicine_info: [],
         shopping_cart: [],
         arrival_all: [],
+        arrival_all_info: [],
     },
     mutations:{
         // MEDICINE_COMMIT: (state, payload) => {
@@ -29,7 +30,16 @@ export default{
           state.arrival_all = payload
           state.arrival_all.forEach((row, index) => {
             row.index = index + 1
+
+            if(row.is_received == false){
+              row.is_received = 'ложь'
+            }else if(row.is_received == true){
+              row.is_received = 'правда'
+            }
           })
+        },
+        SET_ARRIVAL_ALL_INFO: (state, payload) => {
+          state.arrival_all_info = payload
         },
         SET_SHOPPING_CART_MEDICINES: (state, payload) => {
           state.shopping_cart = payload;
@@ -420,6 +430,22 @@ export default{
             //   return error;
             })
         },
+        async GET_ARRIVAL_ALL_INFO({commit, getters},payload) {
+          return await axios({
+              method: "GET",
+              url: '/api/v1/branches/medicines/arrival/' + payload.arrival_id + '/info/',
+              headers: {Authorization: getters.getUser.token}
+            })
+            .then((e) => {
+              commit('SET_ARRIVAL_ALL_INFO', e.data);
+               return e.data;
+            })
+            .catch((error) => {
+              console.log(error);
+            //   return error;
+            })
+        },
+
         async ADD_MEDICINES({commit, getters}, payload) {
           return await axios({
               method: "POST",
@@ -545,5 +571,6 @@ export default{
         getBranchMedicineInfo: state => state.branch_medicine_info,
         getShoppingCartMedicines: state => state.shopping_cart,
         getArrivalAll: state => state.arrival_all,
+        getArrivalAllInfo: state => state.arrival_all_info,
     }
 }
