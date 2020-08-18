@@ -2,7 +2,7 @@ import Vue from 'vue';
 import axios from 'axios';
 import lodash from 'lodash'; 
 
-const baseUrl = 'http://dev.epos.uz/v1/business/';
+const baseUrl = '/api/v1/business/';
 export default{
     state:{
         branches: [],
@@ -126,23 +126,24 @@ export default{
         },
         SET_SEARCH_RESULT_ALL_MEDICINES: (state, payload) =>{
           // let same = false;
-          let results = payload.data
+          let results = payload.results
           console.log(results);
 
           if(results.length != 0){
+            console.log(state.medicines.results);  
             state.medicines.results.forEach((row, index) => {
               // console.log(row);
               
               for(let a = 0; a < results.length; a++){
                 if(lodash.isEqual(row, results[a])){
                   // same = true;
+                  console.log('it is equal!');
                   results.splice(a, 1);
                 }
               }
               
             
             })
-            console.log(results);
              if(results){
               for(let i = 0; i < results.length; i++){
                 Vue.set(state.medicines.results, state.medicines.results.length, results[i]);
@@ -233,7 +234,7 @@ export default{
         async GET_MEDICINES_BY_BRANCH({commit, getters}, payload) {
           return await axios({
               method: "GET",
-              url: 'http://dev.epos.uz/v1/branch/' + payload.virtual_number + '/medicines/',
+              url: '/api/v1/branch/' + payload.virtual_number + '/medicines/',
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
@@ -248,7 +249,7 @@ export default{
         async GET_SEARCH_RESULT_BY_BRANCH({commit, getters},payload) {
           return await axios({
               method: "GET",
-              url: 'http://dev.epos.uz/v1/branches/' + payload.virtual_number + '/medicines/?search=' + payload.title,
+              url: '/api/v1/branches/' + payload.virtual_number + '/medicines/?search=' + payload.title,
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
@@ -308,7 +309,7 @@ export default{
         async GET_BRANCH_MEDICINE_DETAIL({commit, getters}, payload) {
           return await axios({
               method: "GET",
-              url: 'http://dev.epos.uz/v1/branch/' + payload.branch_id + '/business_medicine/' + payload.business_medicine_id + '/branch_medicine_detail/',
+              url: '/api/v1/branch/' + payload.branch_id + '/business_medicine/' + payload.business_medicine_id + '/branch_medicine_detail/',
               // url: baseUrl + getters.getUser.business_id + '/medicine/' + payload.id + '/branches/',  // payload.business_medicine_id   
               headers: {Authorization: getters.getUser.token}
             })
@@ -324,7 +325,7 @@ export default{
         async GET_BRANCH_MEDICINE_INFO({commit, getters}, payload) {
           return await axios({
               method: "GET",
-              url: 'http://dev.epos.uz/v1/branch/' + payload.branch_id + '/business_medicine/' + payload.business_medicine_id + '/branch_medicine_info/',
+              url: '/api/v1/branch/' + payload.branch_id + '/business_medicine/' + payload.business_medicine_id + '/branch_medicine_info/',
               // url: baseUrl + getters.getUser.business_id + '/medicine/' + payload.id + '/branches/',  // payload.business_medicine_id   
               headers: {Authorization: getters.getUser.token}
             })
@@ -340,16 +341,16 @@ export default{
         // http://127.0.0.1:8000/v1/branch/2333/business_medicine/1/branch_medicine_info/
     
         async GET_SEARCH_RESULT_ADD_MEDICINE({commit, getters},payload) {
-           await axios({
+           return await axios({
               method: "GET",
               // url: baseUrl + getters.getUser.business_id + '/medicines/?search=' + payload.title,
-              url: 'http://dev.epos.uz/v1/medicine/list?' + payload.type + '=' + payload.value,
+              url: '/api/v1/medicine/list?' + payload.type + '=' + payload.value,
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
-              commit('SET_SEARCH_RESULT_ADD_MEDICINE', e.data);
               console.log(e);
-               //return e;
+              commit('SET_SEARCH_RESULT_ADD_MEDICINE', e.data);
+               return e;
             })
             .catch((error) => {
               console.log(error);
@@ -357,16 +358,16 @@ export default{
             })
         },
         async GET_SEARCH_RESULT_ALL_MEDICINES({commit, getters},payload) {
-          await axios({
+          return await axios({
              method: "GET",
-             url: baseUrl + getters.getUser.business_id + '/medicines/?search=' + payload.title,
+             url: baseUrl + 'medicines/?search=' + payload.value,
              //url: 'http://dev.epos.uz/v1/medicine/list?' + payload.type + '=' + payload.value,
              headers: {Authorization: getters.getUser.token}
            })
            .then((e) => {
-             commit('SET_SEARCH_RESULT_ALL_MEDICINES', e.data);
              console.log(e);
-              //return e;
+             commit('SET_SEARCH_RESULT_ALL_MEDICINES', e.data);
+             return e.data;
            })
            .catch((error) => {
              console.log(error);
@@ -496,7 +497,7 @@ export default{
         async ADD_ARRIVAL_ALL({commit, getters}, payload) {
           await axios({
              method: "POST",
-             url: 'http://dev.epos.uz/v1/branches/arrival/add/',
+             url: '/api/v1/branches/arrival/add/',
              headers: {Authorization: getters.getUser.token},
              data:{
               send: 'True'
@@ -514,7 +515,7 @@ export default{
        async DELETE_ARRIVAL_ONE({commit, getters}, payload) {
         await axios({
            method: "POST",
-           url: 'http://dev.epos.uz/v1/business/cart/delete ',
+           url: '/api/v1/business/cart/delete ',
            headers: {Authorization: getters.getUser.token},
            data:{
               cart_id: payload.cart_id

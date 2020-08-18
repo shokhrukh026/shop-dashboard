@@ -122,6 +122,7 @@
                 />
             </template>
             </q-table>
+            {{filter}}
         </div>
 
 
@@ -291,7 +292,7 @@ export default {
     },
     methods: {
       ...mapActions([
-        'GET_MEDICINES', 'GET_SEARCH_RESULT', 'GET_NEXT_PAGE'
+        'GET_MEDICINES', 'GET_NEXT_PAGE', 'GET_SEARCH_RESULT_ALL_MEDICINES'
       ]),
       // async getTotalAndLeftQuantities(){
       //   for(let k = 0; k < this.getMedicines.results.length; k++){
@@ -310,12 +311,12 @@ export default {
       //   );
       // }, 5000),
       async getSearchResultByFilter(){
-         await this.GET_SEARCH_RESULT(
+         let a = await this.GET_SEARCH_RESULT_ALL_MEDICINES(
           {
-            type: this.scan ? 'barcode' : 'title',
-            value: this.filter
+            value: this.filter,
           }
         )
+        console.log(a);
       },
       // async filterFunc(){
       //    if(this.filter.length >= 1){     

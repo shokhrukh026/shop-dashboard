@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const baseUrl = 'http://dev.epos.uz/v1/user/login/';
+const baseUrl = '/api/v1/user/login/';
 export default{
     state:{
         user: {token: ''}

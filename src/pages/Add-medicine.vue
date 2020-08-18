@@ -53,6 +53,7 @@
                             @click.stop="medicine_add.title = null" />
                         </template>
                       </q-select>
+                      {{response}}
                        <!-- <q-input color="blue" outlined dense v-model="medicine_add.title" label="Название" /> -->
                        <!-- <q-list bordered separator >
                         <q-item clickable v-ripple>
@@ -414,7 +415,7 @@ export default {
     },
     methods:{
       ...mapActions([
-        'ADD_MEDICINES', 'ADD_MEDICINE_INFO', 'GET_SEARCH_RESULT'
+        'ADD_MEDICINES', 'GET_SEARCH_RESULT_ADD_MEDICINE'
       ]),
 
       // addInfoForMedicine(){
@@ -425,7 +426,8 @@ export default {
           await update(async () => {
           // const needle = val.toLowerCase()
           const needle = val;
-          this.response = await this.GET_SEARCH_RESULT({value: needle, type: 'title'});
+          this.response = await this.GET_SEARCH_RESULT_ADD_MEDICINE({value: needle, type: 'title'});
+          console.log(this.response);
           this.title_options = [];
           for(let i = 0; i < this.response.data.data.length; i++){
             this.title_options.push(await this.response.data.data[i].title);
