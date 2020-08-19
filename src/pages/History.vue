@@ -27,12 +27,12 @@
                 <!-- <q-btn color="green" :disable="loading" label="Добавить" @click="addRow = !addRow" /> -->
                 <!-- <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" /> -->
                 <q-space />
-                <q-input borderless dense debounce="300" color="primary" v-model="filter"
+                <!-- <q-input borderless dense debounce="300" color="primary" v-model="filter"
                   placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; border-radius: 5px;">
                   <template v-slot:append>
                       <q-icon name="search" />
                   </template>
-                </q-input>
+                </q-input> -->
                <!-- <form @submit.prevent.stop="getSearchResultByFilter"  class="row">
                   <q-input square borderless dense debounce="500" color="primary" v-model="filter"  
                   placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; min-width: 20vw;">
@@ -51,6 +51,24 @@
             </q-table>
         </div>
         {{data}}
+
+         <q-dialog v-model="deleteRowVar">
+             <q-card style="width: 300px">
+               <q-card-section class="bg-warning">
+                 <div class="text-h6 text-white">Удаление</div>
+               </q-card-section>
+               <q-separator />
+               <q-card-section class="q-pt-none q-pa-lg">
+                 Вы всерьёз хотите удалить строку?
+               </q-card-section>
+               <q-separator />
+               <q-card-actions align="right" class="bg-white text-teal">
+                 <q-btn flat label="Нет" v-close-popup />
+                 <q-btn flat label="Да" v-close-popup @click="deleteArrival" />
+               </q-card-actions>
+             </q-card>
+           </q-dialog>
+
     </q-page>
 </template>
 
@@ -73,9 +91,11 @@ export default {
         status: '',
       },
       loading: false,
+      rowDelete: {},
+      deleteRowVar: false,
       filter: '',
       columns: [
-        { name: 'index', align: 'center', label: 'No#', field: 'index', sortable: true},
+        { name: 'index', align: 'center', label: '№', field: 'index', sortable: true},
         { name: 'id', align: 'center', label: 'Идентификатор', field: 'id', sortable: true },
         { name: 'branch_name', align: 'center', label: 'Филиал', field: 'branch_name', sortable: true },
         { name: 'is_received', align: 'center', label: 'Получено', field: 'is_received', sortable: true },
@@ -106,8 +126,18 @@ export default {
     },
     methods: {
       ...mapActions([
-          'GET_ARRIVAL_ALL'
+          'GET_ARRIVAL_ALL', 'DELETE_ARRIVAL_FROM_HISTORY'
       ]),
+      deleteRow(props){
+        console.log(props.row);
+        this.rowDelete = props.row
+        this.deleteRowVar = !this.deleteRowVar
+      },
+      async deleteArrival(){
+        await this.DELETE_ARRIVAL_FROM_HISTORY({arrival_id: this.rowDelete.id});
+        this.data = [];
+        this.data = await this.GET_ARRIVAL_ALL();
+      }
       // async getSearchResultByFilter(){
       //   return await this.GET_SEARCH_RESULT_BY_BRANCH(
       //     {

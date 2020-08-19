@@ -141,18 +141,17 @@ export default{
           }
         },
         SET_SEARCH_RESULT_ALL_MEDICINES: (state, payload) =>{
-          // let same = false;
+          state.medicines.results.forEach((row, index) => {
+            delete row.index;
+          })
+
           let results = payload.results
-          console.log(results);
 
           if(results.length != 0){
-            console.log(state.medicines.results);  
             state.medicines.results.forEach((row, index) => {
-              // console.log(row);
               
               for(let a = 0; a < results.length; a++){
                 if(lodash.isEqual(row, results[a])){
-                  // same = true;
                   console.log('it is equal!');
                   results.splice(a, 1);
                 }
@@ -168,6 +167,10 @@ export default{
           }else{
             console.log('Array is empty!')
           }
+
+          state.medicines.results.forEach((row, index) => {
+            row.index = index + 1
+          })
         },
         SET_SEARCH_RESULT_BY_BRANCH: (state, payload) =>{
           let same = false;
@@ -381,7 +384,7 @@ export default{
              headers: {Authorization: getters.getUser.token}
            })
            .then((e) => {
-             console.log(e);
+             //console.log(e.data);
              commit('SET_SEARCH_RESULT_ALL_MEDICINES', e.data);
              return e.data;
            })
@@ -402,6 +405,7 @@ export default{
                //return e;
             })
             .catch((error) => {
+              console.log(getters.getMedicines.links.next);
               console.log(error);
               //   return error;
             })
@@ -561,7 +565,25 @@ export default{
            console.log(error);
          //   return error;
          })
-     },
+      },
+      async DELETE_ARRIVAL_FROM_HISTORY({commit, getters}, payload) {
+        await axios({
+           method: "POST",
+           url: '/api/v1/business/delete/arrival/',
+           headers: {Authorization: getters.getUser.token},
+           data:{
+            arrival_id: payload.arrival_id
+           }
+         })
+         .then((e) => {
+           console.log('Successfully deleted!')
+         //   return e;
+         })
+         .catch((error) => {
+           console.log(error);
+         //   return error;
+         })
+      },
         
 
         
