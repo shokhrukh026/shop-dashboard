@@ -35,12 +35,13 @@
                         hide-selected
                         fill-input
                         
-                        input-debounce="100"
+                        input-debounce="500"
                         :options="title_options"
                         @new-value="createTitleValue"
                         @filter="filterTitle"
                         color="blue"
                       >
+                        <!-- @popup-show="popupShow(event)" -->
                         <template v-slot:no-option>
                           <q-item>
                             <q-item-section class="text-grey">
@@ -53,7 +54,7 @@
                             @click.stop="medicine_add.title = null" />
                         </template>
                       </q-select>
-                      {{response}}
+                      
                        <!-- <q-input color="blue" outlined dense v-model="medicine_add.title" label="Название" /> -->
                        <!-- <q-list bordered separator >
                         <q-item clickable v-ripple>
@@ -87,10 +88,10 @@
                         fill-input
                         input-debounce="1000"
                         :options="barcode_options"
-                        @keypress="isKeyPressed(event)"
                         @new-value="createBarcodeValue"
                         @filter="filterBarcode"
                         color="blue"
+                        @add="AddedToBarcode(details)"
                       >
                        
                         <!-- @click.enter="filterBarcode" -->
@@ -182,7 +183,8 @@
            </div>
 
 
-
+{{title_options}}
+{{response}}
 
           <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
              <q-card class="card-bg text-black">
@@ -264,7 +266,8 @@
            </div>
 
           <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 row justify-end q-mt-sm">
-              <q-btn class="text-capitalize bg-blue text-white" @click="addMedicine" size="md">Добавить</q-btn>
+              <q-btn class="text-capitalize bg-blue text-white" @click="addMedicine" size="md" 
+              :disable="medicine_add.quantity == '' && medicine_add.piece ==''">Добавить</q-btn>
           </div>
 
            <!-- <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
@@ -341,9 +344,8 @@
                 </q-list>
               </div>
             </div> -->
-{{title_options}}
-{{medicine_add}}
 
+{{medicine_add}}
 
         </div>
     </q-page>
@@ -358,7 +360,7 @@ export default {
       return {
           title_options: [],
           barcode_options: [],
-          response: {data: {data: {}}},
+          response: [],
           medicine_add: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', capacity: '', quantity: '',
            piece: '', vat: '', description: '', purchase_price: '', selling_price: '', expire_date: ''},
           // medicine_info_add: [{ quantity: '', purchase_price: '', selling_price: '', expire_date: ''}],
@@ -381,13 +383,13 @@ export default {
       // },
       'medicine_add.capacity': function (newVal, oldVal) {
         if (newVal <= 1) {
-          this.medicine_add.piece = 0
+          this.medicine_add.piece = ''
         }
       },
       'medicine_add.title': function (newVal, oldVal) {
         if (newVal != '') {
-          this.medicine_add = {title: this.medicine_add.title, barcode: this.response.data.data[0].barcode, country: this.response.data.data[0].country, 
-            manufacture: this.response.data.data[0].manufacture, serial_code: this.response.data.data[0].serial_code, capacity: this.response.data.data[0].capacity};
+          this.medicine_add = {title: this.medicine_add.title, barcode: this.response[0].barcode, country: this.response[0].country, 
+            manufacture: this.response[0].manufacture, serial_code: this.response[0].serial_code, capacity: this.response[0].capacity};
           // this.$set(this.medicine_add, 0, this.response.data.data[0]);
 
           //  for(let u=0; u < this.response.data.data.length; u  ++){
@@ -427,11 +429,11 @@ export default {
           // const needle = val.toLowerCase()
           const needle = val;
           this.response = await this.GET_SEARCH_RESULT_ADD_MEDICINE({value: needle, type: 'title'});
-          console.log(this.response);
-          this.title_options = [];
-          for(let i = 0; i < this.response.data.data.length; i++){
-            this.title_options.push(await this.response.data.data[i].title);
+          for(let i = 0; i < this.response.length; i++){
+            await this.$set(this.title_options, i, this.response[i].title);
+            //this.title_options.push(await this.response[i].title);
           }
+          setTimeout(()=>{console.log('Hello!')}, 2000);
           // this.options = stringOptions.filter(v => v.toLowerCase().indexOf(needle) > -1)
           })
         }
@@ -462,6 +464,14 @@ export default {
       //   )
       // },
       async addMedicine(){
+        if(!('piece' in this.medicine_add)){
+          this.medicine_add.piece = '';
+        }
+        if(this.medicine_add.piece == ''){
+          this.medicine_add.piece = 0;
+        }else if(this.medicine_add.quantity == ''){
+          this.medicine_add.quantity = 0;
+        }
         let answer = await this.ADD_MEDICINES(
           {
             title: this.medicine_add.title,
@@ -482,6 +492,12 @@ export default {
         if(answer){
           this.$router.push('/medicines');
         }
+      },
+      // popupShow(e){
+      //   setTimeout(function(){console.log(e)}, 3000)
+      // },
+      AddedToBarcode(e){
+        console.log(e);
       },
       createTitleValue (val, done) {
         if (val.length > 0) {

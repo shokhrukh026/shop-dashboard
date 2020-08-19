@@ -108,10 +108,15 @@ export default{
         },
         SET_SEARCH_RESULT_ADD_MEDICINE: (state, payload) =>{
           // let same = false;
-          let results = payload.data
-          console.log(results);
+          
+          let results = payload
 
           if(results.length != 0){
+            console.log(state.medicines);
+            // if(state.medicines == []){
+            //   state.medicines = 
+            // }
+
             state.medicines.results.forEach((row, index) => {
               // console.log(row);
               
@@ -119,12 +124,13 @@ export default{
                 if(lodash.isEqual(row, results[a])){
                   // same = true;
                   results.splice(a, 1);
+                  console.log(results);
                 }
               }
               
             
             })
-            console.log(results);
+            
              if(results){
               for(let i = 0; i < results.length; i++){
                 Vue.set(state.medicines.results, state.medicines.results.length, results[i]);
@@ -354,13 +360,13 @@ export default{
            return await axios({
               method: "GET",
               // url: baseUrl + getters.getUser.business_id + '/medicines/?search=' + payload.title,
-              url: '/api/v1/medicine/list?' + payload.type + '=' + payload.value,
+              url: '/api/v1/medicine/list/?' + payload.type + '=' + payload.value,
               headers: {Authorization: getters.getUser.token}
             })
             .then((e) => {
-              console.log(e);
-              commit('SET_SEARCH_RESULT_ADD_MEDICINE', e.data);
-               return e;
+              console.log(e.data.data);
+              //commit('SET_SEARCH_RESULT_ADD_MEDICINE', e.data.data);
+               return e.data.data;
             })
             .catch((error) => {
               console.log(error);
