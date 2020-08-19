@@ -76,7 +76,7 @@
                 >
                 <template v-slot:body-cell-actions="props">
                     <q-td :props="props">
-                        <q-btn dense round flat color="grey" @click="(addRow = !addRow) && (temp = props.row)" icon="add_circle"></q-btn>
+                        <q-btn dense round flat color="grey" @click="(addRow = !addRow) && (temp = props.row)" icon="remove_circle"></q-btn>
                         <q-btn dense round flat color="grey" to="/branch-update" icon="edit"></q-btn>
                         <q-btn dense round flat color="grey" to="/branch-info" icon="fas fa-info-circle"></q-btn>
                     </q-td>
@@ -158,7 +158,7 @@
                </q-card-section>
                <q-separator />
                <q-card-section class="q-pt-none q-pa-lg">
-                <q-select outlined v-model="distribution_branch" :options="distribution_options" label="Филиал" class="q-mb-sm"/>
+                <!-- <q-select outlined v-model="distribution_branch" :options="distribution_options" label="Филиал" class="q-mb-sm"/> -->
                 <q-input outlined v-model="distribution_amount" label="Кол-во" class="q-mb-sm" :suffix="temp_total_quantity" 
                 :rules="[
                   val => val !== null && val !== '' || 'Заполните поле пожалуйста',

@@ -163,7 +163,6 @@
                   @submit="addToCart"
                   @reset="onReset"
                   class="q-pt-md"
-                  ref="myForm"
                 >
                <q-card-section class="q-pt-none">
                  <div class="row">
@@ -171,16 +170,14 @@
                  </div>
                  <div class="row q-mb-xs content-stretch">
                   <q-input outlined v-model="distribution_amount.box" label="Кол-во упаковок" class="col" :suffix="left_quantity_box" 
+                  ref="box"
                   :rules="[
-                    val => val !== null && val !== '' || 'Заполните поле пожалуйста',
-                    val => val > 0 && val <= temp.left_quantity_box || 'В складе имеется ' + temp.left_quantity_box + ' упаковок'
+                    val => val >= 0 && val <= temp.left_quantity_box || 'В складе имеется ' + temp.left_quantity_box + ' упаковок'
                   ]"/>
-
-
                   <q-input outlined v-model="distribution_amount.piece" label="Кол-во штук" class="q-pl-xs col" :suffix="left_quantity_piece" 
-                  v-if="temp.capacity > 1"
+                  ref="piece"
+                  v-if="temp.capacity > 1" 
                   :rules="[
-                    val => val !== null && val !== '' || 'Заполните поле пожалуйста',
                     val => val >= 0 && val <= temp.left_quantity_piece || 'В складе имеется ' + temp.left_quantity_piece + ' штук'
                   ]"/>
                  </div>
@@ -189,7 +186,7 @@
                
                <q-card-actions align="right" class="bg-white text-white">
                    <q-btn class="bg-info" label="Отменить" type="reset" v-close-popup />
-                   <q-btn class="bg-info" label="Добавить" v-close-popup type="submit" />
+                   <q-btn class="bg-info" label="Добавить" v-close-popup type="submit"/>
                </q-card-actions>
               
             </q-form>
@@ -221,6 +218,7 @@ export default {
             distribution_amount: {box: '', piece: ''},
             distribution_branch: '',  
             distribution_options: [],
+            formHasError: false,
 
           // this should be commented
             getMedicines: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', vat: '', total_quantity: '', left_quantity: ''},
@@ -376,54 +374,45 @@ export default {
           'GET_MEDICINE_DETAIL', 'GET_MEDICINE_INFO', 'GET_BRANCHES', 'GET_BRANCHES_IN_MED_INFO_PAGE', 'ADD_TO_CART'
       ]),
       async addToCart(){
-        // let data = { id: this.id, branch: this.distribution_branch, amount: this.distribution_amount }
-        await this.$emit('medicines', true);
-        // let cart_amount = sessionStorage.getItem('cart');
-        // if(cart_amount !== null){
-        //    sessionStorage.setItem('cart', Number(cart_amount) + 1);
-        // }else{
-        //    sessionStorage.setItem('cart', 1);
-        // }
+        this.$refs.box.validate()
+        this.$refs.piece.validate()
 
-
-        const branch_id = this.getBranches.filter(el => el.name == this.distribution_branch);
-        console.log(branch_id);
-
-        if(!this.$refs.myForm.validate()){
-          console.log('Error!!!');
+        if (this.$refs.box.hasError || this.$refs.piece.hasError) {
+          this.formHasError = true
+          this.$q.notify({
+            color: 'negative',
+            message: 'Error!'
+          })
+          console.log('ERROR!');
         }
-        // this.$refs.myForm.validate().then((success) => {
-        //   console.log(success);
-        //   if (success) {
-        //     console.log('Success');
-
-            // yay, models are correct
-            await this.ADD_TO_CART({
-              business_medicine_info_id: this.temp.business_medicine_info_id,
-              quantity_box: this.distribution_amount.box,
-              quantity_piece: this.distribution_amount.piece,
-              branch_id: branch_id[0].id,
-            })
-        //   }
-        //   else {
-        //     // oh no, user has filled in
-        //     // at least one invalid value
-        //     console.log('ERROR!');
-        //     this.$q.notify({
-        //       color: 'red-5',
-        //       textColor: 'white',
-        //       icon: 'warning',
-        //       message: 'Ошибка!'
-        //     })
-        //   }
-        // })
-
-        this.onReset();
+        else {
+          this.$q.notify({
+            icon: 'done',
+            color: 'positive',
+            message: 'Submitted'
+          })
         
+          await this.$emit('medicines', true);
+      
+          const branch_id = this.getBranches.filter(el => el.name == this.distribution_branch);
+          console.log(branch_id);
+
+          await this.ADD_TO_CART({
+            business_medicine_info_id: this.temp.business_medicine_info_id,
+            quantity_box: this.distribution_amount.box,
+            quantity_piece: this.distribution_amount.piece,
+            branch_id: branch_id[0].id,
+          });
+          
+          this.onReset();
+        }
       },
       onReset () {
         this.distribution_branch = '';
         this.distribution_amount = {box: '', piece: ''};
+
+        this.$refs.box.resetValidation()
+        this.$refs.piece.resetValidation()
       }
       // async getSearchResultByFilter(){
       //   return await this.GET_SEARCH_RESULT(

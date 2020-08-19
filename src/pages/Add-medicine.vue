@@ -91,6 +91,7 @@
                         @new-value="createBarcodeValue"
                         @filter="filterBarcode"
                         color="blue"
+                        :showPopup="showPopup(event)"
                         @add="AddedToBarcode(details)"
                       >
                        
@@ -183,8 +184,7 @@
            </div>
 
 
-{{title_options}}
-{{response}}
+{{medicine_add}}
 
           <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
              <q-card class="card-bg text-black">
@@ -345,7 +345,6 @@
               </div>
             </div> -->
 
-{{medicine_add}}
 
         </div>
     </q-page>
@@ -496,7 +495,11 @@ export default {
       // popupShow(e){
       //   setTimeout(function(){console.log(e)}, 3000)
       // },
-      AddedToBarcode(e){
+
+      // AddedToBarcode(e){
+      //   console.log(e);
+      // },
+      showPopup(e){
         console.log(e);
       },
       createTitleValue (val, done) {
