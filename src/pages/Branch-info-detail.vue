@@ -152,16 +152,19 @@
 
 
         <q-dialog v-model="addRow" persistent >
-             <q-card style="width: 300px">
+             <q-card>
                <q-card-section class="bg-info">
-                 <div class="text-h6 text-white">Распределение</div>
+                 <div class="text-h6 text-white">Возврат</div>
                </q-card-section>
                <q-separator />
-               <q-card-section class="q-pt-none q-pa-lg">
+               <q-card-section class="q-pt-none q-pa-lg row">
                 <!-- <q-select outlined v-model="distribution_branch" :options="distribution_options" label="Филиал" class="q-mb-sm"/> -->
-                <q-input outlined v-model="distribution_amount" label="Кол-во" class="q-mb-sm" :suffix="temp_total_quantity" 
+                <q-input outlined v-model="distribution_amount" label="Кол-во упаковок" class="q-mr-xs" :suffix="temp_total_quantity" 
                 :rules="[
-                  val => val !== null && val !== '' || 'Заполните поле пожалуйста',
+                  val => val > 0 && val <= temp.total_qauntity || 'В складе имеется ' + temp.total_qauntity + ' товара'
+                ]"/>
+                <q-input outlined v-model="distribution_amount" label="Кол-во штук" class="" :suffix="temp_total_quantity" 
+                :rules="[
                   val => val > 0 && val <= temp.total_qauntity || 'В складе имеется ' + temp.total_qauntity + ' товара'
                 ]"/>
                 
@@ -169,7 +172,7 @@
                <q-separator />
                <q-card-actions align="right" class="bg-white text-teal">
                  <q-btn flat label="Отменить" v-close-popup />
-                 <q-btn flat label="Распределить" v-close-popup  @click="addToCart"/>
+                 <q-btn flat label="Добавить" @click="addToCart"/>
                </q-card-actions>
              </q-card>
            </q-dialog>

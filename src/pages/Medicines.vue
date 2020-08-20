@@ -3,7 +3,7 @@
         <div class="q-pa-md">
             <div class="row q-mb-xs">
               <q-btn push color="white" text-color="primary" label="Добавить" 
-              class="q-mb-xs" :disable="loading" to="/add-medicine"/>
+              class="q-mb-xs" :disable="loading" @click="addMedicinePopUp = !addMedicinePopUp"/>
               <q-space/>
               <!-- <q-input   borderless dense debounce="1000" color="primary" v-model="filter" @keyup="filterFunc" class="bg-white"
               placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; border-radius: 5px;"> -->
@@ -143,6 +143,52 @@
              </q-card>
            </q-dialog>
 
+           <q-dialog v-model="addMedicinePopUp">
+             <q-card style="width: 300px">
+               <q-card-section class="bg-info">
+                 <div class="text-h6 text-white">Искать лекарство</div>
+               </q-card-section>
+               <q-separator />
+               <q-card-section class="q-pt-none q-pa-lg">
+                  <q-select
+                    label="Название"
+                    outlined
+                    dense
+                    v-model="medicine_add.title"
+                    use-input
+                    
+                    hide-selected
+                    fill-input
+                    
+                    input-debounce="500"
+                    :options="title_options"
+                    @filter="filterTitle"
+                    color="blue"
+                  >
+                    <!-- @new-value="createTitleValue" -->
+                    <!-- @popup-show="popupShow(event)" -->
+                    <template v-slot:no-option>
+                      <q-item>
+                        <q-item-section class="text-grey">
+                          Нет результатов
+                        </q-item-section>
+                      </q-item>
+                    </template>
+                    <template v-slot:append>
+                      <q-icon v-if="medicine_add.title !== null" class="cursor-pointer" name="clear"
+                        @click.stop="medicine_add.title = null" />
+                    </template>
+                  </q-select>
+                      
+               </q-card-section>
+               <q-separator />
+               <q-card-actions align="right" class="bg-white text-teal">
+                 <q-btn flat label="Нет" v-close-popup />
+                 <q-btn flat label="Да" v-close-popup  />
+               </q-card-actions>
+             </q-card>
+           </q-dialog>
+
 
         
            {{getMedicines}}
@@ -159,6 +205,15 @@ export default {
       return {
       answer: {data: {data: []}},
       scan: false,
+
+
+      title: '',
+      title_options: [],
+      response: [],
+      medicine_add: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', capacity: '', quantity: '',
+           piece: '', vat: '', description: '', purchase_price: '', selling_price: '', expire_date: ''},
+
+
       pagination: {
         rowsPerPage: 8,
         page: 1,
@@ -172,6 +227,7 @@ export default {
         left_quantity: '',
         vat: '',
       },
+      addMedicinePopUp: false,
       editRowVar: false,
       deleteRowVar: false,
       rowDelete: {},
@@ -184,16 +240,6 @@ export default {
         { name: 'country', align: 'center', label: 'Страна', field: 'country', sortable: true },
         { name: 'manufacture', align: 'center', label: 'Производитель', field: 'manufacture', sortable: true },
         { name: 'serial_code', align: 'center', label: 'Серийный номер', field: 'serial_code', sortable: true },
-        // { name: 'capacity', align: 'center', label: 'Вместимость', field: 'capacity', sortable: true },
-        // {
-        //   name: 'name',
-        //   required: true,
-        //   label: 'Покупатель',
-        //   align: 'left',
-        //   field: row => row.name,
-        //   format: val => ${val},
-        //   sortable: true
-        // },
         { name: 'total_quantity', align: 'center', label: 'Кол-во', field: 'total_quantity', sortable: true },
         { name: 'left_quantity', align: 'center', label: 'Остаток', field: 'left_quantity', sortable: true },
         { name: 'vat', align: 'center', label: 'НДС', field: 'vat', sortable: true },
@@ -204,8 +250,6 @@ export default {
       data: [
           // {index: 1, products: 'Тримол', barcode: '2313141', total_quantity: '100', left_quantity: '50', vat: '10%'},
           // {index: 2, products: 'Ношпа', barcode: '2313141', total_quantity: '56', left_quantity: '40', vat: '12%'},
-          // {index: 3, products: 'Ибуклин', barcode: '2313141', total_quantity: '80', left_quantity: '10', vat: '5%'},
-          // {index: 4, products: 'Арбидол', barcode: '2313141', total_quantity: '14', left_quantity: '0', vat: '7%'},
       ],
       data2: [],
       }
@@ -217,43 +261,7 @@ export default {
            
          }
         },
-        // filter: {
-        //   handler(search) {
-        //     this.setIconsDebounced(search);
-        //   },
-        //   immediate: true
-        // },
-        
-        data: {
-          handler: async function (val, oldVal) {
-            // this.data.forEach((row, index) => {
-            //   row.index = index + 1
-            // })
-            
-            // let amount = [], left = [];
-            // for(let k = 0; k < this.getMedicines.results.length; k++){
-            //   let capacity = await this.getMedicines.results[k].capacity;
-            //   let total_quantity_box = await this.getMedicines.results[k].total_quantity_box;
-            //   let total_quantity_piece = await this.getMedicines.results[k].total_quantity_piece;
-            //   let left_quantity_box = await this.getMedicines.results[k].left_quantity_box;
-            //   let left_quantity_piece = await this.getMedicines.results[k].left_quantity_piece;
-            //   left.push(left_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + left_quantity_piece + ' шт');
-            //   amount.push(total_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + total_quantity_piece + ' шт');
-            // }
-           
-            // this.data.forEach((row, index) => {
-            //   this.$set(this.data[index], 'total_quantity_med', amount[index]);
-            //   // row.total_quantity_med = amount[index]
-            // })
-            // this.data.forEach((row, index) => {
-            //   this.$set(this.data[index], 'left_quantity_med', left[index]);
-            //   // row.left_quantity_med = left[index]
-            // })
-            
-
-          },
-          deep: true
-        },
+       
         filter: async function(newVal, oldVal) {
           if(this.scan == false){
             if(newVal.length >= 2){          
@@ -271,15 +279,6 @@ export default {
       this.data = await this.getMedicines.results;
 
 
-      // await this.$store.commit('MEDICINE_COMMIT', {name: 'total_quantity_med', amount: this.amount});
-      // await this.$store.commit('MEDICINE_COMMIT', {name: 'left_quantity_med', amount: this.left});
-
-     
-      
-      
-      // this.data.forEach((row, index) => {
-      //   row.index = index
-      // })
     },
     computed:{
       ...mapGetters([
@@ -292,24 +291,9 @@ export default {
     },
     methods: {
       ...mapActions([
-        'GET_MEDICINES', 'GET_NEXT_PAGE', 'GET_SEARCH_RESULT_ALL_MEDICINES'
+        'GET_MEDICINES', 'GET_NEXT_PAGE', 'GET_SEARCH_RESULT_ALL_MEDICINES', 'GET_SEARCH_RESULT_ADD_MEDICINE'
       ]),
-      // async getTotalAndLeftQuantities(){
-      //   for(let k = 0; k < this.getMedicines.results.length; k++){
-      //     let capacity = await this.getMedicines.results[k].capacity;
-      //     let total_quantity_box = await this.getMedicines.results[k].total_quantity_box;
-      //     let total_quantity_piece = await this.getMedicines.results[k].total_quantity_piece;
-      //     let left_quantity_box = await this.getMedicines.results[k].left_quantity_box;
-      //     let left_quantity_piece = await this.getMedicines.results[k].left_quantity_piece;
-      //     this.left.push(left_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + left_quantity_piece + ' шт');
-      //     this.amount.push(total_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + total_quantity_piece + ' шт');
-      //   }
-      // },
-      // setIconsDebounced: debounce(function(search) {
-      //   this.filteredIcons = this.icons.filter(icon =>
-      //     icon.name.toLowerCase().includes(search.toLowerCase())
-      //   );
-      // }, 5000),
+  
       async getSearchResultByFilter(){
          let a = await this.GET_SEARCH_RESULT_ALL_MEDICINES(
           {
@@ -318,18 +302,7 @@ export default {
         )
         console.log(a);
       },
-      // async filterFunc(){
-      //    if(this.filter.length >= 1){     
-      //       this.data = await []
-      //       this.answer = await this.getSearchResultByFilter();
-      //       this.data.push(await this.answer.data.data[0])
-      //     } 
-      //    if(this.filter == ''){
-      //       this.data = await []
-      //       this.data = await []
-      //       this.data = await this.getMedicines.results
-      //     }
-      // },
+   
 
 
       deleteRow(props){
@@ -339,6 +312,22 @@ export default {
       editRow(props) {
         this.row = props.row
         this.editRowVar = !this.editRowVar
+      },
+
+
+
+       async filterTitle (val, update, abort) {
+        if(val.length >= 2){
+          await update(async () => {
+          // const needle = val.toLowerCase()
+          const needle = val;
+          this.response = await this.GET_SEARCH_RESULT_ADD_MEDICINE({value: needle, type: 'title'});
+          for(let i = 0; i < this.response.length; i++){
+            await this.$set(this.title_options, i, this.response[i].title);
+            //this.title_options.push(await this.response[i].title);
+          }
+          })
+        }
       },
 
     }

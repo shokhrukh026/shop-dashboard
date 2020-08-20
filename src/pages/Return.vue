@@ -3,7 +3,6 @@
         <div class="q-pa-md">
             <q-table
             dense
-            title="Покупатели"
             :data="data"
             :columns="columns"
             row-key="index"  
@@ -22,7 +21,7 @@
                 </q-td>
             </template>
             <template v-slot:top="props">
-                <span class="text-h6">История приходов</span>
+                <span class="text-h6">История возвратов</span>
                 <!-- <q-btn color="green" :disable="loading" label="Добавить" @click="addRow = !addRow" /> -->
                 <!-- <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" /> -->
                 <q-space />
@@ -75,12 +74,20 @@ export default {
       filter: '',
       columns: [
         { name: 'index', align: 'center', label: 'No#', field: 'index', sortable: true},
-        { name: 'branch_name', align: 'center', label: 'Филиал', field: 'branch_name', sortable: true },
-        { name: 'is_received', align: 'center', label: 'Получено', field: 'is_received', sortable: true },
-        { name: 'added_at', align: 'center', label: 'Добавлено в', field: 'added_at', sortable: true },
-        { name: 'received_at', align: 'center', label: 'Получено в', field: 'received_at', sortable: true },
+        { name: 'title', align: 'center', label: 'Название', field: 'title', sortable: true },
+        { name: 'barcode', align: 'center', label: 'Штрих-код', field: 'barcode', sortable: true },
+        { name: 'country', align: 'center', label: 'Страна', field: 'country', sortable: true },
+        { name: 'manufacture', align: 'center', label: 'Производитель', field: 'manufacture', sortable: true },
+        { name: 'serial_code', align: 'center', label: 'Серийный номер', field: 'serial_code', sortable: true },
+        { name: 'capacity', align: 'center', label: 'Вместимость', field: 'capacity', sortable: true },
+        { name: 'quantity', align: 'center', label: 'Кол-во', field: 'quantity', sortable: true },
+        { name: 'purchase_price', align: 'center', label: 'Цена покупки', field: 'purchase_price', sortable: true },
+        { name: 'selling_price', align: 'center', label: 'Цена продажи', field: 'selling_price', sortable: true },
+        { name: 'expire_date', align: 'center', label: 'Годен до', field: 'expire_date', sortable: true },
+        { name: 'vat', align: 'center', label: 'Ндс', field: 'vat', sortable: true },
+        { name: 'description', align: 'center', label: 'Описание', field: 'description', sortable: true },
 
-       
+
         { name: 'actions', label: 'Действия', field: '', align:'center' },
       ],
       data: [
@@ -93,17 +100,17 @@ export default {
   
     },
     async mounted(){
-      this.data = await this.GET_ARRIVAL_ALL();
+      this.data = await this.GET_REFUNDS_LIST();
       
     },
     computed:{
       ...mapGetters([
-        'getArrivalAll',
+        'getRefunds',
       ])
     },
     methods: {
       ...mapActions([
-          'GET_ARRIVAL_ALL'
+          'GET_REFUNDS_LIST'
       ]),
       // async getSearchResultByFilter(){
       //   return await this.GET_SEARCH_RESULT_BY_BRANCH(

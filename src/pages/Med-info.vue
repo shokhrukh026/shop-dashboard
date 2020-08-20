@@ -172,13 +172,13 @@
                   <q-input outlined v-model="distribution_amount.box" label="Кол-во упаковок" class="col" :suffix="left_quantity_box" 
                   ref="box"
                   :rules="[
-                    val => val >= 0 && val <= temp.left_quantity_box || 'В складе имеется ' + temp.left_quantity_box + ' упаковок'
+                    val => val >= 0 && val <= left_quantity_box || 'В складе имеется ' + left_quantity_box + ' упаковок'
                   ]"/>
                   <q-input outlined v-model="distribution_amount.piece" label="Кол-во штук" class="q-pl-xs col" :suffix="left_quantity_piece" 
                   ref="piece"
                   v-if="temp.capacity > 1" 
                   :rules="[
-                    val => val >= 0 && val <= temp.left_quantity_piece || 'В складе имеется ' + temp.left_quantity_piece + ' штук'
+                    val => val >= 0 && val <= left_quantity_piece || 'В складе имеется ' + left_quantity_piece + ' штук'
                   ]"/>
                  </div>
             </q-card-section>
@@ -186,7 +186,7 @@
                
                <q-card-actions align="right" class="bg-white text-white">
                    <q-btn class="bg-info" label="Отменить" type="reset" v-close-popup />
-                   <q-btn class="bg-info" label="Добавить" v-close-popup type="submit"/>
+                   <q-btn class="bg-info" label="Добавить" type="submit"/>
                </q-card-actions>
               
             </q-form>
@@ -271,11 +271,13 @@ export default {
         }
     },
     watch:{ 
-      // 'distribution_amount': function (newVal, oldVal){
-      //    if(newVal){
-      //      this.temp_total_quantity = this.temp.total_qauntity - newVal;
-      //    }
-      // },
+      'distribution_amount.box': function (newVal, oldVal){
+         if(newVal < this.left_quantity_box){
+           this.left_quantity_piece = this.temp.capacity;
+         }else if (newVal == this.left_quantity_box){
+           this.left_quantity_piece = this.temp.left_quantity_piece;
+         }
+      },
       'temp.left_quantity_box': function (newVal, oldVal){
         this.left_quantity_box = this.temp.left_quantity_box.toString();
       },
@@ -355,6 +357,15 @@ export default {
 
       await this.GET_BRANCHES();
       this.distribution_options = await this.getBranchNames;
+
+      // this.$watch(
+      //   () => {
+      //       return this.$refs.box
+      //   },
+      //   (val) => {
+      //     console.log(val);
+      //   }
+      // )
       
     },
     computed:{
@@ -374,11 +385,15 @@ export default {
           'GET_MEDICINE_DETAIL', 'GET_MEDICINE_INFO', 'GET_BRANCHES', 'GET_BRANCHES_IN_MED_INFO_PAGE', 'ADD_TO_CART'
       ]),
       async addToCart(){
+        this.$refs.box.next()
+        .then(success => {console.log(success)})
+        .catch(err => console.log(err))
         this.$refs.box.validate()
         this.$refs.piece.validate()
+        
 
         if (this.$refs.box.hasError || this.$refs.piece.hasError) {
-          this.formHasError = true
+          this.formHasError = true;
           this.$q.notify({
             color: 'negative',
             message: 'Error!'
@@ -386,12 +401,7 @@ export default {
           console.log('ERROR!');
         }
         else {
-          this.$q.notify({
-            icon: 'done',
-            color: 'positive',
-            message: 'Submitted'
-          })
-        
+          
           await this.$emit('medicines', true);
       
           const branch_id = this.getBranches.filter(el => el.name == this.distribution_branch);
@@ -403,8 +413,14 @@ export default {
             quantity_piece: this.distribution_amount.piece,
             branch_id: branch_id[0].id,
           });
+          this.$q.notify({
+            icon: 'done',
+            color: 'positive',
+            message: 'Submitted'
+          })
           
           this.onReset();
+          this.addRow = false;
         }
       },
       onReset () {

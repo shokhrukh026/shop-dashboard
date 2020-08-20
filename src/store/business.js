@@ -16,6 +16,7 @@ export default{
         shopping_cart: [],
         arrival_all: [],
         arrival_all_info: [],
+        refunds: [],
     },
     mutations:{
         // MEDICINE_COMMIT: (state, payload) => {
@@ -26,6 +27,12 @@ export default{
         //       Vue.set(row, payload.name, payload.amount[index]);
         //     })
         // },
+        SET_REFUNDS_LIST: (state, payload) => {
+          state.refunds = payload
+          state.refunds.forEach((row, index) => {
+            row.index = index + 1
+          })
+        },
         SET_ARRIVAL_ALL: (state, payload) => {
           state.arrival_all = payload
           state.arrival_all.forEach((row, index) => {
@@ -455,7 +462,21 @@ export default{
             //   return error;
             })
         },
-
+        async GET_REFUNDS_LIST({commit, getters},payload) {
+          return await axios({
+              method: "GET",
+              url: baseUrl + 'refunds/list/',
+              headers: {Authorization: getters.getUser.token}
+            })
+            .then((e) => {
+              commit('SET_REFUNDS_LIST', e.data);
+               return e.data;
+            })
+            .catch((error) => {
+              console.log(error);
+            //   return error;
+            })
+        },
         async ADD_MEDICINES({commit, getters}, payload) {
           return await axios({
               method: "POST",
@@ -600,5 +621,6 @@ export default{
         getShoppingCartMedicines: state => state.shopping_cart,
         getArrivalAll: state => state.arrival_all,
         getArrivalAllInfo: state => state.arrival_all_info,
+        getRefunds: state => state.refunds,
     }
 }
