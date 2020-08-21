@@ -477,6 +477,21 @@ export default{
             //   return error;
             })
         },
+        async GET_MONITORING_PERIOD({commit, getters},payload) {
+          return await axios({
+              method: "GET",
+              url: '/api/monitoring/business/period',
+              headers: {Authorization: getters.getUser.token}
+            })
+            .then((e) => {
+              //commit('SET_MONITORING_PERIOD', e.data);
+               return e.data;
+            })
+            .catch((error) => {
+              console.log(error);
+            //   return error;
+            })
+        },
         async ADD_MEDICINES({commit, getters}, payload) {
           return await axios({
               method: "POST",

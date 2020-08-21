@@ -341,7 +341,6 @@
 
         return `"${formatted}"`
     }
-
     export default {
         name: 'PageIndex',
         components: {

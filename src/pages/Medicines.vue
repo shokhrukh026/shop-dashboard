@@ -143,49 +143,135 @@
              </q-card>
            </q-dialog>
 
-           <q-dialog v-model="addMedicinePopUp">
-             <q-card style="width: 300px">
-               <q-card-section class="bg-info">
+           <q-dialog v-model="addMedicinePopUp" full-width full-height>
+             <q-card>
+               <q-card-section class="bg-info row">
                  <div class="text-h6 text-white">Искать лекарство</div>
+                 <q-space></q-space>
+                 <q-btn icon="close" color="white" flat round dense v-close-popup />
                </q-card-section>
                <q-separator />
                <q-card-section class="q-pt-none q-pa-lg">
-                  <q-select
-                    label="Название"
-                    outlined
-                    dense
-                    v-model="medicine_add.title"
-                    use-input
-                    
-                    hide-selected
-                    fill-input
-                    
-                    input-debounce="500"
-                    :options="title_options"
-                    @filter="filterTitle"
-                    color="blue"
-                  >
-                    <!-- @new-value="createTitleValue" -->
-                    <!-- @popup-show="popupShow(event)" -->
-                    <template v-slot:no-option>
-                      <q-item>
-                        <q-item-section class="text-grey">
-                          Нет результатов
-                        </q-item-section>
-                      </q-item>
-                    </template>
-                    <template v-slot:append>
-                      <q-icon v-if="medicine_add.title !== null" class="cursor-pointer" name="clear"
-                        @click.stop="medicine_add.title = null" />
-                    </template>
-                  </q-select>
+                  <div class="row">
+                    <q-select
+                      label="Название"
+                      outlined
+                      dense
+                      v-model="medicine_add.title"
+                      use-input
                       
+                      hide-selected
+                      fill-input
+                      
+                      input-debounce="500"
+                      :options="title_options"
+                      @filter="filterTitle"
+                      color="blue"
+                      class="col"
+                    >
+                      <!-- @new-value="createTitleValue" -->
+                      <!-- @popup-show="popupShow(event)" -->
+                      <template v-slot:no-option>
+                        <q-item>
+                          <q-item-section class="text-grey">
+                            Нет результатов
+                          </q-item-section>
+                        </q-item>
+                      </template>
+                      <template v-slot:append>
+                        <q-icon v-if="medicine_add.title !== null" class="cursor-pointer" name="clear"
+                          @click.stop="medicine_add.title = null" />
+                      </template>
+                    </q-select>
+                    <q-select
+                      label="Штрих-код"
+                      outlined
+                      dense
+                      v-model="medicine_add.barcode"
+                      use-input
+                      hide-selected
+                      fill-input
+                      input-debounce="1000"
+                      :options="barcode_options"
+                      @new-value="createBarcodeValue"
+                      @filter="filterBarcode"
+                      color="blue"
+                      class="q-ml-xs col"
+                    >
+                      
+                      <!-- @click.enter="filterBarcode" -->
+
+                      <template v-slot:no-option>
+                        <q-item>
+                          <q-item-section class="text-grey">
+                            Нет результатов
+                          </q-item-section>
+                        </q-item>
+                      </template>
+                      <template v-slot:append>
+                        <q-icon v-if="medicine_add.barcode !== null" class="cursor-pointer" name="clear"
+                          @click.stop="medicine_add.barcode = null" />
+                      </template>
+                    </q-select>
+                  </div>    
                </q-card-section>
                <q-separator />
-               <q-card-actions align="right" class="bg-white text-teal">
+               <q-card-section>
+                 <q-table
+                 
+                  dense
+                  title=""
+                  :data="data2"
+                  :columns="columns"
+                  row-key="index"  
+                  :filter="filter"
+                  :loading="loading"
+                  separator="cell"
+                  :pagination.sync="pagination"
+                  :rows-per-page-options="[3]"
+                  :pagination-label="(firstRowIndex, endRowIndex, totalRowsNumber) => firstRowIndex + '-' + endRowIndex + ' из ' + rowsNumber"
+                  >
+                   <template v-slot:body-cell-actions="props">
+                        <q-td :props="props">
+                            <q-btn dense round flat color="grey" :to="{ name: 'edit-product', params: {id: props.row.id, row: props.row}}" icon="edit"></q-btn>
+                            <q-btn dense round flat color="grey" :to="{ name: 'med-info', params: {id: props.row.id}}" icon="fas fa-info-circle"></q-btn>
+                            <q-btn dense round flat color="grey" @click="deleteRow(props)" icon="delete"></q-btn>
+                        </q-td>
+                    </template>
+                    <template v-slot:top="props">
+                        <span class="text-subtitle1">Все лекарства</span>
+                        <!-- <q-btn color="green" :disable="loading" label="Добавить" @click="addRow = !addRow" /> -->
+                        <!-- <q-btn class="q-ml-sm" color="primary" :disable="loading" label="Remove row" @click="removeRow" /> -->
+                        <q-space />
+                        <form @submit.prevent.stop="getSearchResultByFilter"  class="row">
+                          <q-input square borderless dense debounce="500" color="primary" v-model="filter"  
+                          placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; min-width: 20vw;">
+                            <!-- <template v-slot:append>
+                                <q-icon name="search" />
+                            </template> -->
+                          </q-input>
+                          <q-btn flat square color="white" :class="scan ? 'bg-green' : 'bg-blue'" style="border-radius: 0px;" type="submit">
+                            <q-icon name="search" />  
+                          </q-btn>
+                        </form>
+                        <q-toggle
+                          v-model="scan"
+                          icon="fas fa-barcode"
+                          color="green"
+                        />
+                        <q-btn
+                        flat round dense
+                        :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+                        @click="props.toggleFullscreen"
+                        class="q-ml-md"
+                        />
+                    </template>
+                    </q-table>
+               </q-card-section>
+               <!-- <q-card-actions align="right" class="bg-white text-teal">
                  <q-btn flat label="Нет" v-close-popup />
                  <q-btn flat label="Да" v-close-popup  />
-               </q-card-actions>
+               </q-card-actions> -->
              </q-card>
            </q-dialog>
 
@@ -215,7 +301,7 @@ export default {
 
 
       pagination: {
-        rowsPerPage: 8,
+        rowsPerPage: 5,
         page: 1,
       },
       rowsNumber: null,

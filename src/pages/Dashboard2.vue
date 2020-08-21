@@ -3,61 +3,24 @@
     <q-card class="bg-transparent no-shadow no-border">
       <q-card-section class="q-pa-none">
         <div class="row q-col-gutter-sm ">
-          <div class="col-md-3 col-sm-12 col-xs-12">
+          <div class="col-md-4 col-sm-12 col-xs-12" v-for="(block, item) in monitoring_blocks" :key="item">
             <q-card>
-              <q-item style="background-color: #546bfa" class="q-pa-none">
+              <q-item class="q-pa-none" :class="block.color">
                 <q-item-section class="q-pa-md q-ml-none  text-white">
-                  <q-item-label class="text-white text-h6 text-weight-bolder">$ 20k</q-item-label>
-                  <q-item-label>Monthly Income</q-item-label>
+                  <q-item-label class="text-white text-h6 text-weight-bolder">{{block.amount}} сум</q-item-label>
+                  <q-item-label>{{block.label}}</q-item-label>
                 </q-item-section>
                 <q-item-section side class="q-mr-md text-white">
-                  <q-icon name="fas fa-dollar-sign" color="white" size="44px"></q-icon>
+                  <q-icon :name="block.icon" color="white" size="44px"></q-icon>
                 </q-item-section>
               </q-item>
             </q-card>
           </div>
-          <div class="col-md-3 col-sm-12 col-xs-12">
-            <q-card>
-              <q-item style="background-color: #3a9688" class="q-pa-none">
-                <q-item-section class=" q-pa-md q-ml-none  text-white">
-                  <q-item-label class="text-white text-h6 text-weight-bolder">20</q-item-label>
-                  <q-item-label>Weekly Sales</q-item-label>
-                </q-item-section>
-                <q-item-section side class="q-mr-md text-white">
-                  <q-icon name="fas fa-chart-bar" color="white" size="44px"></q-icon>
-                </q-item-section>
-              </q-item>
-            </q-card>
-          </div>
-          <div class="col-md-3 col-sm-12 col-xs-12">
-            <q-card>
-              <q-item style="background-color: #7cb342" class="q-pa-none ">
-                <q-item-section class=" q-pa-md q-ml-none  text-white">
-                  <q-item-label class="text-white text-h6 text-weight-bolder">321</q-item-label>
-                  <q-item-label>New Customers</q-item-label>
-                </q-item-section>
-                <q-item-section side class="q-mr-md text-white">
-                  <q-icon name="fas fa-chart-line" color="white" size="44px"></q-icon>
-                </q-item-section>
-              </q-item>
-            </q-card>
-          </div>
-          <div class="col-md-3 col-sm-12 col-xs-12">
-            <q-card>
-              <q-item style="background-color: #f88c2b" class="q-pa-none">
-                <q-item-section class=" q-pa-md q-ml-none  text-white">
-                  <q-item-label class="text-white text-h6 text-weight-bolder">82</q-item-label>
-                  <q-item-label>Active Users</q-item-label>
-                </q-item-section>
-                <q-item-section side class="q-mr-md text-white">
-                  <q-icon name="person" color="white" size="44px"></q-icon>
-                </q-item-section>
-              </q-item>
-            </q-card>
-          </div>
+         
         </div>
       </q-card-section>
     </q-card>
+    {{monitoring_blocks}}
 
     <q-card class="q-mt-sm">
       <q-card-section class="text-h6 q-pb-none">
@@ -230,7 +193,7 @@
       </q-card-section>
     </q-card>
 
-    <div class="row q-col-gutter-sm  q-py-sm">
+    <!-- <div class="row q-col-gutter-sm  q-py-sm">
       <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
         <q-card>
           <q-tabs
@@ -338,10 +301,10 @@
             </q-tab-panel>
           </q-tab-panels>
         </q-card>
-      </div>
+      </div> -->
 
 
-      <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
+      <!-- <div class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
         <q-carousel
           animated
           v-model="slide"
@@ -405,12 +368,13 @@
             </q-scroll-area>
           </q-carousel-slide>
         </q-carousel>
-      </div>
-    </div>
+      </div> -->
+    <!-- </div> -->
   </q-page>
 </template>
 
 <script>
+    import {mapActions, mapGetters} from 'vuex';
     import IEcharts from 'vue-echarts-v3/src/full.js'
 
     export default {
@@ -422,36 +386,41 @@
             return {
                 slide: 1,
                 tab: 'contact',
+                monitoring_blocks: [
+                  { amount: '', icon: 'fas fa-chart-pie', label: 'Ежемесячный доход', color:'bg-blue'},
+                  { amount: '', icon: 'fas fa-chart-bar', label: 'Еженедельный доход', color:'bg-secondary'},
+                  { amount: '', icon: 'fas fa-chart-line', label: 'Ежедневный доход', color:'bg-orange'},
+                ],
                 messages: [
-                    {
-                        id: 5,
-                        name: 'Pratik Patel',
-                        msg: ' -- I\'ll be in your neighborhood doing errands this\n' +
-                            '            weekend. Do you want to grab brunch?',
-                        avatar: 'https://avatars2.githubusercontent.com/u/34883558?s=400&v=4',
-                        time: '10:42 PM'
-                    }, {
-                        id: 1,
-                        name: 'Boy',
-                        msg: ' -- I\'ll be in your neighborhood doing errands this\n' +
-                            '            weekend. Do you want to grab brunch?',
-                        avatar: 'https://cdn.quasar.dev/img/boy-avatar.png',
-                        time: '5:17 AM'
-                    }, {
-                        id: 2,
-                        name: 'Jeff Galbraith',
-                        msg: ' -- I\'ll be in your neighborhood doing errands this\n' +
-                            '            weekend. Do you want to grab brunch?',
-                        avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
-                        time: '5:17 AM'
-                    }, {
-                        id: 3,
-                        name: 'Razvan Stoenescu',
-                        msg: ' -- I\'ll be in your neighborhood doing errands this\n' +
-                            '            weekend. Do you want to grab brunch?',
-                        avatar: 'https://cdn.quasar.dev/team/razvan_stoenescu.jpeg',
-                        time: '5:17 AM'
-                    }
+                    // {
+                    //     id: 5,
+                    //     name: 'Pratik Patel',
+                    //     msg: ' -- I\'ll be in your neighborhood doing errands this\n' + 
+                    //         '            weekend. Do you want to grab brunch?',
+                    //     avatar: 'https://avatars2.githubusercontent.com/u/34883558?s=400&v=4',
+                    //     time: '10:42 PM'
+                    // }, {
+                    //     id: 1,
+                    //     name: 'Boy',
+                    //     msg: ' -- I\'ll be in your neighborhood doing errands this\n' +
+                    //         '            weekend. Do you want to grab brunch?',
+                    //     avatar: 'https://cdn.quasar.dev/img/boy-avatar.png',
+                    //     time: '5:17 AM'
+                    // }, {
+                    //     id: 2,
+                    //     name: 'Jeff Galbraith',
+                    //     msg: ' -- I\'ll be in your neighborhood doing errands this\n' +
+                    //         '            weekend. Do you want to grab brunch?',
+                    //     avatar: 'https://cdn.quasar.dev/team/jeff_galbraith.jpg',
+                    //     time: '5:17 AM'
+                    // }, {
+                    //     id: 3,
+                    //     name: 'Razvan Stoenescu',
+                    //     msg: ' -- I\'ll be in your neighborhood doing errands this\n' +
+                    //         '            weekend. Do you want to grab brunch?',
+                    //     avatar: 'https://cdn.quasar.dev/team/razvan_stoenescu.jpeg',
+                    //     time: '5:17 AM'
+                    // }
                 ],
                 contacts: [
                     {
@@ -552,6 +521,12 @@
                 ],
 
             }
+        },
+        async mounted(){
+          let monitoring = await this.GET_MONITORING_PERIOD();
+          this.monitoring_blocks[0].amount = monitoring.month;
+          this.monitoring_blocks[1].amount = monitoring.week;
+          this.monitoring_blocks[2].amount = monitoring.day;
         },
         computed: {
             getSalesOptions() {
@@ -674,6 +649,9 @@
             },
         },
         methods: {
+            ...mapActions([
+              'GET_MONITORING_PERIOD'
+            ]),
             getColor(val) {
                 if (val > 70 && val <= 100) {
                     return 'green'

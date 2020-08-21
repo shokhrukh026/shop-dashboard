@@ -170,7 +170,7 @@
                  </div>
                  <div class="row q-mb-xs content-stretch">
                   <q-input outlined v-model="distribution_amount.box" label="Кол-во упаковок" class="col" :suffix="left_quantity_box" 
-                  ref="box"
+                  ref="box" 
                   :rules="[
                     val => val >= 0 && val <= left_quantity_box || 'В складе имеется ' + left_quantity_box + ' упаковок'
                   ]"/>
@@ -385,11 +385,14 @@ export default {
           'GET_MEDICINE_DETAIL', 'GET_MEDICINE_INFO', 'GET_BRANCHES', 'GET_BRANCHES_IN_MED_INFO_PAGE', 'ADD_TO_CART'
       ]),
       async addToCart(){
-        this.$refs.box.next()
-        .then(success => {console.log(success)})
-        .catch(err => console.log(err))
+        console.log(this.$refs.box);
+        // this.$refs.box.next()
+        // .then(success => {console.log(success)})
+        // .catch(err => console.log(err))
         this.$refs.box.validate()
         this.$refs.piece.validate()
+        // .then(success => {console.log(success)})
+        // .catch(err => console.log(err))
         
 
         if (this.$refs.box.hasError || this.$refs.piece.hasError) {
