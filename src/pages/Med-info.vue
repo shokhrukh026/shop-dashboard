@@ -166,17 +166,20 @@
                 >
                <q-card-section class="q-pt-none">
                  <div class="row">
-                  <q-select outlined v-model="distribution_branch" :options="distribution_options" label="Филиал" class="q-mb-sm col-12"/>
+                  <q-select outlined v-model="distribution_branch" :options="distribution_options" label="Филиал" class="q-mt-md col-12"
+                  :rules="[
+                    val => val != '' || 'Филиал не выбран'
+                  ]"/>
                  </div>
                  <div class="row q-mb-xs content-stretch">
-                  <q-input outlined v-model="distribution_amount.box" label="Кол-во упаковок" class="col" :suffix="left_quantity_box" 
-                  ref="box" 
+                  <q-input outlined v-model="distribution_amount.box" label="Кол-во упаковок" class="col" :suffix="String(left_quantity_box)" 
+                  ref="box"
                   :rules="[
                     val => val >= 0 && val <= left_quantity_box || 'В складе имеется ' + left_quantity_box + ' упаковок'
                   ]"/>
-                  <q-input outlined v-model="distribution_amount.piece" label="Кол-во штук" class="q-pl-xs col" :suffix="left_quantity_piece" 
-                  ref="piece"
+                  <q-input outlined v-model="distribution_amount.piece" label="Кол-во штук" class="q-pl-md col" :suffix="String(left_quantity_piece)" 
                   v-if="temp.capacity > 1" 
+                  ref="piece"
                   :rules="[
                     val => val >= 0 && val <= left_quantity_piece || 'В складе имеется ' + left_quantity_piece + ' штук'
                   ]"/>
@@ -204,7 +207,6 @@ import {mapActions, mapGetters} from 'vuex'
 export default {
     props:{
       id: {
-        type: Number,
         required: true
       },
     },
@@ -212,13 +214,12 @@ export default {
         return{
             rowsNumber: null,
             temp: {},
-            left_quantity_box: '',
-            left_quantity_piece: '',
+            left_quantity_box: null,
+            left_quantity_piece: null,
             addRow: false,
             distribution_amount: {box: '', piece: ''},
             distribution_branch: '',  
             distribution_options: [],
-            formHasError: false,
 
           // this should be commented
             getMedicines: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', vat: '', total_quantity: '', left_quantity: ''},
@@ -271,18 +272,25 @@ export default {
         }
     },
     watch:{ 
+      // 'distribution_amount.box': {
+      //   immediate: true,
+      //   async handler() {
+      //     await this.$nextTick();
+      //     this.$refs.form.validate();
+      //   }
+      // },
       'distribution_amount.box': function (newVal, oldVal){
          if(newVal < this.left_quantity_box){
-           this.left_quantity_piece = this.temp.capacity;
+           this.left_quantity_piece = Number(this.temp.capacity);
          }else if (newVal == this.left_quantity_box){
-           this.left_quantity_piece = this.temp.left_quantity_piece;
+           this.left_quantity_piece = Number(this.temp.left_quantity_piece);
          }
       },
       'temp.left_quantity_box': function (newVal, oldVal){
-        this.left_quantity_box = this.temp.left_quantity_box.toString();
+        this.left_quantity_box = Number(this.temp.left_quantity_box);
       },
       'temp.left_quantity_piece': function (newVal, oldVal){
-        this.left_quantity_piece = this.temp.left_quantity_piece.toString();
+        this.left_quantity_piece = Number(this.temp.left_quantity_piece);
       },
       'temp.capacity': function (newVal, oldVal){
         if(newVal <= 1){
@@ -358,14 +366,7 @@ export default {
       await this.GET_BRANCHES();
       this.distribution_options = await this.getBranchNames;
 
-      // this.$watch(
-      //   () => {
-      //       return this.$refs.box
-      //   },
-      //   (val) => {
-      //     console.log(val);
-      //   }
-      // )
+   
       
     },
     computed:{
@@ -385,26 +386,19 @@ export default {
           'GET_MEDICINE_DETAIL', 'GET_MEDICINE_INFO', 'GET_BRANCHES', 'GET_BRANCHES_IN_MED_INFO_PAGE', 'ADD_TO_CART'
       ]),
       async addToCart(){
+        console.log(this.$refs.piece);
         console.log(this.$refs.box);
-        // this.$refs.box.next()
-        // .then(success => {console.log(success)})
-        // .catch(err => console.log(err))
-        this.$refs.box.validate()
-        this.$refs.piece.validate()
-        // .then(success => {console.log(success)})
-        // .catch(err => console.log(err))
+        this.$refs.box.valid
+        this.$refs.piece.valid
         
 
         if (this.$refs.box.hasError || this.$refs.piece.hasError) {
-          this.formHasError = true;
           this.$q.notify({
             color: 'negative',
             message: 'Error!'
           })
-          console.log('ERROR!');
         }
         else {
-          
           await this.$emit('medicines', true);
       
           const branch_id = this.getBranches.filter(el => el.name == this.distribution_branch);
@@ -419,11 +413,20 @@ export default {
           this.$q.notify({
             icon: 'done',
             color: 'positive',
-            message: 'Submitted'
+            message: 'Отправлено'
           })
           
           this.onReset();
           this.addRow = false;
+
+
+          this.data = [];
+          const answer = await this.GET_MEDICINE_INFO({id: this.id});
+          // console.log(answer.data);
+          this.rowsNumber = answer.data.count;
+          for(let i = 0; i < answer.data.results.length; i++ ){
+            this.$set(this.data, this.data.length, answer.data.results[i]);
+          }
         }
       },
       onReset () {

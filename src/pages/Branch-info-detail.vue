@@ -157,17 +157,20 @@
                  <div class="text-h6 text-white">Возврат</div>
                </q-card-section>
                <q-separator />
-               <q-card-section class="q-pt-none q-pa-lg row">
+               <q-card-section class="q-pt-none q-pa-lg">
                 <!-- <q-select outlined v-model="distribution_branch" :options="distribution_options" label="Филиал" class="q-mb-sm"/> -->
-                <q-input outlined v-model="distribution_amount" label="Кол-во упаковок" class="q-mr-xs" :suffix="temp_total_quantity" 
-                :rules="[
-                  val => val > 0 && val <= temp.total_qauntity || 'В складе имеется ' + temp.total_qauntity + ' товара'
-                ]"/>
-                <q-input outlined v-model="distribution_amount" label="Кол-во штук" class="" :suffix="temp_total_quantity" 
-                :rules="[
-                  val => val > 0 && val <= temp.total_qauntity || 'В складе имеется ' + temp.total_qauntity + ' товара'
-                ]"/>
+                <div class="row">
+                  <q-input outlined v-model="distribution_amount" label="Кол-во упаковок" class="q-mr-xs col" :suffix="String(temp_total_quantity)" 
+                  :rules="[
+                    val => val > 0 && val <= temp_total_quantity || 'В складе имеется ' + temp_total_quantity + ' упаковок'
+                  ]"/>
+                  <q-input outlined v-model="distribution_amount" label="Кол-во штук" class="col" :suffix="String(temp_total_piece)" 
+                  :rules="[
+                    val => val > 0 && val <= temp_total_piece || 'В складе имеется ' + temp_total_piece + ' штук'
+                  ]"/>
+                </div>
                 
+                <div class="q-mt-md"><span class="text-green text-weight-bold">Уже добавлено:</span> {{temp_already_added}}</div>
                </q-card-section>
                <q-separator />
                <q-card-actions align="right" class="bg-white text-teal">
@@ -187,11 +190,9 @@ import {mapActions, mapGetters} from 'vuex'
 export default {
     props:{
       business_medicine_id: {
-        type: Number,
         required: true
       },
       branch_id: {
-        type: Number,
         required: true
       }
     },
@@ -202,6 +203,8 @@ export default {
             rowsNumber2: null,
             temp: {},
             temp_total_quantity: '',
+            temp_total_piece: '',
+            temp_already_added: '',
             addRow: false,
             distribution_amount: '',
             distribution_branch: '',  
@@ -243,41 +246,27 @@ export default {
         }
     },
     watch:{ 
-      // 'distribution_amount': function (newVal, oldVal){
-      //    if(newVal){
-      //      this.temp_total_quantity = this.temp.total_qauntity - newVal;
-      //    }
-      // },
       'temp.total_qauntity': function (newVal, oldVal){
-        this.temp_total_quantity = this.temp.total_qauntity.toString();
+        this.temp_total_quantity = Number(this.temp.total_qauntity);
       },
-      data: {
-        handler: function (val, oldVal) {
-          this.data.forEach((row, index) => {
-            row.index = index + 1
-          })
-          // let amount = [], left = [];
-          // for(let k = 0; k < this.getMedicinesInfo.results.length; k++){
-          //   let capacity = await this.getMedicinesInfo.results[k].capacity;
-          //   let total_quantity_box = await this.getMedicinesInfo.results[k].total_qauntity;
-          //   let total_quantity_piece = await this.getMedicinesInfo.results[k].total_quantity_piece;
-          //   let left_quantity_box = await this.getMedicinesInfo.results[k].left_quantity;
-          //   let left_quantity_piece = await this.getMedicinesInfo.results[k].left_quantity_piece;
-          //   left.push(left_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + left_quantity_piece + ' шт');
-          //   amount.push(total_quantity_box + ' упаковок ' +  '( по ' + capacity + ' )' + ' + ' + total_quantity_piece + ' шт');
-          // }
-          // console.log(amount);
+      addRow: async function(newVal, oldVal){
+        if(newVal == true){
+          let a = await this.GET_CHECK_FOR_REFUND({ branch_id: this.branch_id, med_info_id: this.business_medicine_id});
+          a.limit_quantity = 56;
+          a.capacity = 1;
+          a.already_added = 0;
+          this.temp_total_quantity = Math.floor(a.limit_quantity / a.capacity);
+          this.temp_total_piece = a.limit_quantity % a.capacity;
+          if(a.already_added != 0){
+            this.temp_already_added = Math.floor(a.already_added / a.capacity) + ' упаковок ' + '(по ' + a.capacity + ' )'
+             + ' и ' + (a.already_added % a.capacity) + ' штук';
+          }else{
+            this.temp_already_added = 0;
+          }
 
-          // this.data.forEach((row, index) => {
-          //   row.total_quantity = amount[index]
-          // })
-          // this.data.forEach((row, index) => {
-          //   row.left_quantity = left[index]
-          // })
+        }
+      }
       
-        },
-        deep: true
-      },
     
         
     },
@@ -297,7 +286,7 @@ export default {
 
 
       const answer = await this.GET_BRANCH_MEDICINE_INFO({branch_id: this.branch_id,  business_medicine_id: this.business_medicine_id});
-      // console.log(answer.data);
+      console.log(answer.data);
       this.rowsNumber = answer.data.count;
       for(let i = 0; i < answer.data.results.length; i++ ){
         this.$set(this.data, this.data.length, answer.data.results[i]);
@@ -329,7 +318,7 @@ export default {
     },
     methods: {
       ...mapActions([
-          'GET_BRANCHES', 'GET_BRANCH_MEDICINE_DETAIL', 'GET_BRANCH_MEDICINE_INFO'
+          'GET_BRANCHES', 'GET_BRANCH_MEDICINE_DETAIL', 'GET_BRANCH_MEDICINE_INFO', 'GET_CHECK_FOR_REFUND'
       ]),
       async addToCart(){
         let data = { id: this.id, branch: this.distribution_branch, amount: this.distribution_amount }

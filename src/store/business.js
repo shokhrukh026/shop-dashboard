@@ -68,6 +68,9 @@ export default{
         },
         SET_MEDICINES_BY_BRANCH: (state, payload) => {
           state.medicines_by_branch = payload;
+          state.medicines_by_branch.results.forEach((row, index) => {
+            row.index = index + 1
+          })
         },
         SET_MEDICINES_DETAIL_INFO: (state, payload) => {
           state.medicine_info = payload;
@@ -113,40 +116,43 @@ export default{
             row.index = index + 1
           })
         },
-        SET_SEARCH_RESULT_ADD_MEDICINE: (state, payload) =>{
-          // let same = false;
+
+
+
+        // SET_SEARCH_RESULT_ADD_MEDICINE: (state, payload) =>{
+        //   // let same = false;
           
-          let results = payload
+        //   let results = payload
 
-          if(results.length != 0){
-            console.log(state.medicines);
-            // if(state.medicines == []){
-            //   state.medicines = 
-            // }
+        //   if(results.length != 0){
+        //     console.log(state.medicines);
+        //     // if(state.medicines == []){
+        //     //   state.medicines = 
+        //     // }
 
-            state.medicines.results.forEach((row, index) => {
-              // console.log(row);
+        //     state.medicines.results.forEach((row, index) => {
+        //       // console.log(row);
               
-              for(let a = 0; a < results.length; a++){
-                if(lodash.isEqual(row, results[a])){
-                  // same = true;
-                  results.splice(a, 1);
-                  console.log(results);
-                }
-              }
+        //       for(let a = 0; a < results.length; a++){
+        //         if(lodash.isEqual(row, results[a])){
+        //           // same = true;
+        //           results.splice(a, 1);
+        //           console.log(results);
+        //         }
+        //       }
               
             
-            })
+        //     })
             
-             if(results){
-              for(let i = 0; i < results.length; i++){
-                Vue.set(state.medicines.results, state.medicines.results.length, results[i]);
-              }
-             }
-          }else{
-            console.log('Array is empty!')
-          }
-        },
+        //      if(results){
+        //       for(let i = 0; i < results.length; i++){
+        //         Vue.set(state.medicines.results, state.medicines.results.length, results[i]);
+        //       }
+        //      }
+        //   }else{
+        //     console.log('Array is empty!')
+        //   }
+        // },
         SET_SEARCH_RESULT_ALL_MEDICINES: (state, payload) =>{
           state.medicines.results.forEach((row, index) => {
             delete row.index;
@@ -477,6 +483,21 @@ export default{
             //   return error;
             })
         },
+        async GET_CHECK_FOR_REFUND({commit, getters},payload) {
+          return await axios({
+              method: "GET",
+              url: baseUrl + 'refund/check/' + payload.branch_id + '/' + payload.med_info_id + '/',
+              headers: {Authorization: getters.getUser.token}
+            })
+            .then((e) => {
+              //commit('SET_CHECK_FOR_REFUND', e.data);
+               return e.data;
+            })
+            .catch((error) => {
+              console.log(error);
+            //   return error;
+            })
+        }, 
         async GET_MONITORING_PERIOD({commit, getters},payload) {
           return await axios({
               method: "GET",
@@ -584,6 +605,24 @@ export default{
            //   return error;
            })
        },
+       async ADD_REFUND({commit, getters}, payload) {
+          await axios({
+            method: "POST",
+            url: baseUrl + 'refund/add/',
+            headers: {Authorization: getters.getUser.token},
+            data:{
+              send: 'True'
+            }
+          })
+          .then((e) => {
+            console.log('Successfully added!')
+          //   return e;
+          })
+          .catch((error) => {
+            console.log(error);
+          //   return error;
+          })
+        },
        async DELETE_ARRIVAL_ONE({commit, getters}, payload) {
         await axios({
            method: "POST",
@@ -620,7 +659,7 @@ export default{
          //   return error;
          })
       },
-        
+      
 
         
     },
