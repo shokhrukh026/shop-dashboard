@@ -240,12 +240,11 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
 
 export default {
   props: {
     id: {
-      type: Number,
+      type: String,
       required: true,
     },
   },
@@ -276,33 +275,9 @@ export default {
     };
   },
   watch: {},
-  computed: {
-    ...mapGetters(["getMedicineDetails", ""]),
-  },
-  async mounted() {
-    const answer = await this.GET_MEDICINE_DETAIL({ id: this.id });
 
-    this.getMedicines.title = answer.data.title;
-    this.getMedicines.description = answer.data.description;
-    this.getMedicines.barcode = answer.data.barcode;
-    this.getMedicines.country = answer.data.country;
-    this.getMedicines.manufacture = answer.data.manufacture;
-    this.getMedicines.serial_code = answer.data.serial_code;
-    this.getMedicines.vat = answer.data.vat;
-    this.getMedicines.total_quantity = answer.data.total_quantity;
-    this.getMedicines.left_quantity = answer.data.left_quantity;
-    this.getMedicines.capacity = answer.data.capacity;
 
-    if (this.getMedicines.capacity <= 1) {
-      this.medicine_info_add[0].piece = 0;
-    }
-  },
   methods: {
-    ...mapActions([
-      "ADD_MEDICINES",
-      "ADD_MEDICINE_INFO",
-      "GET_MEDICINE_DETAIL",
-    ]),
 
     addInfoForMedicine() {
       if (this.getMedicines.capacity <= 1) {
@@ -327,26 +302,6 @@ export default {
       this.medicine_info_add.splice(item, 1);
     },
 
-    async addMedicineInfo() {
-      for (let i = 0; i < this.medicine_info_add.length; i++) {
-        await this.ADD_MEDICINE_INFO({
-          business_medicine_id: this.id,
-          quantity: this.medicine_info_add[i].quantity,
-          piece: this.medicine_info_add[i].piece,
-          purchase_price: this.medicine_info_add[i].purchase_price,
-          selling_price: this.medicine_info_add[i].selling_price,
-          expire_date: this.medicine_info_add[i].expire_date,
-        });
-        this.medicine_info_add[i] = {
-          quantity: "",
-          piece: "",
-          purchase_price: "",
-          selling_price: "",
-          expire_date: "",
-        };
-      }
-      this.addedMedInfo = true;
-    },
   },
 };
 </script>

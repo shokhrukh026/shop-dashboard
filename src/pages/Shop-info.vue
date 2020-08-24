@@ -7,13 +7,13 @@
         default-opened
         header-class="bg-blue text-h6"
         dark
-        :label="'Информация о лекарстве ' + getMedicines.title"
+        :label="'Информация о Магазине ' + getMedicines.title"
       >
         <q-list bordered separator dense class="bg-white shadow-1">
           <q-item v-ripple>
             <q-item-section>
               <q-item-label class="text-h6 text-blue-9"
-                >Название лекарства :
+                >Название Магазина :
                 <span class="text-subtitle1 text-black"
                   >&nbsp;{{ getMedicines.title }}</span
                 ></q-item-label
@@ -214,7 +214,7 @@
             </q-td>
           </template>
           <template v-slot:top="props">
-            <span class="text-h6">Лекарства в филиалах</span>
+            <span class="text-h6">Магазины в филиалах</span>
             <q-space />
             <q-btn
               flat

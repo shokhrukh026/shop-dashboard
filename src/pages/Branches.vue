@@ -35,7 +35,7 @@
               round
               flat
               color="grey"
-              :to="{ name: 'branch-info', params: { id: props.row.id } }"
+              :to="{ name: 'branch-info', params: { id: props.row.id, row: props.row} }"
               icon="fas fa-info-circle"
             ></q-btn>
           </q-td>
@@ -150,7 +150,29 @@ export default {
 
         { name: "actions", label: "Действия", field: "", align: "center" },
       ],
-      data: [],
+      data: [
+        {
+          index: "1",
+          name: "Green",
+          address: "15 minor",
+          street: "39-45 Мехржон кўчаси, Тошкент",
+          city: "Ташкент",
+          status: "открыто",
+          contact_person: "Sarvar Juraev",
+          contact_phone: "+998900014565"
+        },
+        {
+          index: "2",
+          name: "GT",
+          address: "дом 3 квартира 5",
+          street: "Яккасарайский район, ул. У. Носира-84, г. Ташкент UZ",
+          city: "Ташкент",
+          status: "закрыто",
+          contact_person: "Sardor Rashidov",
+          contact_phone: "+9989011515"
+        },
+
+      ],
     };
   },
   watch: {

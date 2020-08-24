@@ -4,29 +4,16 @@
       <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 q-mr-md q-mb-md">
         <q-card class="card-bg text-black">
           <q-card-section class="text-h6 bg-blue">
-            <div class="text-h6 text-white">Добавить лекарство</div>
+            <div class="text-h6 text-white">Добавить Магазин</div>
             <div class="text-subtitle2 text-white">
-              Введите данные лекарства
+              Введите данные Магазина
             </div>
           </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-list class="row">
               <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <q-item-section>
-                  <!-- <q-select
-                        label="Название"
-                        outlined
-                        dense
-                        v-model="medicine_add.title"
-                        use-input
 
-                        @keypress="filterFunc"
-                        input-debounce="1000"
-                        @new-value="createValue"
-                        :options="title_options"
-                        @filter="filterFn"
-                        color="blue"
-                      > -->
                   <q-select
                     label="Название"
                     outlined
@@ -59,24 +46,6 @@
                     </template>
                   </q-select>
 
-                  <!-- <q-input color="blue" outlined dense v-model="medicine_add.title" label="Название" /> -->
-                  <!-- <q-list bordered separator >
-                        <q-item clickable v-ripple>
-                          <q-item-section>Single line item</q-item-section>
-                        </q-item>
-
-                        <q-item clickable v-ripple>
-                          <q-item-section>
-                            <q-item-label>Item with caption</q-item-label>
-                          </q-item-section>
-                        </q-item>
-
-                        <q-item clickable v-ripple>
-                          <q-item-section>
-                            <q-item-label>Item with caption</q-item-label>
-                          </q-item-section>
-                        </q-item>
-                      </q-list> -->
                 </q-item-section>
               </q-item>
 
@@ -98,7 +67,6 @@
                     :showPopup="showPopup(event)"
                     @add="AddedToBarcode(details)"
                   >
-                    <!-- @click.enter="filterBarcode" -->
 
                     <template v-slot:no-option>
                       <q-item>
@@ -116,7 +84,6 @@
                       />
                     </template>
                   </q-select>
-                  <!-- <q-input  color="blue" outlined dense v-model="medicine_add.barcode" label="Штрих-код" /> -->
                 </q-item-section>
               </q-item>
               <q-item class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -186,41 +153,9 @@
                   />
                 </q-item-section>
               </q-item>
-              <!-- <q-item class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                     <q-item-section>
-                       <q-input  color="blue" outlined dense v-model="medicine_add[0].quantity" label="Количество" />
-                     </q-item-section>
-                   </q-item>
-                    <q-item class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                     <q-item-section>
-                       <q-input color="blue" outlined dense v-model="medicine_add[0].purchase_price" label="Цена покупки" />
-                     </q-item-section>
-                   </q-item>
-                   <q-item class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
-                     <q-item-section>
-                       <q-input color="blue" outlined dense v-model="medicine_add[0].selling_price" label="Цена продажи" />
-                     </q-item-section>
-                   </q-item> -->
-
-              <!-- <q-item class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                     <q-item-section>
-
-                       <q-input dense color="blue" outlined v-model="medicine_add[0].expire_date" label="Годен до">
-                         <template v-slot:append>
-                           <q-icon name="event" class="cursor-pointer">
-                             <q-popup-proxy  transition-show="scale" transition-hide="scale">
-                               <q-date color="blue" outlined mask="YYYY-MM-DD" today-btn v-model="medicine_add[0].expire_date"/>
-                             </q-popup-proxy>
-                           </q-icon>
-                         </template>
-                       </q-input>
-
-                     </q-item-section>
-                   </q-item> -->
             </q-list>
           </q-card-section>
           <q-card-actions align="right">
-            <!-- <q-btn class="text-capitalize bg-blue text-white" @click="addMedicine">Добавить</q-btn> -->
           </q-card-actions>
         </q-card>
       </div>
@@ -228,38 +163,13 @@
       <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
         <q-card class="card-bg text-black">
           <q-card-section class="text-h6 bg-blue">
-            <div class="text-h6 text-white">Добавить инфо для лекарства</div>
+            <div class="text-h6 text-white">Добавить инфо для магазина</div>
             <div class="text-subtitle2 text-white">
-              Введите данные лекарства
+              Введите данные Магазина
             </div>
           </q-card-section>
           <q-card-section class="q-pa-sm">
             <q-list class="row">
-              <!-- <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                        <q-item-section>
-                          <q-select
-                           label="Название"
-                           outlined
-                           dense
-                           v-model="title"
-                           use-input
-                           use-chips
-                           input-debounce="0"
-                           @new-value="createValue"
-                           :options="options"
-                           @filter="filterFn"
-                           color="blue"
-                         >
-                           <template v-slot:no-option>
-                             <q-item>
-                               <q-item-section class="text-grey">
-                                 No results
-                               </q-item-section>
-                             </q-item>
-                           </template>
-                         </q-select>
-                        </q-item-section>
-                      </q-item> -->
 
               <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
                 <q-item-section>
@@ -359,86 +269,12 @@
         >
       </div>
 
-      <!-- <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
-            <q-btn color="blue" icon="add" label="Добавить информацию о лекарстве" @click="addInfoForMedicine"/>
-           </div>
 
-
-
-              <div class="q-pt-sm"  style="max-width: 20vw; min-width: 20vw;" v-for="(medInfo,item) in medicine_info_add" :key="item">
-                 <div class="col-lg-5 col-md-5 col-xs-5 col-sm-12 q-mr-sm">
-                <q-list bordered class="rounded-borders bg-blue" dark>
-                  <q-expansion-item expand-separator icon="info" :label="'Информация о лекарстве #' + (item + 1)  " caption="Введите данные лекарства">
-                    <q-card>
-                      <q-card-section>
-
-                        <q-list class="row">
-                          <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-                            <q-item-section>
-                              <q-select label="Название" outlined dense v-model="title" use-input use-chips
-                                input-debounce="0" @new-value="createValue" :options="options" @filter="filterFn"
-                                color="blue">
-                                <template v-slot:no-option>
-                                  <q-item>
-                                    <q-item-section class="text-grey">
-                                      Нет результатов
-                                    </q-item-section>
-                                  </q-item>
-                                </template>
-                              </q-select>
-                            </q-item-section>
-                          </q-item>
-
-                          <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                            <q-item-section>
-                              <q-input color="blue" outlined dense v-model="medInfo.quantity"
-                                label="Количество" />
-                            </q-item-section>
-                          </q-item>
-                          <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                            <q-item-section>
-                              <q-input color="blue" outlined dense v-model="medInfo.purchase_price"
-                                label="Цена покупки" />
-                            </q-item-section>
-                          </q-item>
-                          <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                            <q-item-section>
-                              <q-input color="blue" outlined dense v-model="medInfo.selling_price"
-                                label="Цена продажи" />
-                            </q-item-section>
-                          </q-item>
-
-                          <q-item class="col-lg-6 col-md-12 col-sm-12 col-xs-12">
-                            <q-item-section>
-
-                              <q-input dense color="blue" outlined v-model="medInfo.expire_date"
-                                label="Годен до">
-                                <template v-slot:append>
-                                  <q-icon name="event" class="cursor-pointer">
-                                    <q-popup-proxy transition-show="scale" transition-hide="scale">
-                                      <q-date color="blue" outlined mask="YYYY-MM-DD" today-btn
-                                        v-model="medInfo.expire_date" />
-                                    </q-popup-proxy>
-                                  </q-icon>
-                                </template>
-                              </q-input>
-
-                            </q-item-section>
-                          </q-item>
-                        </q-list>
-
-                      </q-card-section>
-                    </q-card>
-                  </q-expansion-item>
-                </q-list>
-              </div>
-            </div> -->
     </div>
   </q-page>
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
 
 export default {
   data() {
@@ -461,7 +297,6 @@ export default {
         selling_price: "",
         expire_date: "",
       },
-      // medicine_info_add: [{ quantity: '', purchase_price: '', selling_price: '', expire_date: ''}],
     };
   },
   watch: {

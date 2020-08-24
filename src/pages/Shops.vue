@@ -47,7 +47,7 @@
               round
               flat
               color="grey"
-              :to="{ name: 'med-info', params: { id: props.row.id } }"
+              :to="{ name: 'show-info', params: { id: props.row.id } }"
               icon="fas fa-info-circle"
             ></q-btn>
             <q-btn
@@ -61,7 +61,8 @@
           </q-td>
         </template>
         <template v-slot:top="props">
-          <span class="text-subtitle1">Все лекарства</span>
+
+          <span class="text-subtitle1">Все магазины</span>
           <q-space />
           <form @submit.prevent.stop="getSearchResultByFilter" class="row">
             <q-input
@@ -99,6 +100,7 @@
             @click="props.toggleFullscreen"
             class="q-ml-md"
           />
+
         </template>
       </q-table>
       {{ filter }}
@@ -288,7 +290,6 @@
 </template>
 
 <script>
-import { mapActions, mapGetters } from "vuex";
 
 export default {
   data() {
@@ -345,15 +346,8 @@ export default {
         {
           name: "products",
           align: "center",
-          label: "Лекарство",
+          label: "Магазин",
           field: "title",
-          sortable: true,
-        },
-        {
-          name: "barcode",
-          align: "center",
-          label: "Штрих-код",
-          field: "barcode",
           sortable: true,
         },
         {
@@ -363,13 +357,7 @@ export default {
           field: "country",
           sortable: true,
         },
-        {
-          name: "manufacture",
-          align: "center",
-          label: "Производитель",
-          field: "manufacture",
-          sortable: true,
-        },
+
         {
           name: "serial_code",
           align: "center",
@@ -380,7 +368,7 @@ export default {
         {
           name: "total_quantity",
           align: "center",
-          label: "Кол-во",
+          label: "Кол-во Магазинов",
           field: "total_quantity",
           sortable: true,
         },
@@ -389,13 +377,6 @@ export default {
           align: "center",
           label: "Остаток",
           field: "left_quantity",
-          sortable: true,
-        },
-        {
-          name: "vat",
-          align: "center",
-          label: "НДС",
-          field: "vat",
           sortable: true,
         },
         {
@@ -438,12 +419,6 @@ export default {
     },
   },
   methods: {
-    ...mapActions([
-      "GET_MEDICINES",
-      "GET_NEXT_PAGE",
-      "GET_SEARCH_RESULT_ALL_MEDICINES",
-      "GET_SEARCH_RESULT_ADD_MEDICINE",
-    ]),
 
     async getSearchResultByFilter() {
       let a = await this.GET_SEARCH_RESULT_ALL_MEDICINES({

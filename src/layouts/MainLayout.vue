@@ -66,15 +66,11 @@
           </q-item-section>
         </q-item>
 
-
-
-
       </q-list>
     </q-drawer>
 
     <q-page-container class="bg-grey-2">
       <router-view @medicines="distributeMedicines"/>
-      <!-- @medicines="distributeMedicines" :medicine="shopping_cart" -->
     </q-page-container>
   </q-layout>
 </template>
@@ -94,17 +90,16 @@ export default {
     return {
       cart: '0',
       leftDrawerOpen: false,
-      // shopping_cart: [],
       sideBar: [
         {title: 'Главная', icon: 'dashboard', url: '/main'},
         {title: 'Филиалы', icon: 'fas fa-building', url: '/branches'},
-        {title: 'Лекарства', icon: 'fas fa-box-open', url: '/medicines'},
+        {title: 'Магазины', icon: 'store', url: '/shops'},
         {title: 'Возврат', icon: 'fas fa-exchange-alt', url: '/return'},
         {title: 'История', icon: 'fas fa-history', url: '/history'},
 
-        {title: 'Панель приборов', icon: 'fas fa-chart-pie ', url: '/medicines'},
-        {title: 'Лучшие продажи', icon: 'fas fa-chart-line', url: '/medicines'},
-        {title: 'Остаток средств', icon: 'fas fa-chart-bar', url: '/medicines'},
+        {title: 'Панель приборов', icon: 'fas fa-chart-pie ', url: '/shops'},
+        {title: 'Лучшие продажи', icon: 'fas fa-chart-line', url: '/shops'},
+        {title: 'Остаток средств', icon: 'fas fa-chart-bar', url: '/shops'},
 
 
 
@@ -116,10 +111,7 @@ export default {
 
   },
   async mounted(){
-    await this.GET_SHOPPING_CART_MEDICINES();
     console.log(this.getShoppingCartMedicines.length);
-    // sessionStorage.setItem('cart', this.getShoppingCartMedicines.length);
-    // this.cart = sessionStorage.getItem('cart');
     this.cart = this.getShoppingCartMedicines.length;
   },
   computed:{
