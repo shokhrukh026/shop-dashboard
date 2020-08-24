@@ -14,34 +14,15 @@
         <q-space />
 
         <div class="q-gutter-sm row items-center no-wrap">
-          <!-- <q-btn round dense flat color="white" :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
-            @click="$q.fullscreen.toggle()" v-if="$q.screen.gt.sm">
-                       <q-tooltip>Messages</q-tooltip>
-          </q-btn> -->
-          <!-- <q-btn round dense flat color="white" icon="notifications">
-            <q-badge color="red" text-color="white" floating>
-              5
-            </q-badge>
-            <q-menu>
-              <q-list style="min-width: 100px">
-                <messages></messages>
-                <q-card class="text-center no-shadow no-border">
-                  <q-btn label="View All" style="max-width: 120px !important;" flat dense class="text-indigo-8"></q-btn>
-                </q-card>
-              </q-list>
-            </q-menu>
-                       <q-tooltip>Notifications</q-tooltip>
-          </q-btn> -->
           <q-btn round flat to="/shopping-cart">
             <q-icon name="shopping_cart"></q-icon>
             <q-badge color="red" floating v-if="cart > 0">{{cart}}</q-badge>
           </q-btn>
-          
+
 
 
           <q-btn round flat>
             <q-avatar size="26px">
-              <!-- <img src="https://cdn.quasar.dev/img/boy-avatar.png"> -->
               <q-icon name="fas fa-user-circle"></q-icon>
             </q-avatar>
 
@@ -73,8 +54,8 @@
         <q-img  :src="require('../statics/Uzpos_logo_rectangle.png')"></q-img>
       </router-link>
       <q-list>
-       
-      
+
+
 
         <q-item :to="bar.url" active-class="q-item-no-link-highlighting" v-for="(bar,item) in sideBar" :key="item">
           <q-item-section avatar>
@@ -84,15 +65,15 @@
             <q-item-label>{{bar.title}}</q-item-label>
           </q-item-section>
         </q-item>
-       
-        
+
+
 
 
       </q-list>
     </q-drawer>
 
     <q-page-container class="bg-grey-2">
-      <router-view @medicines="distributeMedicines"/> 
+      <router-view @medicines="distributeMedicines"/>
       <!-- @medicines="distributeMedicines" :medicine="shopping_cart" -->
     </q-page-container>
   </q-layout>

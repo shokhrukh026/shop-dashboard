@@ -7,7 +7,6 @@ const routes = [
     path: '/main',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      // {path: '', component: () => import('pages/Dashboard.vue'), beforeEnter: AuthGuard},
       {path: '/', component: () => import('pages/Dashboard2.vue'), meta: {authRequired: true}},
       {path: '/branches', name: 'branches', component: () => import('pages/Branches.vue'), meta: {authRequired: true}},
       {path: '/medicines', component: () => import('pages/Medicines.vue'), meta: {authRequired: true}},
@@ -22,7 +21,7 @@ const routes = [
       {path: '/add-info-medicine/:id', name: 'add-info-medicine', component: () => import('pages/Add-info-medicine.vue'), props: true, meta: {authRequired: true}},
       {path: '/edit-product/:id', name: 'edit-product', component: () => import('pages/Edit-product.vue'), props:true, meta: {authRequired: true}},
       {path: '/shopping-cart', component: () => import('pages/ShoppingCart.vue'), meta: {authRequired: true}},
-      
+
 
       {path: '/Profile', component: () => import('pages/UserProfile.vue')},
       {path: '/Map', component: () => import('pages/Map.vue')},
@@ -47,7 +46,7 @@ const routes = [
     path: '/Pricing',
     component: () => import('pages/Pricing.vue')
   },
-  
+
   {
     path: '/Mail',
     component: () => import('layouts/Mail.vue')
@@ -55,10 +54,9 @@ const routes = [
   {
     path: '/Lock-2',
     component: () => import('pages/LockScreen-2.vue')
-  }
+  },
 ]
 
-// Always leave this as last one
 if (process.env.MODE !== 'ssr') {
   routes.push({
     path: '*',
@@ -67,20 +65,3 @@ if (process.env.MODE !== 'ssr') {
 }
 
 export default routes
-
-
-
-
-
-
-
-// function AuthGuard(from, to, next){
-//   if(store.getters.getUser){
-//     next()
-//   }
-//   else
-//     next('/')
-// }
-
-
-    

@@ -33,16 +33,13 @@ export default{
             //   return e;
             })
             .catch((error) => {
-              console.log(error);
               return 'error';
             })
 
-
-        //  Used when above code not works
-          const data = {token: 14212414124412, user_id: 1, business_id: 2}
+          const data = {token: 14212414124412, user_id: 1, business_id: 2};
           commit('SET_USER_TO_STATE', data);
           payload.router.push({path: '/main'})
-            
+
         },
         STATE_CHANGED({commit}, payload){
             commit('SET_USER_TO_STATE', payload);

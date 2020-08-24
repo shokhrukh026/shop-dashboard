@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import user from './user'
-import business from './business'
 import data from './data'
 
 
@@ -21,7 +20,6 @@ export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
       user,
-      business,
       data
     },
 
