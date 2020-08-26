@@ -44,7 +44,7 @@
           </q-td>
         </template>
         <template v-slot:top="props">
-          <span class="text-h6">Лекарства</span>
+          <span class="text-h6">Магазины</span>
           <q-space />
           <form @submit.prevent.stop="getSearchResultByFilter" class="row">
             <q-input
@@ -91,9 +91,12 @@
 export default {
   props: {
     id: {
-      type: String,
-      required: true,
+      type: [String, Number],
+      row:{
+        required: false,
+      }
     },
+
   },
   data() {
     return {
@@ -121,7 +124,7 @@ export default {
         {
           name: "products",
           align: "center",
-          label: "Лекарство",
+          label: "Магазины",
           field: "title",
           sortable: true,
         },

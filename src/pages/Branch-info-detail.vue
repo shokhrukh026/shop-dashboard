@@ -7,7 +7,7 @@
         default-opened
         header-class="bg-blue text-h6"
         dark
-        :label="'Информация о лекарстве ' + getMedicines.title"
+        :label="'Информация о Магазине' + getMedicines.title"
       >
         <q-list bordered separator dense class="bg-white shadow-1">
           <q-item v-ripple>

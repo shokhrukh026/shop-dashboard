@@ -11,90 +11,42 @@
             <q-list class="row">
               <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <q-item-section>
-                  <q-input
-                    color="blue"
-                    outlined
-                    dense
-                    v-model="branch_edit.name"
-                    label="Название"
-                  />
+                  <q-input color="blue" outlined dense v-model="branch_edit.name" label="Название" />
                 </q-item-section>
               </q-item>
               <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <q-item-section>
-                  <q-input
-                    color="blue"
-                    outlined
-                    dense
-                    v-model="branch_edit.address"
-                    label="Адрес"
-                  />
+                  <q-input  color="blue" outlined dense v-model="branch_edit.address" label="Адрес" />
                 </q-item-section>
               </q-item>
               <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <q-item-section>
-                  <q-input
-                    color="blue"
-                    outlined
-                    dense
-                    v-model="branch_edit.street"
-                    label="Улица"
-                  />
+                  <q-input  color="blue" outlined dense v-model="branch_edit.street" label="Улица" />
                 </q-item-section>
               </q-item>
               <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <q-item-section>
-                  <q-input
-                    color="blue"
-                    outlined
-                    dense
-                    v-model="branch_edit.city"
-                    label="Город"
-                  />
+                  <q-input  color="blue" outlined dense v-model="branch_edit.city" label="Город" />
                 </q-item-section>
               </q-item>
               <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <q-item-section>
-                  <q-input
-                    color="blue"
-                    outlined
-                    dense
-                    v-model="branch_edit.status"
-                    label="Статус"
-                  />
+                  <q-input  color="blue" outlined dense v-model="branch_edit.status" label="Статус" />
                 </q-item-section>
               </q-item>
               <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <q-item-section>
-                  <q-input
-                    color="blue"
-                    outlined
-                    dense
-                    v-model="branch_edit.contact_person"
-                    label="Контактное лицо"
-                  />
+                  <q-input  color="blue" outlined dense v-model="branch_edit.contact_person" label="Контактное лицо" />
                 </q-item-section>
               </q-item>
               <q-item class="col-lg-6 col-md-6 col-sm-12 col-xs-12">
                 <q-item-section>
-                  <q-input
-                    color="blue"
-                    outlined
-                    dense
-                    v-model="branch_edit.contact_phone"
-                    label="Контактный телефон"
-                  />
+                  <q-input  color="blue" outlined dense v-model="branch_edit.contact_phone" label="Контактный телефон" />
                 </q-item-section>
               </q-item>
               <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
                 <q-item-section>
-                  <q-input
-                    color="blue"
-                    outlined
-                    dense
-                    v-model="branch_edit.virtual_number"
-                    label="Виртуальный номер"
-                  />
+                  <q-input  color="blue" outlined dense v-model="branch_edit.virtual_number" label="Виртуальный номер" />
                 </q-item-section>
               </q-item>
             </q-list>
@@ -108,25 +60,36 @@
   </q-page>
 </template>
 
+
 <script>
-export default {
-  props: {
-    id: {
-      type: String,
-      required: true,
+  import {mapActions, mapGetters} from 'vuex'
+
+  export default {
+    props: {
+      id: {
+        type: [Number, Number],
+        required: true
+      },
+      row: {
+        type: Object,
+        required: false
+      }
     },
-    row: {
-      type: Object,
-      required: false,
+    data(){
+      return {
+        branch_edit: this.row,
+      }
     },
-  },
-  data() {
-    return {
-      branch_edit: this.row,
-    };
-  },
-  mounted() {},
-};
+    mounted(){
+      // let a = this.row;
+      // this.$set(this.branch_edit,0 , a)
+    }
+
+
+
+  }
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>

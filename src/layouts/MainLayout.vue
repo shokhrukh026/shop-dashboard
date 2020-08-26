@@ -78,7 +78,7 @@
 <script>
 import EssentialLink from 'components/EssentialLink'
 import Messages from "./Messages";
-import {mapActions, mapGetters} from 'vuex'
+
 
 export default {
   name: 'MainLayout',
@@ -110,19 +110,10 @@ export default {
   watch: {
 
   },
-  async mounted(){
-    console.log(this.getShoppingCartMedicines.length);
-    this.cart = this.getShoppingCartMedicines.length;
+  async mounted(){;
   },
-  computed:{
-    ...mapGetters([
-      'getShoppingCartMedicines'
-    ])
-  },
+
   methods: {
-    ...mapActions([
-      'GET_SHOPPING_CART_MEDICINES'
-    ]),
     //clears Session
     async logout(){
       await this.$store.dispatch('LOGOUT');

@@ -35,7 +35,10 @@
               round
               flat
               color="grey"
-              :to="{ name: 'branch-info', params: { id: props.row.id, row: props.row} }"
+              :to="{
+                name: 'branch-info',
+                params: { id: props.row.id, row: props.row },
+              }"
               icon="fas fa-info-circle"
             ></q-btn>
           </q-td>
@@ -75,18 +78,12 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
       pagination: {
         rowsPerPage: 8,
-      },
-      row: {
-        index: "",
-        branch_name: "",
-        city: "",
-        owner: "",
-        status: "",
       },
       loading: false,
       filter: "",
@@ -151,27 +148,6 @@ export default {
         { name: "actions", label: "Действия", field: "", align: "center" },
       ],
       data: [
-        {
-          index: "1",
-          name: "Green",
-          address: "15 minor",
-          street: "39-45 Мехржон кўчаси, Тошкент",
-          city: "Ташкент",
-          status: "открыто",
-          contact_person: "Sarvar Juraev",
-          contact_phone: "+998900014565"
-        },
-        {
-          index: "2",
-          name: "GT",
-          address: "дом 3 квартира 5",
-          street: "Яккасарайский район, ул. У. Носира-84, г. Ташкент UZ",
-          city: "Ташкент",
-          status: "закрыто",
-          contact_person: "Sardor Rashidov",
-          contact_phone: "+9989011515"
-        },
-
       ],
     };
   },
@@ -185,9 +161,20 @@ export default {
       deep: true,
     },
   },
-  async created() {},
-  computed: {},
-  methods: {},
+  async created() {
+    this.loading = true;
+    await this.FETCH_ALL_BRANCHES();
+    //await this.FETCH_ONE_BRANCHES("1/"); //geting brach by id
+    //await console.log(this.GET_ONE_BRANCH); //geting brach by id
+    this.data = this.GET_ALL_BRANCHES;
+    this.loading = false;
+  },
+  computed: {
+    ...mapGetters(["GET_ALL_BRANCHES", "GET_ONE_BRANCH"]),
+  },
+  methods: {
+    ...mapActions(["FETCH_ALL_BRANCHES", "FETCH_ONE_BRANCHES"]),
+  },
 };
 </script>
 

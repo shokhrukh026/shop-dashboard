@@ -109,7 +109,7 @@ export default {
         password: this.password,
         router: this.$router,
       });
-      if (a == "error") {
+      if (a === "error") {
         this.error = true;
       }
     },
