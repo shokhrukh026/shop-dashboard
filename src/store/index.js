@@ -5,9 +5,9 @@ import user from './user'
 import data from './data'
 import branches from "src/store/branches";
 import products from "src/store/products";
+import cart from "src/store/cart";
 
-
-Vue.use(Vuex)
+Vue.use(Vuex);
 
 /*
  * If not building with SSR mode, you can

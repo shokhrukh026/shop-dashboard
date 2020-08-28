@@ -297,14 +297,14 @@
       // this.getMedicines.description = details.data.description;
       // this.getMedicines.added_at = details.data.added_at;
 
-      this.loading = true;
-      const answer = await this.FETCH_BUSSINESS_PRODUCT_INFO(this.id);
-      console.log(answer.data);
-      this.rowsNumber = answer.data.count;
-      for(let i = 0; i < answer.data.results.length; i++ ){
-        this.$set(this.data, this.data.length, answer.data.results[i]);
-      }
-      this.loading = false;
+      // this.loading = true;
+      // const answer = await this.FETCH_BUSSINESS_PRODUCT_INFO(this.id);
+      // console.log(answer.data);
+      // this.rowsNumber = answer.data.count;
+      // for(let i = 0; i < answer.data.results.length; i++ ){
+      //   this.$set(this.data, this.data.length, answer.data.results[i]);
+      // }
+      // this.loading = false;
 
 
 

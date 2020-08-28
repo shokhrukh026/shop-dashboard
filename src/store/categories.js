@@ -25,6 +25,9 @@ export default{
       }
     },
 
+    /**
+     * @return {boolean}
+     */
     async ADD_CATEGORY({commit}, category_title) {
       try {
         const response = await shop.post("business/add/category/", {
@@ -33,8 +36,11 @@ export default{
           },
           category_title: category_title,
         });
+
+        return true;
       } catch (e) {
         console.log(e + "SET_ADD_CATEGORY")
+        return false;
       }
     },
 
