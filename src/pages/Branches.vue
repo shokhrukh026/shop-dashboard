@@ -26,7 +26,7 @@
               color="grey"
               :to="{
                 name: 'branch-update',
-                params: { id: props.row.id, row: props.row },
+                params: { id: props.row.branch_id, row: props.row },
               }"
               icon="edit"
             ></q-btn>
@@ -37,7 +37,7 @@
               color="grey"
               :to="{
                 name: 'branch-info',
-                params: { id: props.row.id, row: props.row },
+                params: { id: props.row.branch_id, row: props.row },
               }"
               icon="fas fa-info-circle"
             ></q-btn>
@@ -147,8 +147,7 @@ export default {
 
         { name: "actions", label: "Действия", field: "", align: "center" },
       ],
-      data: [
-      ],
+      data: [],
     };
   },
   watch: {
@@ -174,6 +173,10 @@ export default {
   },
   methods: {
     ...mapActions(["FETCH_ALL_BRANCHES", "FETCH_ONE_BRANCHES"]),
+
+    propsPrint(id) {
+      console.log(id);
+    },
   },
 };
 </script>

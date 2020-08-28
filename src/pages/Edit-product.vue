@@ -4,9 +4,9 @@
       <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12">
         <q-card class="card-bg text-black">
           <q-card-section class="text-h6 bg-blue">
-            <div class="text-h6 text-white">Редактировать лекарство</div>
+            <div class="text-h6 text-white">Редактировать Продукт</div>
             <div class="text-subtitle2 text-white">
-              Введите данные лекарства
+              Введите данные Продукта
             </div>
           </q-card-section>
           <q-card-section class="q-pa-sm">
@@ -218,6 +218,7 @@ export default {
       ],
     };
   },
+
   computed: {},
   methods: {},
 };

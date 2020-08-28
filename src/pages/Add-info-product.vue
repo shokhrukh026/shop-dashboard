@@ -4,7 +4,7 @@
       <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 q-mr-md q-mb-md">
         <q-card class="card-bg text-black">
           <q-card-section class="text-h6 bg-blue">
-            <div class="text-h6 text-white">Данные лекарства</div>
+            <div class="text-h6 text-white">Данные Продукта</div>
           </q-card-section>
 
           <q-list dense bordered separator class="bg-white shadow-1">

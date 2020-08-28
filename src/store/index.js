@@ -4,6 +4,7 @@ import Vuex from 'vuex'
 import user from './user'
 import data from './data'
 import branches from "src/store/branches";
+import products from "src/store/products";
 
 
 Vue.use(Vuex)
@@ -23,6 +24,7 @@ export default function (/* { ssrContext } */) {
       user,
       data,
       branches,
+      products,
     },
 
     // enable strict mode (adds overhead!)

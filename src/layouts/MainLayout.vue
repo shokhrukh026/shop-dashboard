@@ -93,7 +93,7 @@ export default {
       sideBar: [
         {title: 'Главная', icon: 'dashboard', url: '/main'},
         {title: 'Филиалы', icon: 'fas fa-building', url: '/branches'},
-        {title: 'Магазины', icon: 'store', url: '/shops'},
+        {title: 'Продукты', icon: 'store', url: '/products'},
         {title: 'Возврат', icon: 'fas fa-exchange-alt', url: '/return'},
         {title: 'История', icon: 'fas fa-history', url: '/history'},
 

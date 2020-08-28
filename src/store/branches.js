@@ -32,11 +32,11 @@ export default {
 
   },
   actions: {
-    async FETCH_ALL_BRANCHES({ commit}) {
+    async FETCH_ALL_BRANCHES({ commit, getters}) {
       try {
         const response = await shop.get("business/branches/", {
           headers: {
-            Authorization: 'Token cb2544ea21512d984a14ba1ae2b71878db04b33c'
+            Authorization: getters.getUser.token
           },
         });
         commit('SET_BRANCHES', response.data);
@@ -44,11 +44,11 @@ export default {
         console.log(e + "check branches request FETCH_ALL_BRANCHES");
       }
     },
-    async FETCH_ONE_BRANCHES ({commit}, id) {
+    async FETCH_ONE_BRANCHES ({commit}, getters, id) {
       try{
         const response = await shop.get(`business/branches/${id}`, {
           headers: {
-            Authorization: 'Token cb2544ea21512d984a14ba1ae2b71878db04b33c',
+            Authorization: getters.getUser.token,
           }
         });
         commit('SET_ONE_BRANCH', response.data);
