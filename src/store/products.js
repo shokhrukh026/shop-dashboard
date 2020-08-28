@@ -117,7 +117,7 @@ export default {
           `business/products/detail/info/${id}/`,
           {
             headers: {
-              headers: { Authorization: getters.getUser.token },
+              Authorization: getters.getUser.token,
             },
           }
         );

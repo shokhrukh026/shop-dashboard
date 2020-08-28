@@ -19,7 +19,7 @@ export default{
 
   },
 
-  async cartList({coomit, getters}, payload)
+  async ProductsArrival({coomit, getters}, payload)
   {
 
   },

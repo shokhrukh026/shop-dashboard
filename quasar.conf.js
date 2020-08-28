@@ -79,7 +79,7 @@ module.exports = function (ctx) {
       proxy: {
         // proxy all requests starting with /api to jsonplaceholder
         '/api': {
-          target: 'http://dev.epos.uz:80',
+          target: 'http://165.232.69.254:80',
           changeOrigin: true,
           pathRewrite: {
             '^/api': ''
