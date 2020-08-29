@@ -2,73 +2,73 @@
   <q-page class="bg-grey-3">
     <div class="q-pa-md">
 
-      <q-expansion-item expand-separator icon="info" default-opened   header-class="bg-blue text-h6" dark :label="'Информация о Продукте ' + getMedicines.title">
+      <q-expansion-item expand-separator icon="info" default-opened   header-class="bg-blue text-h6" dark :label="'Информация о Продукте ' + getProduct.title">
 
         <q-list bordered separator dense class="bg-white shadow-1">
           <q-item v-ripple>
             <q-item-section>
-              <q-item-label class="text-h6 text-blue-9">Название Продукта : <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.title}}</span></q-item-label>
+              <q-item-label class="text-h6 text-blue-9">Название Продукта : <span class="text-subtitle1 text-black">&nbsp;{{getProduct.title}}</span></q-item-label>
             </q-item-section>
           </q-item>
           <q-item v-ripple >
             <q-item-section>
-              <q-item-label class="text-h6 text-blue-9">Категория: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.category}}</span></q-item-label>
+              <q-item-label class="text-h6 text-blue-9">Категория: <span class="text-subtitle1 text-black">&nbsp;{{getProduct.category}}</span></q-item-label>
             </q-item-section>
           </q-item>
           <q-item v-ripple >
             <q-item-section>
-              <q-item-label class="text-h6 text-blue-9">Описание: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.description}}</span></q-item-label>
+              <q-item-label class="text-h6 text-blue-9">Описание: <span class="text-subtitle1 text-black">&nbsp;{{getProduct.description}}</span></q-item-label>
             </q-item-section>
           </q-item>
           <q-item v-ripple >
             <q-item-section>
-              <q-item-label class="text-h6 text-blue-9">Штрих-код: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.barcode}}</span></q-item-label>
+              <q-item-label class="text-h6 text-blue-9">Штрих-код: <span class="text-subtitle1 text-black">&nbsp;{{getProduct.barcode}}</span></q-item-label>
             </q-item-section>
           </q-item>
           <q-item v-ripple >
             <q-item-section>
-              <q-item-label class="text-h6 text-blue-9">Тип: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.type}}</span></q-item-label>
+              <q-item-label class="text-h6 text-blue-9">Тип: <span class="text-subtitle1 text-black">&nbsp;{{getProduct.type}}</span></q-item-label>
             </q-item-section>
           </q-item>
           <q-item v-ripple >
             <q-item-section>
-              <q-item-label class="text-h6 text-blue-9">Страна: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.country}}</span></q-item-label>
+              <q-item-label class="text-h6 text-blue-9">Страна: <span class="text-subtitle1 text-black">&nbsp;{{getProduct.country}}</span></q-item-label>
             </q-item-section>
           </q-item>
           <q-item v-ripple >
             <q-item-section>
-              <q-item-label class="text-h6 text-blue-9">Производитель: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.manufacture}}</span></q-item-label>
+              <q-item-label class="text-h6 text-blue-9">Производитель: <span class="text-subtitle1 text-black">&nbsp;{{getProduct.manufacture}}</span></q-item-label>
             </q-item-section>
           </q-item>
           <q-item v-ripple >
             <q-item-section>
-              <q-item-label class="text-h6 text-blue-9">НДС: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.vat}}%</span></q-item-label>
+              <q-item-label class="text-h6 text-blue-9">НДС: <span class="text-subtitle1 text-black">&nbsp;{{getProduct.vat}}%</span></q-item-label>
             </q-item-section>
           </q-item>
           <q-item v-ripple >
             <q-item-section>
-              <q-item-label class="text-h6 text-blue-9">Общее количество в бизнесе: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.total_quantity}}</span></q-item-label>
+              <q-item-label class="text-h6 text-blue-9">Общее количество в бизнесе: <span class="text-subtitle1 text-black">&nbsp;{{getProduct.total_quantity}}</span></q-item-label>
             </q-item-section>
           </q-item>
           <q-item v-ripple >
             <q-item-section>
-              <q-item-label class="text-h6 text-blue-9">Оставшееся количество в бизнесе: <span class="text-subtitle1 text-black">{{getMedicines.left_quantity}}</span></q-item-label>
+              <q-item-label class="text-h6 text-blue-9">Оставшееся количество в бизнесе: <span class="text-subtitle1 text-black">{{getProduct.left_quantity}}</span></q-item-label>
             </q-item-section>
           </q-item>
           <q-item v-ripple >
             <q-item-section>
-              <q-item-label class="text-h6 text-blue-9">Добавлено в : <span class="text-subtitle1 text-black">{{getMedicines.added_at}}</span></q-item-label>
+              <q-item-label class="text-h6 text-blue-9">Добавлено в : <span class="text-subtitle1 text-black">{{getProduct.added_at}}</span></q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
       </q-expansion-item>
 
-      <!-- {{getMedicines}} -->
+      <!-- {{getProduct}} -->
       <div class="q-mt-md">
         <q-btn push color="white" text-color="blue" icon="fas fa-arrow-left"
                class="q-mb-xs q-mr-xs" to="/products"/>
         <q-btn push color="white" text-color="primary" label="Добавить" class="q-mb-xs" :disable="loading"
-               :to="{ name: 'add-info-medicine', params: {id: id}}"/>
+               :to="{ name: 'add-info-product', params: {id: $props.branch_id}}"/>
       </div>
       <!-- {{getBranches}} -->
 
@@ -217,7 +217,7 @@
         distribution_branch: '',
         distribution_options: [],
 
-        getMedicines: {title: '', barcode: '', type: '', country: '', manufacture: '', category: '',
+        getProduct: {title: '', barcode: '', type: '', country: '', manufacture: '', category: '',
           total_quantity: '', left_quantity: '', vat: '', description: "", added_at: ""},
         pagination: {
           rowsPerPage: 8
@@ -243,10 +243,10 @@
           { name: 'name', align: 'center', label: 'Имя', field: 'name', sortable: true },
           { name: 'address', align: 'center', label: 'Адрес', field: 'address', sortable: true },
           { name: 'city', align: 'center', label: 'Город', field: 'city', sortable: true },
+          { name: 'street', align: 'center', label: 'Улица', field: 'street', sortable: true },
           { name: 'contact_person', align: 'center', label: 'Контактное лицо', field: 'contact_person', sortable: true },
           { name: 'contact_phone', align: 'center', label: 'Контактный телефон', field: 'contact_phone', sortable: true },
           { name: 'status', align: 'center', label: 'Статус', field: 'status', sortable: true },
-          { name: 'street', align: 'center', label: 'Улица', field: 'street', sortable: true },
           { name: 'total_quantity', align: 'center', label: 'Кол-во', field: 'total_quantity', sortable: true },
 
 
@@ -281,21 +281,21 @@
 
       const details = await this.FETCH_BUSSINESS_PRODUCT(this.id);
 
-      this.getMedicines = await this.getProductDetail;
+      this.getProduct = await this.getProductDetail;
 
 
 
-      // this.getMedicines.title = details.data.title;
-      // this.getMedicines.barcode = details.data.barcode;
-      // this.getMedicines.type = details.data.type;
-      // this.getMedicines.country = details.data.country;
-      // this.getMedicines.manufacture = details.data.manufacture;
-      // this.getMedicines.category = details.data.category;
-      // this.getMedicines.total_quantity = details.data.total_quantity;
-      // this.getMedicines.left_quantity = details.data.left_quantity;
-      // this.getMedicines.vat = details.data.vat;
-      // this.getMedicines.description = details.data.description;
-      // this.getMedicines.added_at = details.data.added_at;
+      // this.getProduct.title = details.data.title;
+      // this.getProduct.barcode = details.data.barcode;
+      // this.getProduct.type = details.data.type;
+      // this.getProduct.country = details.data.country;
+      // this.getProduct.manufacture = details.data.manufacture;
+      // this.getProduct.category = details.data.category;
+      // this.getProduct.total_quantity = details.data.total_quantity;
+      // this.getProduct.left_quantity = details.data.left_quantity;
+      // this.getProduct.vat = details.data.vat;
+      // this.getProduct.description = details.data.description;
+      // this.getProduct.added_at = details.data.added_at;
 
       this.loading = true;
       const answer = await this.FETCH_BUSSINESS_PRODUCT_INFO(this.id);
@@ -309,11 +309,15 @@
 
 
       this.loading2 = true;
-      const answer2 = await this.GET_BRANCHES_IN_MED_INFO_PAGE({id: this.id});
+      const answer2 = await this.FETCH_BUSSINESS_PRODUCT_IN_BRANCH(this.id);
+
+      console.log(answer2);
+
       for(let i = 0; i < answer2.data.length; i++ ){
         this.$set(this.data2, this.data2.length, answer2.data[i]);
       }
       this.loading2 = false;
+
 
       await this.GET_BRANCHES();
       this.distribution_options = await this.getBranchNames;
@@ -334,7 +338,8 @@
     },
     methods: {
       ...mapActions([
-        'FETCH_BUSSINESS_PRODUCT', 'FETCH_BUSSINESS_PRODUCT_INFO', 'FETCH_ALL_BRANCHES', 'GET_BRANCHES_IN_MED_INFO_PAGE', 'ADD_TO_CART'
+        'FETCH_BUSSINESS_PRODUCT', 'FETCH_BUSSINESS_PRODUCT_INFO', 'FETCH_ALL_BRANCHES', 'GET_BRANCHES_IN_MED_INFO_PAGE',
+        'ADD_TO_CART', 'FETCH_BUSSINESS_PRODUCT_IN_BRANCH'
       ]),
       async addToCart(){
         await this.$emit('medicines', true);

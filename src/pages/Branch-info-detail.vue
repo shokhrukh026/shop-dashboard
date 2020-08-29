@@ -15,7 +15,7 @@
               <q-item-label class="text-h6 text-blue-9"
                 >Название лекарства :
                 <span class="text-subtitle1 text-black"
-                  >&nbsp;{{ getMedicines.title }}</span
+                  >&nbsp;{{ getProduct.title }}</span
                 ></q-item-label
               >
             </q-item-section>
@@ -25,7 +25,7 @@
               <q-item-label class="text-h6 text-blue-9"
                 >Описание:
                 <span class="text-subtitle1 text-black"
-                  >&nbsp;{{ getMedicines.description }}</span
+                  >&nbsp;{{ getProduct.description }}</span
                 ></q-item-label
               >
             </q-item-section>
@@ -35,7 +35,7 @@
               <q-item-label class="text-h6 text-blue-9"
                 >Штрих-код:
                 <span class="text-subtitle1 text-black"
-                  >&nbsp;{{ getMedicines.barcode }}</span
+                  >&nbsp;{{ getProduct.barcode }}</span
                 ></q-item-label
               >
             </q-item-section>
@@ -45,7 +45,7 @@
               <q-item-label class="text-h6 text-blue-9"
                 >Страна:
                 <span class="text-subtitle1 text-black"
-                  >&nbsp;{{ getMedicines.country }}</span
+                  >&nbsp;{{ getProduct.country }}</span
                 ></q-item-label
               >
             </q-item-section>
@@ -55,7 +55,7 @@
               <q-item-label class="text-h6 text-blue-9"
                 >Производитель:
                 <span class="text-subtitle1 text-black"
-                  >&nbsp;{{ getMedicines.manufacture }}</span
+                  >&nbsp;{{ getProduct.manufacture }}</span
                 ></q-item-label
               >
             </q-item-section>
@@ -65,7 +65,7 @@
               <q-item-label class="text-h6 text-blue-9"
                 >Серийный номер:
                 <span class="text-subtitle1 text-black"
-                  >&nbsp;{{ getMedicines.serial_code }}</span
+                  >&nbsp;{{ getProduct.serial_code }}</span
                 ></q-item-label
               >
             </q-item-section>
@@ -75,7 +75,7 @@
               <q-item-label class="text-h6 text-blue-9"
                 >НДС:
                 <span class="text-subtitle1 text-black"
-                  >&nbsp;{{ getMedicines.vat }}%</span
+                  >&nbsp;{{ getProduct.vat }}%</span
                 ></q-item-label
               >
             </q-item-section>
@@ -85,7 +85,7 @@
               <q-item-label class="text-h6 text-blue-9"
                 >Общее количество в филиале:
                 <span class="text-subtitle1 text-black"
-                  >&nbsp;{{ getMedicines.total_quantity }}</span
+                  >&nbsp;{{ getProduct.total_quantity }}</span
                 ></q-item-label
               >
             </q-item-section>

@@ -79,6 +79,13 @@ export default {
         row.index = index + 1;
       });
     },
+
+    SET_BUSSINESS_PRODUCT_IN_BRANCH: (state, payload) => {
+      state.productInBranch = payload;
+      state.productInBranch.forEach((row, index) => {
+        row.index = index + 1
+      })
+    },
   },
   actions: {
     async FETCH_BUSSINESS_PRODUCT_LIST({ commit, getters }) {
@@ -129,6 +136,27 @@ export default {
         console.log(e + "FETCH_BUSSINESS_PRODUCT_INFO")
       }
     },
+
+    async FETCH_BUSSINESS_PRODUCT_IN_BRANCH({ commit, getters }, id) {
+      try {
+        const response = await shop.get(
+          `business/product/${id}/branches/`,
+          {
+            headers: {
+              Authorization: getters.getUser.token,
+            },
+          }
+        );
+        commit("SET_BUSSINESS_PRODUCT_IN_BRANCH", response.data);
+
+        return response;
+
+      } catch (e) {
+        console.log(e + "FETCH_BUSSINESS_PRODUCT_INFO")
+      }
+    },
+
+
     async GET_NEXT_PAGE({ commit, getters }, payload) {
       let url = getters.getProducts.links.next;
       return await axios({
@@ -164,10 +192,12 @@ export default {
     products: [],
     productDetail: [],
     productInfo: [],
+    productInBranch: []
   },
   getters: {
     getProducts: (state) => state.products,
     getProductDetail: (state) => state.productDetail,
     getProductInfo: (state) => state.productInfo,
+    getProductInBranch: (state) => state.productInBranch,
   },
 };
