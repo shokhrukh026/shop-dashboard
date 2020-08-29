@@ -310,7 +310,6 @@
 
       this.loading2 = true;
       const answer2 = await this.GET_BRANCHES_IN_MED_INFO_PAGE({id: this.id});
-      // console.log(answer2.data);
       for(let i = 0; i < answer2.data.length; i++ ){
         this.$set(this.data2, this.data2.length, answer2.data[i]);
       }

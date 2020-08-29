@@ -12,7 +12,7 @@ export default{
 
   },
   actions: {
-    async FETCH_ALL_CATEGORIES({commit}) {
+    async FETCH_ALL_CATEGORIES({commit, getters}) {
       try {
         const response = await shop.get("business/categories/", {
           headers: {
@@ -21,25 +21,30 @@ export default{
         });
         commit("SET_ALL_CATEGORIES", response.data);
       } catch (e) {
-        console.log("watch to FETCH_ALL_CATEGORIES");
+        console.log(e + "watch to FETCH_ALL_CATEGORIES");
       }
     },
 
     /**
      * @return {boolean}
      */
-    async ADD_CATEGORY({commit}, category_title) {
+    async ADD_CATEGORY({commit, getters},category_title) {
       try {
-        const response = await shop.post("business/add/category/", {
+        const response = await shop.post("business/add/category/",
+          {
+
+            category_title: category_title,
+          },
+          {
           headers: {
             Authorization: getters.getUser.token,
+            'Content-Type': 'application/json',
           },
-          category_title: category_title,
         });
-
+        commit("SET_ADD_CATEGORY", response.data);
         return true;
       } catch (e) {
-        console.log(e + "SET_ADD_CATEGORY")
+        console.log(e + "ADD_CATEGORY");
         return false;
       }
     },
@@ -50,7 +55,7 @@ export default{
     newCategoryAdded: "",
   },
   getters:{
-    GET_ALL_CATEGORIES : state => state.categories,
-    GET_IS_ADDED: state => state.newCategoryAdded,
+    get_all_categories : state => state.categories,
+    get_is_added: state => state.newCategoryAdded,
   }
 }

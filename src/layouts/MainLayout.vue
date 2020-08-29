@@ -94,14 +94,9 @@ export default {
         {title: 'Главная', icon: 'dashboard', url: '/main'},
         {title: 'Филиалы', icon: 'fas fa-building', url: '/branches'},
         {title: 'Продукты', icon: 'store', url: '/products'},
+        {title: 'Категории', icon: 'store', url: '/categories'},
         {title: 'Возврат', icon: 'fas fa-exchange-alt', url: '/return'},
         {title: 'История', icon: 'fas fa-history', url: '/history'},
-
-        {title: 'Панель приборов', icon: 'fas fa-chart-pie ', url: '/shops'},
-        {title: 'Лучшие продажи', icon: 'fas fa-chart-line', url: '/shops'},
-        {title: 'Остаток средств', icon: 'fas fa-chart-bar', url: '/shops'},
-
-
 
       ]
 

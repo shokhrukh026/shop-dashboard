@@ -168,7 +168,6 @@
                  <div class="row col-12 justify-end q-px-md">
                   <q-btn class="text-capitalize bg-blue text-white" @click="addMedicine">Добавить</q-btn>
                  </div>
-                 <!-- {{medicine_add}} -->
 
                </q-card-section>
 

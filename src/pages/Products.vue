@@ -9,7 +9,7 @@
           label="Добавить"
           class="q-mb-xs"
           :disable="loading"
-          @click="addMedicinePopUp = !addMedicinePopUp"
+          @click="addProductPopUp = !addProductPopUp"
         />
         <q-space />
       </div>
@@ -123,8 +123,8 @@
       </q-card>
     </q-dialog>
 
-    <q-dialog v-model="addMedicinePopUp" full-width full-height>
-      <addMedicines />
+    <q-dialog v-model="addProductPopUp" full-width full-height>
+      <addProduct />
     </q-dialog>
 
     <!-- {{getMedicines}} -->
@@ -133,11 +133,11 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import addMedicines from './Add-medicines'
+import addProduct from './popUps/Add-Product'
 
 export default {
   components:{
-    'addMedicines': addMedicines
+    'addProduct': addProduct
   },
 
   data() {
@@ -178,7 +178,7 @@ export default {
         left_quantity: "",
         vat: "",
       },
-      addMedicinePopUp: false,
+      addProductPopUp: false,
       editRowVar: false,
       deleteRowVar: false,
       rowDelete: {},
@@ -321,21 +321,4 @@ export default {
 </script>
 
 <style scoped></style>
-
-/* watch: { "pagination.page": async function (newVal, oldVal) { if (newVal ===
-this.pagesNumber) { await this.GET_NEXT_PAGE(); } }, filter: async function
-(newVal, oldVal) { if (this.scan === false) { if (newVal.length >= 2) { await
-this.getSearchResultByFilter(); } else { console.log("Search input has less than
-2 characters. Search is not working"); } } }, }, /*async mounted() {
-this.loading = true; await this.FETCH_BUSSINESS_PRODUCT_LIST(); this.rowsNumber
-= await this.getProducts.count; this.data = await this.getProducts.results;
-console.log(data); this.loading = false; }, computed: { ...mapGetters([
-'getProducts', 'GET_ALL_BRANCHES' ]), pagesNumber() { return
-Math.ceil(this.data.length / this.pagination.rowsPerPage); }, }, methods: {
-...mapActions([ 'FETCH_BUSSINESS_PRODUCT_LIST', 'GET_NEXT_PAGE',
-'GET_SEARCH_RESULT_ALL_PRODUCTS' ]), async getSearchResultByFilter() { let a =
-await this.GET_SEARCH_RESULT_ALL_PRODUCTS({ value: this.filter, }); },
-deleteRow(props){ this.rowDelete = props.row this.deleteRowVar =
-!this.deleteRowVar }, editRow(props) { this.row = props.row this.editRowVar =
-!this.editRowVar }, },*/ */
 

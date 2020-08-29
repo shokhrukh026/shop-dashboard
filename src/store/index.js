@@ -6,6 +6,7 @@ import data from './data'
 import branches from "src/store/branches";
 import products from "src/store/products";
 import cart from "src/store/cart";
+import categories from "src/store/categories";
 
 Vue.use(Vuex);
 
@@ -25,6 +26,7 @@ export default function (/* { ssrContext } */) {
       data,
       branches,
       products,
+      categories,
     },
 
     // enable strict mode (adds overhead!)
