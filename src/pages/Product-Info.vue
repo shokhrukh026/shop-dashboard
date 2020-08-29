@@ -89,7 +89,7 @@
         >
           <template v-slot:body-cell-actions="props">
             <q-td :props="props">
-              <q-btn dense round flat color="grey" @click="(addRow = !addRow) && (temp = props.row)" icon="add_circle"></q-btn>
+              <q-btn dense round flat color="grey" @click="(addRow = !addRow) && (temp = props.row) && openDialog"s icon="add_circle"></q-btn>
               <q-btn dense round flat color="grey" to="/branch-update" icon="edit"></q-btn>
               <q-btn dense round flat color="grey" to="/branch-info" icon="fas fa-info-circle"></q-btn>
             </q-td>
@@ -129,7 +129,7 @@
             </q-td>
           </template>
           <template v-slot:top="props">
-            <span class="text-h6">Лекарства в филиалах</span>
+            <span class="text-h6">Продукт в филиалах</span>
             <q-space />
             <q-btn
               flat round dense
@@ -146,7 +146,6 @@
     </div>
 
 
-
     <q-dialog v-model="addRow" persistent >
 
       <q-card style="min-width: 50vw;">
@@ -156,28 +155,16 @@
         </q-card-section>
         <q-separator />
         <q-form
-          @submit="addToCart"
+          @submit="addToCart(quantity, business_product_info_id, branch_id)"
+          @keypress.enter="addToCart"
           @reset="onReset"
           class="q-pt-md"
         >
           <q-card-section class="q-pt-none">
             <div class="row">
-              <q-select outlined v-model="distribution_branch" :options="distribution_options" label="Филиал" class="q-mt-md col-12"
+              <q-input outlined    type="number" v-model="quantity" label="Количество" class="q-mt-md col-12"
                         :rules="[
-                    val => val != '' || 'Филиал не выбран'
-                  ]"/>
-            </div>
-            <div class="row q-mb-xs content-stretch">
-              <q-input outlined v-model="distribution_amount.box" label="Кол-во упаковок" class="col" :suffix="String(left_quantity_box)"
-                       ref="box"
-                       :rules="[
-                    val => val >= 0 && val <= left_quantity_box || 'В складе имеется ' + left_quantity_box + ' упаковок'
-                  ]"/>
-              <q-input outlined v-model="distribution_amount.piece" label="Кол-во штук" class="q-pl-md col" :suffix="String(left_quantity_piece)"
-                       v-if="temp.capacity > 1"
-                       ref="piece"
-                       :rules="[
-                    val => val >= 0 && val <= left_quantity_piece || 'В складе имеется ' + left_quantity_piece + ' штук'
+                    val => val != '' || 'Поле не должно быть пустым'
                   ]"/>
             </div>
           </q-card-section>
@@ -190,7 +177,6 @@
 
         </q-form>
       </q-card>
-
     </q-dialog>
     <!-- {{getMedicinesInfo}} -->
   </q-page>
@@ -216,6 +202,7 @@
         distribution_amount: {box: '', piece: ''},
         distribution_branch: '',
         distribution_options: [],
+        quantity: "",
 
         getProduct: {title: '', barcode: '', type: '', country: '', manufacture: '', category: '',
           total_quantity: '', left_quantity: '', vat: '', description: "", added_at: ""},
@@ -224,7 +211,10 @@
         },
         loading: false,
         loading2: false,
+        dialog: false,
         filter: '',
+        branch_id: "",
+        business_product_info_id: "",
         columns: [
           { name: 'index', align: 'center', label: '№', field: 'index', sortable: true},
           { name: 'expire_date', align: 'center', label: 'Годен до', field: 'expire_date', sortable: true },
@@ -283,40 +273,29 @@
 
       this.getProduct = await this.getProductDetail;
 
-
-
-      // this.getProduct.title = details.data.title;
-      // this.getProduct.barcode = details.data.barcode;
-      // this.getProduct.type = details.data.type;
-      // this.getProduct.country = details.data.country;
-      // this.getProduct.manufacture = details.data.manufacture;
-      // this.getProduct.category = details.data.category;
-      // this.getProduct.total_quantity = details.data.total_quantity;
-      // this.getProduct.left_quantity = details.data.left_quantity;
-      // this.getProduct.vat = details.data.vat;
-      // this.getProduct.description = details.data.description;
-      // this.getProduct.added_at = details.data.added_at;
-
       this.loading = true;
       const answer = await this.FETCH_BUSSINESS_PRODUCT_INFO(this.id);
-      console.log(answer.data);
       this.rowsNumber = answer.data.count;
       for(let i = 0; i < answer.data.results.length; i++ ){
         this.$set(this.data, this.data.length, answer.data.results[i]);
       }
       this.loading = false;
+      this.business_product_info_id =  answer.data.results.answer.data.results;
 
-
+      console.log(this.business_product_info_id);
 
       this.loading2 = true;
       const answer2 = await this.FETCH_BUSSINESS_PRODUCT_IN_BRANCH(this.id);
-
-      console.log(answer2);
 
       for(let i = 0; i < answer2.data.length; i++ ){
         this.$set(this.data2, this.data2.length, answer2.data[i]);
       }
       this.loading2 = false;
+
+
+      this.branch_id =  answer2.data.branch_id;
+
+
 
 
       await this.GET_BRANCHES();
@@ -339,46 +318,39 @@
     methods: {
       ...mapActions([
         'FETCH_BUSSINESS_PRODUCT', 'FETCH_BUSSINESS_PRODUCT_INFO', 'FETCH_ALL_BRANCHES', 'GET_BRANCHES_IN_MED_INFO_PAGE',
-        'ADD_TO_CART', 'FETCH_BUSSINESS_PRODUCT_IN_BRANCH'
+        'ADD_TO_CART', 'FETCH_BUSSINESS_PRODUCT_IN_BRANCH', 'AddToCard'
       ]),
-      async addToCart(){
-        await this.$emit('medicines', true);
-
-        const branch_id = this.getBranches.filter(el => el.name === this.distribution_branch);
-        console.log(branch_id);
-
-        await this.ADD_TO_CART({
-          business_medicine_info_id: this.temp.business_medicine_info_id,
-          quantity_box: this.distribution_amount.box,
-          quantity_piece: this.distribution_amount.piece,
-          branch_id: branch_id[0].id,
+      async addToCart(quantity, business_product_info_id, branch_id){
+        let isAdded  = await this.AddToCard({
+          business_product_info_id: this.business_product_info_id,
+          quantity: this.quantity,
+          branch_id: this.business_product_info_id,
         });
-        this.$q.notify({
-          icon: 'done',
-          color: 'positive',
-          message: 'Отправлено'
-        })
 
-        this.onReset();
-        this.addRow = false;
-
-
-        this.data = [];
-        const answer = await this.GET_MEDICINE_INFO({id: this.id});
-        // console.log(answer.data);
-        this.rowsNumber = answer.data.count;
-        for(let i = 0; i < answer.data.results.length; i++ ){
-          this.$set(this.data, this.data.length, answer.data.results[i]);
+        if (isAdded) {
+          this.$q.notify({
+            icon: 'done',
+            color: 'positive',
+            message: 'Успешно отправлено в корзину!'
+          })
+        }else
+        {
+          this.$q.notify({
+            color: 'negative',
+            message: 'товар не добавилось в карзину . Попробуйте еще раз'
+          })
         }
 
       },
-      onReset () {
-        this.distribution_branch = '';
-        this.distribution_amount = {box: '', piece: ''};
+     async onReset () {
+         this.distribution_branch = '';
+         this.distribution_amount = {box: '', piece: ''};
+
 
         this.$refs.box.resetValidation()
         this.$refs.piece.resetValidation()
-      }
+      },
+
     }
   }
 </script>

@@ -27,6 +27,7 @@ export default function (/* { ssrContext } */) {
       branches,
       products,
       categories,
+      cart,
     },
 
     // enable strict mode (adds overhead!)

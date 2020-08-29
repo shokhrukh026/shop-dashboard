@@ -12,14 +12,19 @@ export default{
      */
     async AddToCard({commit, getters}, payload)
     {
+      console.log(payload);
+
       try {
-        const response = shop.post('v1/business/cart/add/', {
+        const response = shop.post('v1/business/cart/add/',
+          {
+            business_product_info_id: payload.business_product_info_id,
+            quantity: payload.quantity,
+            branch_id: payload.branch_id,
+          },
+          {
           headers: {
             Authorization: getters.getUser.token
           },
-          business_product_info_id: payload.business_product_info_id,
-          quantity: payload.quantity,
-          branch_id: payload.branch_id,
         });
 
         return true;

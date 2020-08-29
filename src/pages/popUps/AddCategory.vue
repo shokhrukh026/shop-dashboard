@@ -1,7 +1,7 @@
 <template>
   <q-card class="">
-    <q-card-section class="bg-blue row ">
-      <div class="text-h6 text-white" style="padding-right: 80px;">Добавить Категорию</div>
+    <q-card-section class="bg-info row">
+      <div class="text-h6 text-white" style="padding-right: 100px;">Добавить Категорию</div>
       <q-space></q-space>
       <q-btn icon="close" color="white" flat round dense v-close-popup />
     </q-card-section>
@@ -15,7 +15,7 @@
           </q-item>
         </q-list>
         <div class="row col-12 justify-end q-px-md q-pa-sm ">
-          <q-btn label="Добавить" type="submit" class="text-capitalize bg-blue text-white"/>
+          <q-btn label="Добавить" type="submit" class="text-capitalize bg-info  text-white"/>
         </div>
     </q-form>
 
@@ -61,11 +61,14 @@
         else
         {
           this.$q.notify({
-            message: 'Ooops something got wrong please try send  again',
+            message: 'категория не добавилось.Попробуйте еще раз',
             color: 'red',
             position: 'top',
           })
         }
+
+        this.onReset();
+        this.addRow = false;
       }
     }
   }
