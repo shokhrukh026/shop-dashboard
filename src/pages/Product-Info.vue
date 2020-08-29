@@ -282,7 +282,6 @@
       this.loading = false;
       this.business_product_info_id =  answer.data.results.answer.data.results;
 
-      console.log(this.business_product_info_id);
 
       this.loading2 = true;
       const answer2 = await this.FETCH_BUSSINESS_PRODUCT_IN_BRANCH(this.id);
@@ -327,7 +326,8 @@
           branch_id: this.business_product_info_id,
         });
 
-        if (isAdded) {
+
+        if (!isAdded.error) {
           this.$q.notify({
             icon: 'done',
             color: 'positive',

@@ -42,7 +42,7 @@ export default{
           },
         });
         commit("SET_ADD_CATEGORY", response.data);
-        return true;
+        return response.data;
       } catch (e) {
         console.log(e + "ADD_CATEGORY");
         return false;

@@ -49,7 +49,7 @@
       async addCategoryInfo(title)
       {
         let response = await this.ADD_CATEGORY(title);
-        if(response)
+        if(!response.error)
         {
           this.$q.notify({
             message: 'new Category is added ',

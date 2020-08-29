@@ -26,10 +26,8 @@ export default{
             Authorization: getters.getUser.token
           },
         });
-
-        return true;
+        return response.data;
       }catch (e) {
-
         console.log(e + "AddToCard");
         return false;
       }
