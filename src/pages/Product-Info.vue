@@ -280,10 +280,10 @@
         this.$set(this.data, this.data.length, answer.data.results[i]);
       }
       this.loading = false;
-      this.business_product_info_id =  answer.data.results.answer.data.results;
 
-
+      this.business_product_info_id =  this.data.business_product_info_id;
       this.loading2 = true;
+
       const answer2 = await this.FETCH_BUSSINESS_PRODUCT_IN_BRANCH(this.id);
 
       for(let i = 0; i < answer2.data.length; i++ ){
@@ -292,12 +292,7 @@
       this.loading2 = false;
 
 
-      this.branch_id =  answer2.data.branch_id;
-
-
-
-
-      await this.GET_BRANCHES();
+      await this.FETCH_ALL_BRANCHES();
       this.distribution_options = await this.getBranchNames;
 
 
@@ -317,9 +312,11 @@
     methods: {
       ...mapActions([
         'FETCH_BUSSINESS_PRODUCT', 'FETCH_BUSSINESS_PRODUCT_INFO', 'FETCH_ALL_BRANCHES', 'GET_BRANCHES_IN_MED_INFO_PAGE',
-        'ADD_TO_CART', 'FETCH_BUSSINESS_PRODUCT_IN_BRANCH', 'AddToCard'
+        'ADD_TO_CART', 'FETCH_BUSSINESS_PRODUCT_IN_BRANCH', 'AddToCard', 'FETCH_ALL_BRANCHES'
       ]),
       async addToCart(quantity, business_product_info_id, branch_id){
+        await this.$emit('medicines', true);
+
         let isAdded  = await this.AddToCard({
           business_product_info_id: this.business_product_info_id,
           quantity: this.quantity,
@@ -341,14 +338,18 @@
           })
         }
 
+
+
+        this.$refs.box.resetValidation();
+        this.$refs.piece.resetValidation();
       },
      async onReset () {
          this.distribution_branch = '';
          this.distribution_amount = {box: '', piece: ''};
 
 
-        this.$refs.box.resetValidation()
-        this.$refs.piece.resetValidation()
+        this.$refs.box.resetValidation();
+        this.$refs.piece.resetValidation();
       },
 
     }
