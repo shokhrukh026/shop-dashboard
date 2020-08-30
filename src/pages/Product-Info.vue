@@ -312,12 +312,12 @@
     methods: {
       ...mapActions([
         'FETCH_BUSSINESS_PRODUCT', 'FETCH_BUSSINESS_PRODUCT_INFO', 'FETCH_ALL_BRANCHES', 'GET_BRANCHES_IN_MED_INFO_PAGE',
-        'ADD_TO_CART', 'FETCH_BUSSINESS_PRODUCT_IN_BRANCH', 'AddToCard', 'FETCH_ALL_BRANCHES'
+        'ADD_TO_CART', 'FETCH_BUSSINESS_PRODUCT_IN_BRANCH', 'ADD_TO_CARD', 'FETCH_ALL_BRANCHES'
       ]),
       async addToCart(quantity, business_product_info_id, branch_id){
         await this.$emit('medicines', true);
 
-        let isAdded  = await this.AddToCard({
+        let isAdded  = await this.ADD_TO_CARD({
           business_product_info_id: this.business_product_info_id,
           quantity: this.quantity,
           branch_id: this.business_product_info_id,

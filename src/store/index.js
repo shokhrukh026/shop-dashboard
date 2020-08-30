@@ -5,8 +5,8 @@ import user from './user'
 import data from './data'
 import branches from "src/store/branches";
 import products from "src/store/products";
-import cart from "src/store/cart";
 import categories from "src/store/categories";
+import cart from "src/store/cart";
 
 Vue.use(Vuex);
 
@@ -23,11 +23,11 @@ export default function (/* { ssrContext } */) {
   const Store = new Vuex.Store({
     modules: {
       user,
+      cart,
       data,
       branches,
       products,
       categories,
-      cart,
     },
 
     // enable strict mode (adds overhead!)

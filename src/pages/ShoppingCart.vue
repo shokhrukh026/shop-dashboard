@@ -18,71 +18,38 @@
         >
           <template v-slot:body-cell-actions="props">
             <q-td :props="props">
-              <q-btn
-                dense
-                round
-                flat
-                color="grey"
-                :to="{
-                  name: 'edit-product',
-                  params: { id: props.row.id, row: props.row },
-                }"
-                icon="edit"
-              ></q-btn>
-              <q-btn
-                dense
-                round
-                flat
-                color="grey"
-                :to="{ name: 'med-info', params: { id: props.row.id } }"
-                icon="fas fa-info-circle"
-              ></q-btn>
-              <q-btn
-                dense
-                round
-                flat
-                color="grey"
-                @click="deleteRow(props)"
-                icon="delete"
-              ></q-btn>
+              <q-btn dense round flat color="grey" @click="deleteRow(props)" icon="delete"></q-btn>
             </q-td>
           </template>
           <template v-slot:top="props">
-            <span class="text-subtitle1">Все лекарства</span>
+            <span class="text-subtitle1">Все Продукты</span>
             <q-space />
-
             <q-btn
-              flat
-              round
-              dense
+              flat round dense
               :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
               @click="props.toggleFullscreen"
               class="q-ml-md"
             />
           </template>
         </q-table>
-        <q-btn
-          color="blue"
-          class="q-my-sm"
-          @click="distribute"
-          :disable="data.length == 0"
-          >Распределить</q-btn
-        >
+        <q-btn color="blue" class="q-my-sm" @click="distribute" :disable="data.length == 0">Распределить</q-btn>
       </div>
 
+
+      <!-- {{data}} -->
       <q-dialog v-model="deleteRowVar">
-        <q-card style="width: 300px;">
+        <q-card>
           <q-card-section class="bg-warning">
             <div class="text-h6 text-white">Удаление</div>
           </q-card-section>
           <q-separator />
           <q-card-section class="q-pt-none q-pa-lg">
-            Вы всерьёз хотите удалить строку?
+            Вы всерьёз хотите удалить лекарство?
           </q-card-section>
           <q-separator />
           <q-card-actions align="right" class="bg-white text-teal">
             <q-btn flat label="Нет" v-close-popup />
-            <q-btn flat label="Да" v-close-popup @click="deleteProcess" />
+            <q-btn flat label="Да" v-close-popup  @click="deleteProcess"/>
           </q-card-actions>
         </q-card>
       </q-dialog>
@@ -90,93 +57,79 @@
   </q-page>
 </template>
 
+
 <script>
-export default {
-  props: {},
-  data() {
-    return {
-      answer: { data: { data: [] } },
+  import {mapActions, mapGetters} from 'vuex'
 
-      pagination: {
-        rowsPerPage: 4,
-        page: 1,
+  export default {
+    data(){
+      return {
+        pagination: {
+          rowsPerPage: 4,
+          page: 1,
+        },
+        deleteRowVar: false,
+        rowDelete: {},
+        loading: false,
+        filter: '',
+        columns: [
+          { name: 'index', align: 'center', label: 'No#', field: 'index', sortable: true},
+          { name: 'branch_name', align: 'center', label: 'Филиал', field: 'branch_name', sortable: true },
+          { name: 'title', align: 'center', label: 'Лекарство', field: 'title', sortable: true },
+          { name: 'quantity', align: 'center', label: 'Кол-во', field: 'quantity', sortable: true },
+          { name: 'actions', label: 'Действия', field: '', align:'center' },
+        ],
+        data: [],
+      }
+    },
+
+    async mounted(){
+        this.loading =  true;
+        await this.FETCH_CART_LIST();
+        this.data =  this.getCartList;
+        this.loading =  false;
+    },
+    computed:{
+      ...mapGetters([
+        'getCartList',
+      ])
+    },
+    methods: {
+      ...mapActions([
+        'FETCH_CART_LIST', 'DELETE_CART_ITEM'
+      ]),
+      async deleteRow(props){
+        this.deleteRowVar = !this.deleteRowVar
+        this.rowDelete = props.row
       },
-      row: {
-        index: "",
-        products: "",
-        barcode: "",
-        total_quantity: "",
-        left_quantity: "",
-        vat: "",
+      async deleteProcess(){
+
+        await this.DELETE_CART_ITEM(this.rowDelete.cart_id);
+        this.data = [];
+        this.data = await this.FETCH_CART_LIST();
+        await this.$emit('medicines', false);
+        this.$q.notify({
+          icon: 'done',
+          color: 'positive',
+          message: 'Успешно удалено!'
+        })
       },
-      editRowVar: false,
-      deleteRowVar: false,
-      rowDelete: {},
-      loading: false,
-      filter: "",
-      columns: [
-        {
-          name: "index",
-          align: "center",
-          label: "No#",
-          field: "index",
-          sortable: true,
-        },
-        {
-          name: "branch_name",
-          align: "center",
-          label: "Филиал",
-          field: "branch_name",
-          sortable: true,
-        },
-        {
-          name: "title",
-          align: "center",
-          label: "Лекарство",
-          field: "title",
-          sortable: true,
-        },
-        {
-          name: "quantity",
-          align: "center",
-          label: "Кол-во",
-          field: "quantity",
-          sortable: true,
-        },
+      async distribute(){
+        await this.ADD_ARRIVAL_ALL();
+        await this.$emit('medicines', 'distribute_all');
+        this.data = [];
+        this.data = await this.FETCH_CART_LIST();
+        this.$q.notify({
+          icon: 'done',
+          color: 'positive',
+          message: 'Успешно распределено!'
+        })
+      }
 
-        { name: "actions", label: "Действия", field: "", align: "center" },
-      ],
-      data: [
-        // {index: 1, products: 'Тримол', barcode: '2313141', total_quantity: '100', left_quantity: '50', vat: '10%'},
-        // {index: 2, products: 'Ношпа', barcode: '2313141', total_quantity: '56', left_quantity: '40', vat: '12%'},
-        // {index: 3, products: 'Ибуклин', barcode: '2313141', total_quantity: '80', left_quantity: '10', vat: '5%'},
-        // {index: 4, products: 'Арбидол', barcode: '2313141', total_quantity: '14', left_quantity: '0', vat: '7%'},
-      ],
-    };
-  },
-
-  async mounted() {},
-  computed: {},
-  methods: {
-    async deleteRow(props) {
-      this.deleteRowVar = !this.deleteRowVar;
-      this.rowDelete = props.row;
-    },
-    async deleteProcess() {
-      await this.DELETE_ARRIVAL_ONE({ cart_id: this.rowDelete.cart_id });
-      console.log(this.rowDelete);
-      this.data = [];
-      this.data = await this.GET_SHOPPING_CART_MEDICINES();
-      await this.$emit("medicines", false);
-    },
-    async distribute() {
-      await this.ADD_ARRIVAL_ALL();
-      await this.$emit("medicines", "distribute_all");
-      this.data = [];
-      this.data = await this.GET_SHOPPING_CART_MEDICINES();
-    },
-  },
-};
+    }
+  }
 </script>
 
-<style scoped></style>
+<style scoped>
+
+</style>

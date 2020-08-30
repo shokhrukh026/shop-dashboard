@@ -1,81 +1,84 @@
 import shop from "../api/shop";
-
 export default{
-  mutations:{
-    SET_CARD_LIST: (state, payload) => {
-      state.cardList = payload;
-    }
+  state:{
+    cartList: [],
+    isAdded: "",
   },
-  actions:{
-    /**
-     * @return {boolean}
-     */
-    async AddToCard({commit, getters}, payload)
-    {
-      console.log(payload);
+  mutations:{
 
+    SET_CARD_LIST: (state, payload)=> {
+      state.cartList = payload;
+
+      state.cartList.forEach((row, index) => {
+        row.index = index + 1
+      })
+    },
+
+    SET_ADD_TO_CARD: (state, payload) =>{
+      state.isAdded = payload;
+    },
+  },
+  actions: {
+    async FETCH_CART_LIST({commit, getters}) {
       try {
-        const response = shop.post('v1/business/cart/add/',
+        const response = await shop.get("business/cart/", {
+          headers: {
+            Authorization: getters.getUser.token,
+          },
+        });
+        commit("SET_CARD_LIST", response.data);
+      } catch (e) {
+        console.log(e + "watch to FETCH_CART_LIST");
+      }
+    },
+
+    async DELETE_CART_ITEM({commit, getters}, card_id){
+      try {
+
+        console.log(card_id);
+        const response = await shop.post("business/cart/delete/",
+          {
+            card_id: card_id,
+          },
+          {
+            headers: {
+              Authorization: getters.getUser.token,
+            },
+          });
+        commit("SET_CARD_LIST", response.data);
+
+      }catch (e) {
+
+      }
+
+    },
+
+    async ADD_TO_CARD({commit, getters}, payload)
+    {
+      try {
+        const response = await shop.post("business/cart/add/",
           {
             business_product_info_id: payload.business_product_info_id,
             quantity: payload.quantity,
-            branch_id: payload.branch_id,
+            branch_id: payload.business_product_info_id,
           },
           {
-          headers: {
-            Authorization: getters.getUser.token
-          },
-        });
-        return response.data;
+            headers: {
+              Authorization: getters.getUser.token,
+            },
+          });
+            commit("SET_ADD_TO_CARD", response.data);
+        return response.data();
       }catch (e) {
-        console.log(e + "AddToCard");
-        return false;
+        commit("SET_ADD_TO_CARD", e + "SET_ADD_TO_CARD");
+        return {error: "error in request"};
       }
-    }
+    },
+
   },
-
-  async deleteFromCart({commit, getters}, payload)
-  {
-    try {
-      const response = shop.post('v1/business/cart/delete/', {
-        headers: {
-          Authorization: getters.getUser.token
-        },
-        cart_id: payload.cart_id
-      });
-
-      return payload.status === "SUCCESS";
-
-    }catch (e) {
-        console.log(e + " deleteFromCart");
-      return  false;
-    }
-  },
-
-  async cartList({coomit, getters}, payload)
-  {
-    try {
-      const response = shop.get('v1/business/cart/delete/', {
-        headers: {
-          Authorization: getters.getUser.token
-        },
-      });
-
-      coomit('SET_CARD_LIST', response.data);
-
-      return payload.status === "SUCCESS";
-
-    }catch (e) {
-      console.log(e + "deleteFromCart");
-      return  false;
-    }
-  },
-
-  state:{
-    cardList: [],
-  },
-
   getters:{
-    getCardList: state => state.cardList,
+    getCartList: state => state.cartList,
+
   }
 }
+
