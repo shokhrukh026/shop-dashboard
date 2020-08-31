@@ -12,47 +12,20 @@
         separator="cell"
         :pagination.sync="pagination"
         :rows-per-page-options="[0]"
-        :pagination-label="
-          (firstRowIndex, endRowIndex, totalRowsNumber) =>
-            firstRowIndex + '-' + endRowIndex + ' из ' + totalRowsNumber
-        "
+        :pagination-label="(firstRowIndex, endRowIndex, totalRowsNumber) => firstRowIndex + '-' + endRowIndex + ' из ' + totalRowsNumber"
       >
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <q-btn
-              dense
-              round
-              flat
-              color="grey"
-              @click="editRow(props)"
-              icon="edit"
-            ></q-btn>
-            <q-btn
-              dense
-              round
-              flat
-              color="grey"
-              :to="{ name: 'history-info', params: { id: props.row.id } }"
-              icon="fas fa-info-circle"
-            ></q-btn>
-            <q-btn
-              dense
-              round
-              flat
-              color="grey"
-              @click="deleteRow(props)"
-              icon="delete"
-              v-if="props.row.is_received == 'ложь'"
-            ></q-btn>
+            <q-btn dense round flat color="grey" @click="editRow(props)" icon="edit"></q-btn>
+            <q-btn dense round flat color="grey" :to="{ name: 'history-info', params: {id: props.row.id}}"  icon="fas fa-info-circle"></q-btn>
+            <q-btn dense round flat color="grey" @click="deleteRow(props)" icon="delete"></q-btn>
           </q-td>
         </template>
         <template v-slot:top="props">
           <span class="text-h6">История приходов</span>
           <q-space />
           <q-btn
-            flat
-            round
-            dense
+            flat round dense
             :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
             @click="props.toggleFullscreen"
             class="q-ml-md"
@@ -60,22 +33,25 @@
         </template>
       </q-table>
     </div>
+    <!-- {{data}} -->
 
     <q-dialog v-model="deleteRowVar">
-      <q-card style="width: 300px;">
-        <q-card-section class="bg-warning">
+      <q-card>
+        <q-card-section class="bg-negative">
           <div class="text-h6 text-white">Удаление</div>
         </q-card-section>
         <q-separator />
         <q-card-section class="q-pt-none q-pa-lg">
-          Вы всерьёз хотите удалить строку?
+          Вы Деиствительно хотите удалить историю?
         </q-card-section>
         <q-separator />
         <q-card-actions align="right" class="bg-white text-teal">
           <q-btn flat label="Нет" v-close-popup />
+          <q-btn flat label="Да" v-close-popup @click="deleteArrival" />
         </q-card-actions>
       </q-card>
     </q-dialog>
+
   </q-page>
 </template>
 
@@ -101,13 +77,6 @@ export default {
       deleteRowVar: false,
       filter: "",
       columns: [
-        {
-          name: "index",
-          align: "center",
-          label: "№",
-          field: "index",
-          sortable: true,
-        },
         {
           name: "id",
           align: "center",
@@ -149,7 +118,50 @@ export default {
       data: [],
     };
   },
+
+  async mounted() {
+    this.loading = true;
+    this.data = await this.FETCH_ARRIVAL_ALL();
+    this.loading = false;
+  },
+
+  computed:{
+    ...mapGetters([
+      'getArrivalAll',
+    ])
+  },
+
+  methods: {
+    ...mapActions([
+      'FETCH_ARRIVAL_ALL', 'DELETE_ARRIVAL_FROM_HISTORY'
+    ]),
+
+    deleteRow(props){
+      this.rowDelete = props.row;
+      this.deleteRowVar = !this.deleteRowVar;
+    },
+
+    async deleteArrival(){
+      let response = await this.DELETE_ARRIVAL_FROM_HISTORY(this.rowDelete.id);
+      console.log(response);
+      if(response.success){
+        this.$q.notify({
+          message: 'Успешно удалено!',
+          color: 'green'
+        })
+      }else{
+        this.$q.notify({
+          message: 'Ошибка!',
+          color: 'negative'
+        })
+      }
+      this.data = [];
+      this.data = await this.FETCH_ARRIVAL_ALL();
+    }
+
+  }
 };
+
 </script>
 
 <style scoped></style>

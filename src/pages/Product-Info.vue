@@ -355,6 +355,7 @@
 
         this.$refs.box.resetValidation();
         this.$refs.piece.resetValidation();
+
       },
 
     }

@@ -7,6 +7,7 @@ import branches from "src/store/branches";
 import products from "src/store/products";
 import categories from "src/store/categories";
 import cart from "src/store/cart";
+import arrival from "src/store/arrival";
 
 Vue.use(Vuex);
 
@@ -28,6 +29,7 @@ export default function (/* { ssrContext } */) {
       branches,
       products,
       categories,
+      arrival,
     },
 
     // enable strict mode (adds overhead!)

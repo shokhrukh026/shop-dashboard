@@ -96,7 +96,7 @@
     },
     methods: {
       ...mapActions([
-        'FETCH_CART_LIST', 'DELETE_CART_ITEM'
+        'FETCH_CART_LIST', 'DELETE_CART_ITEM', 'ADD_ARRIVAL_ALL'
       ]),
       async deleteRow(props){
         this.deleteRowVar = !this.deleteRowVar
@@ -118,15 +118,24 @@
         })
       },
       async distribute(){
-        await this.ADD_ARRIVAL_ALL();
-        await this.$emit('medicines', 'distribute_all');
-        this.data = [];
-        this.data = await this.FETCH_CART_LIST();
-        this.$q.notify({
-          icon: 'done',
-          color: 'positive',
-          message: 'Успешно распределено!'
-        })
+       const resp =   await this.ADD_ARRIVAL_ALL();
+        if (resp) {
+          await this.$emit('medicines', 'distribute_all');
+          this.data = [];
+          this.data = await this.FETCH_CART_LIST();
+          this.$q.notify({
+            icon: 'done',
+            color: 'positive',
+            message: 'Успешно распределено!'
+          })
+        }else
+        {
+          this.$q.notify({
+            icon: 'done',
+            color: 'negative',
+            message: 'Не получилось распределить',
+          })
+        }
       }
 
     }

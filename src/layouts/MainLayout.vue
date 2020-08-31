@@ -95,7 +95,6 @@ export default {
         {title: 'Филиалы', icon: 'fas fa-building', url: '/branches'},
         {title: 'Продукты', icon: 'store', url: '/products'},
         {title: 'Категории', icon: 'store', url: '/categories'},
-        {title: 'Возврат', icon: 'fas fa-exchange-alt', url: '/return'},
         {title: 'История', icon: 'fas fa-history', url: '/history'},
 
       ]

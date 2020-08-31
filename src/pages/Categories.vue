@@ -87,8 +87,8 @@
       </q-table>
     </div>
 
-    <q-dialog v-model="addCategoryPopUp" fit  >
-      <addCategory v-bind:data="this.data"/>
+    <q-dialog v-model="addCategoryPopUp" fit >
+      <addCategory  @onDestroyComponent="updateTableInfo"/>
     </q-dialog>
   </q-page>
 </template>
@@ -140,6 +140,7 @@ export default {
         });
       },
       deep: true,
+
     },
 
     filter: async function (newVal, oldVal) {
@@ -156,20 +157,25 @@ export default {
   },
 
   async mounted() {
-    this.loading = true;
-    await this.FETCH_ALL_CATEGORIES();
-    this.data = this.get_all_categories;
-    console.log(this.data);
-    this.loading = false;
+      this.loading = true;
+      await this.FETCH_ALL_CATEGORIES();
+      this.data = this.get_all_categories;
+      this.loading = false;
+
   },
 
   computed: {
     ...mapGetters(["get_all_categories"]),
   },
 
+
   methods: {
     ...mapActions(["FETCH_ALL_CATEGORIES"]),
 
+      updateTableInfo: async function () {
+         await this.FETCH_ALL_CATEGORIES();
+         this.data = this.get_all_categories;
+      }
 
   },
 };

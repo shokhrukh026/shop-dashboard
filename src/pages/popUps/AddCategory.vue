@@ -6,7 +6,7 @@
       <q-btn icon="close" color="white" flat round dense v-close-popup />
     </q-card-section>
 
-    <q-form @submit.prevent="addCategoryInfo(category_add.description)"  @keyup.enter="addCategoryInfo(category_add.description)">
+    <q-form @submit.prevent="addCategoryInfo(category_add.description)"  @keyup.enter="addCategoryInfo(category_add.description)" >
         <q-list class="row col-8">
           <q-item class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <q-item-section class="">
@@ -26,11 +26,7 @@
 
 <script>
   import {mapActions, mapGetters} from 'vuex';
-
   export default {
-    props: {
-      data: Object,
-    },
     data(){
       return {
         category_add: {
@@ -39,6 +35,11 @@
         isAdded: null,
       }
     },
+
+    destroyed($event) {
+      this.$emit('onDestroyComponent');
+    },
+
     computed:{
       ...mapGetters([
         'get_all_categories'
@@ -52,16 +53,14 @@
       async addCategoryInfo(title)
       {
         let response = await this.ADD_CATEGORY(title);
-        if(!response.error)
+        if(response)
         {
           this.$q.notify({
             message: 'new Category is added ',
             color: 'green',
             position: 'top',
-          })
+          });
           this.category_add.description = "";
-          let rep  = await this.FETCH_ALL_CATEGORIES();
-          this.data = this.get_all_categories;
         }
         else
         {
@@ -71,9 +70,11 @@
             position: 'top',
           })
         }
+      },
 
-        this.onReset();
-        this.addRow = false;
+      onReset()
+      {
+        console.log("reseted");
       }
     }
   }
