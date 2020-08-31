@@ -28,6 +28,9 @@
   import {mapActions, mapGetters} from 'vuex';
 
   export default {
+    props: {
+      data: Object,
+    },
     data(){
       return {
         category_add: {
@@ -38,12 +41,12 @@
     },
     computed:{
       ...mapGetters([
-        ''
+        'get_all_categories'
       ]),
     },
     methods: {
       ...mapActions([
-        'ADD_CATEGORY'
+        'ADD_CATEGORY', 'FETCH_ALL_CATEGORIES'
       ]),
 
       async addCategoryInfo(title)
@@ -57,6 +60,8 @@
             position: 'top',
           })
           this.category_add.description = "";
+          let rep  = await this.FETCH_ALL_CATEGORIES();
+          this.data = this.get_all_categories;
         }
         else
         {

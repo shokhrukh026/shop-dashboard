@@ -27,6 +27,8 @@ export default{
           },
         });
         commit("SET_CARD_LIST", response.data);
+
+        return response.data;
       } catch (e) {
         console.log(e + "watch to FETCH_CART_LIST");
       }
@@ -34,21 +36,22 @@ export default{
 
     async DELETE_CART_ITEM({commit, getters}, card_id){
       try {
-
-        console.log(card_id);
         const response = await shop.post("business/cart/delete/",
           {
-            card_id: card_id,
+            cart_id: card_id,
           },
           {
             headers: {
               Authorization: getters.getUser.token,
+              'Content-Type': 'application/json',
             },
           });
+
         commit("SET_CARD_LIST", response.data);
-
+        return response.data;
       }catch (e) {
-
+        console.log(e);
+        return {error: "error"};
       }
 
     },

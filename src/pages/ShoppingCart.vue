@@ -104,9 +104,12 @@
       },
       async deleteProcess(){
 
-        await this.DELETE_CART_ITEM(this.rowDelete.cart_id);
+       const resp =  await this.DELETE_CART_ITEM(this.rowDelete.cart_id);
+       console.log(resp);
         this.data = [];
         this.data = await this.FETCH_CART_LIST();
+        console.log(this.data);
+
         await this.$emit('medicines', false);
         this.$q.notify({
           icon: 'done',

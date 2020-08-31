@@ -88,7 +88,7 @@
     </div>
 
     <q-dialog v-model="addCategoryPopUp" fit  >
-      <addCategory />
+      <addCategory v-bind:data="this.data"/>
     </q-dialog>
   </q-page>
 </template>

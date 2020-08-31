@@ -71,7 +71,7 @@
                :to="{ name: 'add-info-product', params: {id: $props.branch_id}}"/>
       </div>
       <!-- {{getBranches}} -->
-
+      {{getProduct}}
       <div class="q-mt-xs">
         <q-table
           dense
@@ -108,6 +108,7 @@
       </div>
       <!-- {{data}} -->
 
+      {{data}}
       <div class="q-mt-md">
         <q-table
           dense
@@ -280,6 +281,10 @@
         this.$set(this.data, this.data.length, answer.data.results[i]);
       }
       this.loading = false;
+
+      console.log(this.data);
+      console.log(this.data.business_product_info_id);
+
 
       this.business_product_info_id =  this.data.business_product_info_id;
       this.loading2 = true;
