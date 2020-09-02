@@ -1,9 +1,24 @@
 import shop from "../api/shop";
+import ca from "quasar/lang/ca";
 
 export default{
   mutations:{
     SET_ARRIVAL_ALL: (state, payload) => {
       state.arrivalAll = payload;
+      state.arrivalAll.forEach((row, index) => {
+
+        if(row.is_received === false){
+          row.is_received = 'Непринято'
+        }else if(row.is_received === true){
+          row.is_received = 'Принято'
+        }
+      })
+    },
+    SET_ARRIVAL_ALL_INFO: (state, payload)=>{
+      state.arrival_all_info = payload;
+      state.arrival_all_info.forEach((row, index) => {
+        row.index = index + 1
+      })
     }
   },
   actions:{
@@ -23,6 +38,22 @@ export default{
       } catch (e) {
         console.log(e + "check branches request FETCH_ALL_BRANCHES");
         return {error: "Error"}
+      }
+    },
+
+    async FETCH_ARRIVAL_ALL_INFO({commit, getters}, id)
+    {
+      try {
+        const response = await shop.get(`branch/products/arrival/${id}/info/`,
+        {
+            headers: {
+              Authorization: getters.getUser.token
+            },
+        });
+        commit("SET_ARRIVAL_ALL_INFO", response.data);
+        return response.data;
+      }catch (e) {
+        console.log(e + "FETCH_ARRIVAL_ALL_INFO");
       }
     },
 
@@ -68,9 +99,11 @@ export default{
 
   state:{
     arrivalAll: [],
+    arrival_all_info: [],
   },
 
   getters:{
-    get_arrival_all : state => state.categories,
+    getArrivalAll : state => state.arrivalAll,
+    getArrivalAllInfo: state => state.arrival_all_info,
   }
 }
