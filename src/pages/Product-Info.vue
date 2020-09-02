@@ -68,7 +68,7 @@
         <q-btn push color="white" text-color="blue" icon="fas fa-arrow-left"
                class="q-mb-xs q-mr-xs" to="/products"/>
         <q-btn push color="white" text-color="primary" label="Добавить" class="q-mb-xs" :disable="loading"
-               :to="{ name: 'add-info-product', params: {id: $props.branch_id}}"/>
+               :to="{ name: 'add-info-product', params: {id: $props.id}}"/>
       </div>
       <!-- {{getBranches}} -->
       {{getProduct}}

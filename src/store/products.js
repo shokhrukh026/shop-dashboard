@@ -111,7 +111,7 @@ export default {
 
         });
         commit("SET_BUSSINESS_PRODUCT", response.data);
-        return  response;
+        return  response.data;
       } catch (e) {
         console.log(e + " FETCH_BUSSINESS_PRODUCT");
       }
@@ -154,6 +154,28 @@ export default {
       } catch (e) {
         console.log(e + "FETCH_BUSSINESS_PRODUCT_INFO")
       }
+    },
+
+    async ADD_PRODUCT_INFO({commit, getters}, payload)
+    {
+       try {
+         const response = await shop.post('/business/product/info/add/', {
+             business_product_id: payload.business_product_id,
+             quantity: payload.quantity,
+             purchase_price: payload.purchase_price,
+             selling_price: payload.selling_price,
+             expire_date: payload.expire_date,
+         },
+         {
+             headers: {
+               Authorization: getters.getUser.token,
+             },
+         });
+         return response.data;
+       }catch (e) {
+         console.log("In ADD_PRODUCT_INFO " + e);
+       }
+
     },
 
 
