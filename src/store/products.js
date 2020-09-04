@@ -176,7 +176,36 @@ export default {
        }
 
     },
+    async ADD_PRODUCT({commit, getters}, payload)
+    {
+       try {
+          await shop.post('/business/product/add/', {
+            title: payload.title,
+            barcode: payload.barcode,
+            type: payload.type,
+            country: payload.country,
+            manufacture: payload.manufacture,
+            category_id: payload.category_id,
+            quantity: payload.quantity,
+            vat: payload.vat,
+            description: payload.description,
+            purchase_price: payload.purchase_price,
+            selling_price: payload.selling_price,
+            expire_date: payload.expire_date
+        },
+         {
+            headers: {
+              Authorization: getters.getUser.token,
+            },
+         });
+          return response.data;
+       }catch (e) {
+         console.log("In ADD_PRODUCT " + e);
+       }
 
+    },
+
+  
 
     async GET_NEXT_PAGE({ commit, getters }, payload) {
       let url = getters.getProducts.links.next;
