@@ -64,7 +64,7 @@
           </q-td>
         </template>
         <template v-slot:top="props">
-          <span class="text-subtitle1">Все Продукты</span>
+          <span class="text-subtitle1">Все продукты</span>
           <q-space />
           <form @submit.prevent.stop="getSearchResultByFilter" class="row">
             <q-input
@@ -78,8 +78,7 @@
               style="
                 border: 1px solid silver;
                 padding: 0px 5px;
-                min-width: 20vw;
-              "
+                min-width: 20vw;"
             >
             </q-input>
             <q-btn
@@ -133,7 +132,7 @@
 
 <script>
 import { mapActions, mapGetters } from "vuex";
-import addProduct from './popUps/Add-Product'
+import addProduct from './Add-product'
 
 export default {
   components:{
@@ -202,7 +201,7 @@ export default {
         {
           name: "barcode",
           align: "center",
-          label: "код",
+          label: "Штрих-код",
           field: "barcode",
           sortable: true,
         },
@@ -224,19 +223,19 @@ export default {
         {
           name: "type",
           align: "center",
-          label: "type",
+          label: "Тип",
           field: "type",
         },
         {
           name: "category",
           align: "center",
-          label: "КАТЕГО́РИЯ",
+          label: "Категория",
           field: "category",
         },
         {
           name: "vat",
           align: "center",
-          label: "vat",
+          label: "НДС",
           field: "vat",
           sortable: true,
         },
