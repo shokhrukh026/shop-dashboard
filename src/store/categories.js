@@ -4,12 +4,10 @@ export default{
   mutations:{
     SET_ALL_CATEGORIES: (state, payload) => {
         state.categories = payload;
+        // state.categories.forEach((row, index) => {
+        //   row.index = index + 1
+        // })
     },
-
-    SET_ADD_CATEGORY: (state, payload) =>{
-       state.newCategoryAdded = payload;
-    }
-
   },
   actions: {
     async FETCH_ALL_CATEGORIES({commit, getters}) {
@@ -41,7 +39,6 @@ export default{
             'Content-Type': 'application/json',
           },
         });
-        commit("SET_ADD_CATEGORY", response.data);
         return response.data;
       } catch (e) {
         console.log(e + "ADD_CATEGORY");
@@ -52,10 +49,8 @@ export default{
   },
   state:{
     categories: [],
-    newCategoryAdded: "",
   },
   getters:{
-    get_all_categories : state => state.categories,
-    get_is_added: state => state.newCategoryAdded,
+    getAllCategories : state => state.categories,
   }
 }

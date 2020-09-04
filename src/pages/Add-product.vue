@@ -37,8 +37,28 @@
                    <q-item class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                      <q-item-section>
                        <div class="row justify-between">
-                         <q-input  color="blue" outlined dense v-model="medicine_add_new.type" label="Тип" class="col-10"/>
-                         <q-btn color="blue" label="" size="xs" icon="fas fa-plus" class="q-ml-sm col"/>
+                         <q-select
+                            outlined
+                            dense
+                            v-model="type"
+                            use-input
+                            input-debounce="0"
+                            label="Категория"
+                            :options="type_options"
+                            @filter="filterTypeFn"
+                            behavior="menu"
+                            class="col-10"
+                          >
+                            <template v-slot:no-option>
+                              <q-item>
+                                <q-item-section class="text-grey">
+                                  No results
+                                </q-item-section>
+                              </q-item>
+                            </template>
+                          </q-select>
+                         <!-- <q-input  color="blue" outlined dense v-model="medicine_add_new.type" label="Единица измерения" class="col-10"/> -->
+                         <q-btn color="blue" label="" size="xs" icon="fas fa-plus" class="q-ml-sm col" @click="addTypePopup = !addTypePopup"/>
                        </div>
                      </q-item-section>
                    </q-item>
@@ -55,8 +75,29 @@
                    <q-item class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
                      <q-item-section>
                        <div class="row justify-between">
-                         <q-input  color="blue" outlined dense v-model="medicine_add_new.category_id" label="Категория" class="col-10"/>
-                         <q-btn color="blue" label="" size="xs" icon="fas fa-plus" class="q-ml-sm col"/>
+                          <q-select
+                            outlined
+                            dense
+                            v-model="category"
+                            use-input
+                            input-debounce="0"
+                            label="Категория"
+                            :options="categories_options"
+                            @filter="filterFn"
+                            behavior="menu"
+                            class="col-10"
+                          >
+                            <template v-slot:no-option>
+                              <q-item>
+                                <q-item-section class="text-grey">
+                                  No results
+                                </q-item-section>
+                              </q-item>
+                            </template>
+                          </q-select>
+                         <!-- <q-input  color="blue" outlined dense v-model="medicine_add_new.category_id" label="Категория" class="col-10"/> -->
+                         <q-btn color="blue" label="" size="xs" icon="fas fa-plus" class="q-ml-sm col" 
+                         @click="addCategoryPopUp = !addCategoryPopUp"/>
                        </div>
                      </q-item-section>
                    </q-item>
@@ -111,16 +152,39 @@
                    </q-item>
                  </q-list>
              </q-card-section>
+
+             <q-dialog v-model="addTypePopup" persistent>
+              <addType  @onDestroyComponent="updateTypes"/>
+             </q-dialog>
+
+              <q-dialog v-model="addCategoryPopUp" persistent>
+              <addCategory  @onDestroyComponent="updateCategories"/>
+             </q-dialog>
+
+              {{getAllTypes}}
+             {{getAllCategories}}
             </q-card>
 </template>
 
 
 <script>
 import {mapActions, mapGetters} from 'vuex';
+import addCategory from "./popUps/AddCategory";
+import addType from './popUps/AddType';
 
 export default {
+    components: {
+      addCategory,
+      addType
+    },
     data(){
         return {
+            addTypePopup: false,
+            addCategoryPopUp: false,
+            type: '',
+            category: '',
+            categories_options: [],
+            type_options: [],
             medicine_add_new: {title: '', barcode: '', type: '', country: '', manufacture: '', category_id: '', quantity: '',
             vat: '', description: '', purchase_price: '', selling_price: '', expire_date: ''},
         }
@@ -128,14 +192,64 @@ export default {
     watch:{
       
     },
+    async mounted(){
+      await this.updateCategories();
+      await this.updateTypes();
+      
+    },
     computed:{
-      ...mapGetters([]),
+      ...mapGetters([
+        'getAllCategories', 'getAllTypes'
+      ]),
     },
     methods:{
        ...mapActions([
-        'GET_SEARCH_RESULT_ALL_MEDICINES', 'GET_SEARCH_RESULT_ADD_MEDICINE', 'ADD_PRODUCT'
+        'ADD_PRODUCT', 'ADD_CATEGORY', 'FETCH_ALL_CATEGORIES', 'FETCH_ALL_TYPES'
       ]),
+      async updateCategories(){
+        await this.FETCH_ALL_CATEGORIES();
+      },
+      async updateTypes(){
+        await this.FETCH_ALL_TYPES();
+      },
+      filterFn (val, update) {
+        if (val === '') {
+          update(async () => {
+            for(let i = 0; i < this.getAllCategories.length; i++){
+              await this.$set(this.categories_options, i, this.getAllCategories[i].title);
+            }
+          })
+          return
+        }
+        update(() => {
+          let a = []
+          for(let i = 0; i < this.getAllCategories.length; i++){
+            a.push(this.getAllCategories[i].title);
+          }
+          const needle = val.toLowerCase()
+          this.categories_options = a.filter(v => v.toLowerCase().indexOf(needle) > -1)
+        })
+      },
 
+
+      filterTypeFn (val, update) {
+        if (val === '') {
+          update(async () => {
+            for(let i = 0; i < this.getAllTypes.length; i++){
+              await this.$set(this.type_options, i, this.getAllTypes[i].name);
+            }
+          })
+          return
+        }
+        update(() => {
+          let a = []
+          for(let i = 0; i < this.getAllTypes.length; i++){
+            a.push(this.getAllTypes[i].name);
+          }
+          const needle = val.toLowerCase()
+          this.type_options = a.filter(v => v.toLowerCase().indexOf(needle) > -1)
+        })
+      },
 
       async addNewMedicine(){
         let answer = await this.ADD_PRODUCT(

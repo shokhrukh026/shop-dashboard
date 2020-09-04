@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 
 import user from './user'
-import data from './data'
+import types from './types'
 import branches from "src/store/branches";
 import products from "src/store/products";
 import categories from "src/store/categories";
@@ -25,7 +25,7 @@ export default function (/* { ssrContext } */) {
     modules: {
       user,
       cart,
-      data,
+      types,
       branches,
       products,
       categories,

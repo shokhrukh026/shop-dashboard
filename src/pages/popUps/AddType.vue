@@ -1,26 +1,35 @@
 <template>
   <q-card style="min-width: 27vw;">
     <q-card-section class="bg-info row">
-      <div class="text-h6 text-white">Добавить Категорию</div>
+      <div class="text-h6 text-white">Добавить единицу измерения</div>
       <q-space></q-space>
       <q-btn icon="close" color="white" flat round dense v-close-popup />
     </q-card-section>
 
-    <q-form @submit.prevent="addCategoryInfo" class="q-mt-md">
+    <q-form @submit.prevent="addTypeInfo" class="q-mt-md">
         <q-list class="row">
           <q-item class="col-12">
             <q-item-section>
-              <q-input color="blue" outlined dense v-model="title" label="Название Категории*" />
+              <q-input color="blue" outlined dense v-model="title" label="Название единицы измерения*" />
+              
             </q-item-section>
           </q-item>
-          <q-item class="col">
+          <q-item class="col-12">
             <q-item-section>
-              <div class="row justify-end">
-                <q-btn label="Добавить" type="submit" class="bg-info text-white" v-close-popup/>
-              </div>
+              <q-toggle
+                v-model="isCountable"
+                color="blue"
+                keep-color
+              />
             </q-item-section>
+            <q-item-section>
+              <q-btn label="Добавить" type="submit" class="bg-info text-white" v-close-popup/>
+             </q-item-section>
           </q-item>
         </q-list>
+        <!-- <q-separator></q-separator> -->
+        <div class="row justify-end">
+        </div>
     </q-form>
 
     <!-- {{medicine_add}} -->
@@ -34,6 +43,7 @@
     data(){
       return {
         title: '',
+        isCountable: false,
       }
     },
     destroyed($event) {
@@ -41,15 +51,15 @@
     },
     computed:{
       ...mapGetters([
-        'getAllCategories'
+        'getAllTypes'
       ]),
     },
     methods: {
       ...mapActions([
-        'ADD_CATEGORY'
+        'ADD_TYPE'
       ]),
-      async addCategoryInfo(){
-        let response = await this.ADD_CATEGORY(this.title);
+      async addTypeInfo(){
+        let response = await this.ADD_TYPE({ name: this.title, is_countable: this.isCountable});
         if(response){
           this.$q.notify({
             message: 'Успешно добавлено!',

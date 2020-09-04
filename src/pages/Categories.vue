@@ -15,7 +15,6 @@
       </div>
       <q-table
         dense
-        title="Покупатели"
         :data="data"
         :columns="columns"
         row-key="index"
@@ -24,70 +23,32 @@
         separator="cell"
         :pagination.sync="pagination"
         :rows-per-page-options="[1]"
-        :pagination-label="
-          (firstRowIndex, endRowIndex, totalRowsNumber) =>
-            firstRowIndex + '-' + endRowIndex + ' из ' + totalRowsNumber
-        "
+        :pagination-label="(firstRowIndex, endRowIndex, totalRowsNumber) => firstRowIndex + '-' + endRowIndex + ' из ' + totalRowsNumber"
       >
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <q-btn
-              dense
-              round
-              flat
-              color="grey"
-              :to="{
-                name: 'branch-update',
-                params: { id: props.row.branch_id, row: props.row },
-              }"
-              icon="edit"
-            ></q-btn>
-            <q-btn
-              dense
-              round
-              flat
-              color="grey"
-              :to="{
-                name: 'branch-info',
-                params: { id: props.row.branch_id, row: props.row },
-              }"
-              icon="fas fa-info-circle"
-            ></q-btn>
+            <q-btn dense round flat color="grey" :to="{ name: 'branch-update', params: { id: props.row.branch_id, row: props.row },}"
+             icon="edit"></q-btn>
+            <q-btn dense round flat color="grey" :to="{ name: 'branch-info', params: { id: props.row.branch_id, row: props.row }}"
+             icon="fas fa-info-circle"></q-btn>
           </q-td>
         </template>
         <template v-slot:top="props">
           <span class="text-h6">Категории</span>
           <q-space />
-          <q-input
-            borderless
-            dense
-            debounce="300"
-            color="primary"
-            v-model="filter"
-            placeholder="Искать"
-            style="
-              border: 1px solid silver;
-              padding: 0px 5px;
-              border-radius: 5px;
-            "
-          >
+          <q-input borderless dense debounce="300" color="primary" v-model="filter"
+            placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; border-radius: 5px;">
             <template v-slot:append>
-              <q-icon name="search" />
+                <q-icon name="search" />
             </template>
           </q-input>
-          <q-btn
-            flat
-            round
-            dense
-            :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-            @click="props.toggleFullscreen"
-            class="q-ml-md"
-          />
+          <q-btn flat round dense :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
+            @click="props.toggleFullscreen" class="q-ml-md" />
         </template>
       </q-table>
     </div>
-
-    <q-dialog v-model="addCategoryPopUp" fit >
+      {{data}}
+    <q-dialog v-model="addCategoryPopUp" persistent>
       <addCategory  @onDestroyComponent="updateTableInfo"/>
     </q-dialog>
   </q-page>
@@ -108,74 +69,34 @@ export default {
         rowsPerPage: 8,
       },
       loading: false,
-      filter: "",
+      filter: '',
       addCategoryPopUp: false,
       columns: [
-        {
-          name: "index",
-          align: "center",
-          label: "No#",
-          field: "index",
-          sortable: true,
-        },
-        {
-          name: "branch_name",
-          align: "center",
-          label: "Название",
-          field: "title",
-          sortable: true,
-        },
-
+        { name: "index", align: "center", label: "No#", field: "category_id", sortable: true},
+        { name: "branch_name", align: "center", label: "Название", field: "title", sortable: true},
         { name: "actions", label: "Действия", field: "", align: "center" },
       ],
       data: [],
     };
   },
-
   watch: {
-    data: {
-      handler: function (val, oldVal) {
-        this.data.forEach((row, index) => {
-          row.index = index + 1;
-        });
-      },
-      deep: true,
-
-    },
-
-    filter: async function (newVal, oldVal) {
-      if (this.scan === false) {
-        if (newVal.length >= 2) {
-          await this.getSearchResultByFilter();
-        } else {
-          console.log(
-            "Search input has less than 2 characters. Search is not working"
-          );
-        }
-      }
-    },
+    
   },
-
   async mounted() {
-      this.loading = true;
-      await this.FETCH_ALL_CATEGORIES();
-      this.data = this.get_all_categories;
-      this.loading = false;
-
+    await this.updateTableInfo();  
   },
-
   computed: {
-    ...mapGetters(["get_all_categories"]),
+    ...mapGetters(["getAllCategories"]),
   },
-
-
   methods: {
     ...mapActions(["FETCH_ALL_CATEGORIES"]),
 
-      updateTableInfo: async function () {
-         await this.FETCH_ALL_CATEGORIES();
-         this.data = this.get_all_categories;
-      }
+    async updateTableInfo() {
+      this.loading = true;
+      await this.FETCH_ALL_CATEGORIES();
+      this.data = this.getAllCategories;
+      this.loading = false;
+    }
 
   },
 };

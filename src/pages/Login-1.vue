@@ -60,7 +60,7 @@
             </q-card-section>
           </q-card>
         </q-dialog>
-        {{ getUser }}
+        <!-- {{ getUser }} -->
       </q-page>
     </q-page-container>
   </q-layout>
