@@ -15,7 +15,6 @@
     "apexcharts": "^3.16.0",
     "axios": "^0.18.1",
     "echarts": "^4.6.0",
-    "json-server": "^0.16.1",
     "lodash": "^4.17.19",
     "quasar": "^1.0.0",
     "vue-apexcharts": "^1.5.2",
@@ -24,7 +23,7 @@
     "vuedraggable": "^2.23.2"
   },
   "devDependencies": {
-    "@quasar/app": "^1.0.0",
+    "@quasar/app": "^1.4.3",
     "@quasar/quasar-app-extension-qcalendar": "^1.5.6",
     "quasar-app-extension-qhierarchy": "0.0.1"
   },

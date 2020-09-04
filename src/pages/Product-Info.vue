@@ -89,7 +89,7 @@
         >
           <template v-slot:body-cell-actions="props">
             <q-td :props="props">
-              <q-btn dense round flat color="grey" @click="(addRow = !addRow) && (temp = props.row) && openDialog"s icon="add_circle"></q-btn>
+              <q-btn dense round flat color="grey" @click="(addRow = !addRow) && (temp = props.row)" icon="add_circle"></q-btn>
               <q-btn dense round flat color="grey" to="/branch-update" icon="edit"></q-btn>
               <q-btn dense round flat color="grey" to="/branch-info" icon="fas fa-info-circle"></q-btn>
             </q-td>
@@ -97,6 +97,7 @@
           <template v-slot:top="props">
             <span class="text-h6">Товары с разной наценкой</span>
             <q-space />
+            <q-btn flat round dense icon="fas fa-sync-alt" :color="rColor" size="sm" @click="refresh"></q-btn>
             <q-btn
               flat round dense
               :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
@@ -142,12 +143,56 @@
         </q-table>
       </div>
 
-      <!-- {{getBranchesInMedInfoPage}} -->
 
     </div>
 
 
-    <q-dialog v-model="addRow" persistent >
+     <q-dialog v-model="addRow" persistent >
+       
+             <q-card style="min-width: 50vw;">
+               
+               <q-card-section class="bg-info">
+                 <div class="text-h6 text-white">Добавить в корзину</div>
+               </q-card-section>
+               <q-separator />
+                <q-form
+                  @submit="addToCart"
+                  @reset="onReset"
+                  class="q-pt-md"
+                >
+               <q-card-section class="q-pt-none">
+                 <div class="row">
+                  <q-select outlined v-model="distribution_branch" :options="distribution_options" label="Филиал" class="q-my-md col-12"
+                  />
+                  <!-- :rules="[
+                    val => val != '' || 'Филиал не выбран'
+                  ]" -->
+                 </div>
+                 <div class="row q-mb-xs content-stretch">
+                  <q-input outlined v-model="distribution_amount.box" label="Кол-во упаковок" class="col" :suffix="String(left_quantity_box)" 
+                  ref="box"
+                  :rules="[
+                    val => val >= 0 && val <= left_quantity_box || 'В складе имеется ' + left_quantity_box + ' упаковок'
+                  ]"/>
+                  <q-input outlined v-model="distribution_amount.piece" label="Кол-во штук" class="q-pl-md col" :suffix="String(left_quantity_piece)" 
+                  v-if="temp.capacity > 1" 
+                  ref="piece"
+                  :rules="[
+                    val => val >= 0 && val <= left_quantity_piece || 'В складе имеется ' + left_quantity_piece + ' штук'
+                  ]"/>
+                 </div>
+            </q-card-section>
+                
+               <q-card-actions align="right" class="bg-white text-white">
+                   <q-btn class="bg-info" label="Отменить" type="reset" v-close-popup />
+                   <q-btn class="bg-info" label="Добавить" type="submit" :disable="distribution_branch == ''"/>
+               </q-card-actions>
+              
+            </q-form>
+          </q-card>
+
+        </q-dialog>
+    <!-- <q-dialog v-model="addRow" persistent >
 
       <q-card style="min-width: 50vw;">
 
@@ -178,7 +223,9 @@
 
         </q-form>
       </q-card>
-    </q-dialog>
+    </q-dialog> -->
+
+
     <!-- {{getMedicinesInfo}} -->
   </q-page>
 </template>
@@ -195,6 +242,8 @@
     },
     data(){
       return{
+        rColor: 'grey',
+        rColor2: 'grey',
         rowsNumber: null,
         temp: {},
         left_quantity_box: null,
@@ -203,32 +252,25 @@
         distribution_amount: {box: '', piece: ''},
         distribution_branch: '',
         distribution_options: [],
-        quantity: "",
 
         getProduct: {title: '', barcode: '', type: '', country: '', manufacture: '', category: '',
           total_quantity: '', left_quantity: '', vat: '', description: "", added_at: ""},
         pagination: {
-          rowsPerPage: 8
+          rowsPerPage: 8,
+          page: 1,
         },
         loading: false,
         loading2: false,
-        dialog: false,
         filter: '',
-        branch_id: "",
-        business_product_info_id: "",
         columns: [
           { name: 'index', align: 'center', label: '№', field: 'index', sortable: true},
           { name: 'expire_date', align: 'center', label: 'Годен до', field: 'expire_date', sortable: true },
-
           { name: 'total_quantity', align: 'center', label: 'Общее кол-во', field: 'total_quantity', sortable: true },
           { name: 'left_quantity', align: 'center', label: 'Остаток', field: 'left_quantity', sortable: true },
           { name: 'purchase_price', align: 'center', label: 'Цена покупки', field: 'purchase_price', sortable: true },
           { name: 'selling_price', align: 'center', label: 'Цена продажи', field: 'selling_price', sortable: true },
-
           { name: 'actions', label: 'Действия', field: '', align:'center' },
         ],
-
-
         columns2: [
           { name: 'index', align: 'center', label: '№', field: 'index', sortable: true},
           { name: 'name', align: 'center', label: 'Имя', field: 'name', sortable: true },
@@ -239,8 +281,6 @@
           { name: 'contact_phone', align: 'center', label: 'Контактный телефон', field: 'contact_phone', sortable: true },
           { name: 'status', align: 'center', label: 'Статус', field: 'status', sortable: true },
           { name: 'total_quantity', align: 'center', label: 'Кол-во', field: 'total_quantity', sortable: true },
-
-
           { name: 'actions', label: 'Действия', field: '', align:'center' },
         ],
         data: [],
@@ -248,6 +288,11 @@
       }
     },
     watch:{
+      'pagination.page': async function (newVal, oldVal) {
+        if (newVal == this.pagesNumber) {
+          await this.GET_NEXT_PAGE_FOR_MEDICINE_INFO();
+        }
+      },
       'distribution_amount.box': function (newVal, oldVal){
         if(newVal < this.left_quantity_box){
           this.left_quantity_piece = Number(this.temp.capacity);
@@ -261,75 +306,83 @@
       'temp.left_quantity_piece': function (newVal, oldVal){
         this.left_quantity_piece = Number(this.temp.left_quantity_piece);
       },
-      'temp.capacity': function (newVal, oldVal){
-        if(newVal <= 1){
-          this.distribution_amount.piece = 0
+      addRow: function (newVal, oldVal){
+        if(newVal == true){
+          if(this.temp.capacity <= 1){
+            Object.assign(this.distribution_amount, {piece: 0});
+          }
         }
       },
 
     },
     async mounted(){
-
       const details = await this.FETCH_BUSSINESS_PRODUCT(this.id);
-
       this.getProduct = await this.getProductDetail;
 
-      this.loading = true;
-      const answer = await this.FETCH_BUSSINESS_PRODUCT_INFO(this.id);
-      this.rowsNumber = answer.data.count;
-      for(let i = 0; i < answer.data.results.length; i++ ){
-        this.$set(this.data, this.data.length, answer.data.results[i]);
-      }
-      this.loading = false;
 
-      console.log(this.data);
-      console.log(this.data.business_product_info_id);
-
-
-      this.business_product_info_id =  this.data.business_product_info_id;
-      this.loading2 = true;
-
-      const answer2 = await this.FETCH_BUSSINESS_PRODUCT_IN_BRANCH(this.id);
-
-      for(let i = 0; i < answer2.data.length; i++ ){
-        this.$set(this.data2, this.data2.length, answer2.data[i]);
-      }
-      this.loading2 = false;
+      await this.refresh();
+      await this.refresh2();
 
 
       await this.FETCH_ALL_BRANCHES();
       this.distribution_options = await this.getBranchNames;
-
-
     },
     computed:{
       ...mapGetters([
-        'GET_ALL_BRANCHES', 'getProductDetail', 'getBranchesInMedInfoPage'
+        'getProductDetail', 'getProductInfo', 'getProductInBranch', 'GET_ALL_BRANCHES'
       ]),
       getBranchNames() {
         let a = [];
-        for(let i = 0; i<this.getBranches.length; i++){
-          a.push(this.getBranches[i].name);
+        for(let i = 0; i<this.GET_ALL_BRANCHES.length; i++){
+          a.push(this.GET_ALL_BRANCHES[i].name);
         }
         return a;
       },
     },
     methods: {
       ...mapActions([
-        'FETCH_BUSSINESS_PRODUCT', 'FETCH_BUSSINESS_PRODUCT_INFO', 'FETCH_ALL_BRANCHES', 'GET_BRANCHES_IN_MED_INFO_PAGE',
-        'ADD_TO_CART', 'FETCH_BUSSINESS_PRODUCT_IN_BRANCH', 'ADD_TO_CARD', 'FETCH_ALL_BRANCHES'
+        'FETCH_BUSSINESS_PRODUCT', 'FETCH_BUSSINESS_PRODUCT_INFO', 'FETCH_ALL_BRANCHES',
+        'FETCH_BUSSINESS_PRODUCT_IN_BRANCH', 'ADD_TO_CARD'
       ]),
-      async addToCart(quantity, business_product_info_id, branch_id){
+      async refresh(){
+        this.rColor = 'blue';
+        this.loading = true;
+        await this.FETCH_BUSSINESS_PRODUCT_INFO(this.id);
+        this.rowsNumber = await this.getProductInfo.count;
+        this.data = await this.getProductInfo.results;
+        this.pagination.page = 1;
+        this.loading = false;
+        this.rColor = 'grey';
+      },
+      async refresh2(){
+        this.rColor2 = 'blue';
+        this.loading2 = true;
+        await this.FETCH_BUSSINESS_PRODUCT_IN_BRANCH(this.id);
+        this.data2 = await this.getProductInBranch;
+        this.loading2 = false;
+        this.rColor2 = 'grey';
+      },
+      async addToCart(){
         await this.$emit('medicines', true);
+        const branch_id = this.GET_ALL_BRANCHES.filter(el => el.name == this.distribution_branch);
+        console.log(branch_id);
 
-        let isAdded  = await this.ADD_TO_CARD({
-          business_product_info_id: this.business_product_info_id,
-          quantity: this.quantity,
-          branch_id: this.business_product_info_id,
+        let isAdded = await this.ADD_TO_CARD({
+          business_product_info_id: this.temp.business_product_info_id,
+          quantity_box: this.distribution_amount.box,
+          quantity_piece: this.distribution_amount.piece,
+          branch_id: branch_id[0].id,
         });
-
-
-        if (!isAdded.error) {
+        this.$q.notify({
+          icon: 'done',
+          color: 'positive',
+          message: 'Успешно отправлено в корзину!'
+        })
+        
+        console.log(isAdded);
+       
+        if (!isAdded.error)
+        {
           this.$q.notify({
             icon: 'done',
             color: 'positive',
@@ -343,19 +396,14 @@
           })
         }
 
+        this.addRow = false;
+        await this.onReset();
 
-
-        this.$refs.box.resetValidation();
-        this.$refs.piece.resetValidation();
+        await this.refresh();
       },
      async onReset () {
          this.distribution_branch = '';
          this.distribution_amount = {box: '', piece: ''};
-
-
-        this.$refs.box.resetValidation();
-        this.$refs.piece.resetValidation();
-
       },
 
     }

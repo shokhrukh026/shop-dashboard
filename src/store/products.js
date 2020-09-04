@@ -118,7 +118,6 @@ export default {
     },
 
     async FETCH_BUSSINESS_PRODUCT_INFO({ commit, getters }, id) {
-
       try {
         const response = await shop.get(
           `business/products/detail/info/${id}/`,

@@ -86,6 +86,11 @@ export default {
     Messages,
     EssentialLink
   },
+  meta () {
+      return {
+        title: 'UzPos Shop'
+      }
+  },
   data() {
     return {
       cart: '0',
