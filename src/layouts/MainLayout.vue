@@ -77,13 +77,11 @@
 
 <script>
 import EssentialLink from 'components/EssentialLink'
-import Messages from "./Messages";
 
 
 export default {
   name: 'MainLayout',
   components: {
-    Messages,
     EssentialLink
   },
   meta () {
