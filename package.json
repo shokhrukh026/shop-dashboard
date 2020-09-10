@@ -17,6 +17,7 @@
     "echarts": "^4.6.0",
     "lodash": "^4.17.19",
     "quasar": "^1.0.0",
+    "v-money": "^0.8.1",
     "vue-apexcharts": "^1.5.2",
     "vue-echarts-v3": "^2.0.1",
     "vue-i18n": "^8.0.0",

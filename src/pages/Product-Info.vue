@@ -1,9 +1,7 @@
 <template>
   <q-page class="bg-grey-3">
     <div class="q-pa-md">
-
       <q-expansion-item expand-separator icon="info" default-opened   header-class="bg-blue text-h6" dark :label="'Информация о Продукте ' + getProduct.title">
-
         <q-list bordered separator dense class="bg-white shadow-1">
           <q-item v-ripple>
             <q-item-section>
@@ -27,7 +25,7 @@
           </q-item>
           <q-item v-ripple >
             <q-item-section>
-              <q-item-label class="text-h6 text-blue-9">Тип: <span class="text-subtitle1 text-black">&nbsp;{{getProduct.type}}</span></q-item-label>
+              <q-item-label class="text-h6 text-blue-9">Ед. измерения: <span class="text-subtitle1 text-black">&nbsp;{{getProduct.type_product_name}}</span></q-item-label>
             </q-item-section>
           </q-item>
           <q-item v-ripple >
@@ -63,7 +61,7 @@
         </q-list>
       </q-expansion-item>
 
-      <!-- {{getProduct}} -->
+      {{getProduct}}
       <div class="q-mt-md">
         <q-btn push color="white" text-color="blue" icon="fas fa-arrow-left"
                class="q-mb-xs q-mr-xs" to="/products"/>
@@ -71,7 +69,6 @@
                :to="{ name: 'add-info-product', params: {id: $props.id}}"/>
       </div>
       <!-- {{getBranches}} -->
-      {{getProduct}}
       <div class="q-mt-xs">
         <q-table
           dense
@@ -85,7 +82,6 @@
           :pagination.sync="pagination"
           :rows-per-page-options="[0]"
           :pagination-label="(firstRowIndex, endRowIndex, totalRowsNumber) => firstRowIndex + '-' + endRowIndex + ' из ' + rowsNumber"
-
         >
           <template v-slot:body-cell-actions="props">
             <q-td :props="props">
@@ -148,84 +144,36 @@
 
 
      <q-dialog v-model="addRow" persistent >
-       
-             <q-card style="min-width: 50vw;">
-               
-               <q-card-section class="bg-info">
+            <q-card style="min-width: 50vw;">
+              <q-card-section class="bg-info">
                  <div class="text-h6 text-white">Добавить в корзину</div>
                </q-card-section>
                <q-separator />
                 <q-form
                   @submit="addToCart"
                   @reset="onReset"
-                  class="q-pt-md"
+                  class="q-pt-sm"
                 >
-               <q-card-section class="q-pt-none">
+               <q-card-section class="q-py-none">
                  <div class="row">
-                  <q-select outlined v-model="distribution_branch" :options="distribution_options" label="Филиал" class="q-my-md col-12"
-                  />
-                  <!-- :rules="[
-                    val => val != '' || 'Филиал не выбран'
-                  ]" -->
+                    <q-select outlined v-model="distribution_branch" :options="distribution_options" label="Филиал"
+                     class="q-my-sm col-12"
+                    />
                  </div>
-                 <div class="row q-mb-xs content-stretch">
-                  <q-input outlined v-model="distribution_amount.box" label="Кол-во упаковок" class="col" :suffix="String(left_quantity_box)" 
-                  ref="box"
-                  :rules="[
-                    val => val >= 0 && val <= left_quantity_box || 'В складе имеется ' + left_quantity_box + ' упаковок'
-                  ]"/>
-                  <q-input outlined v-model="distribution_amount.piece" label="Кол-во штук" class="q-pl-md col" :suffix="String(left_quantity_piece)" 
-                  v-if="temp.capacity > 1" 
-                  ref="piece"
-                  :rules="[
-                    val => val >= 0 && val <= left_quantity_piece || 'В складе имеется ' + left_quantity_piece + ' штук'
-                  ]"/>
+                 <div class="row content-stretch">
+                    <q-input outlined v-model="distribution_amount" label="Кол-во штук" class="col" :suffix="String(temp.left_quantity)" 
+                    :rules="[
+                      val => val >= 0 && val <= temp.left_quantity || 'В складе имеется ' + temp.left_quantity + ' штук'
+                    ]"/>
                  </div>
-            </q-card-section>
-                
-               <q-card-actions align="right" class="bg-white text-white">
-                   <q-btn class="bg-info" label="Отменить" type="reset" v-close-popup />
-                   <q-btn class="bg-info" label="Добавить" type="submit" :disable="distribution_branch == ''"/>
-               </q-card-actions>
-              
+              </q-card-section>
+              <q-card-actions align="right" class="bg-white text-white q-pt-none">
+                  <q-btn class="bg-info" label="Отменить" type="reset" v-close-popup />
+                  <q-btn class="bg-info" label="Добавить" type="submit" :disable="distribution_branch == ''"/>
+              </q-card-actions>
             </q-form>
           </q-card>
-
-        </q-dialog>
-    <!-- <q-dialog v-model="addRow" persistent >
-
-      <q-card style="min-width: 50vw;">
-
-        <q-card-section class="bg-info">
-          <div class="text-h6 text-white">Добавить в корзину</div>
-        </q-card-section>
-        <q-separator />
-        <q-form
-          @submit="addToCart(quantity, business_product_info_id, branch_id)"
-          @keypress.enter="addToCart"
-          @reset="onReset"
-          class="q-pt-md"
-        >
-          <q-card-section class="q-pt-none">
-            <div class="row">
-              <q-input outlined    type="number" v-model="quantity" label="Количество" class="q-mt-md col-12"
-                        :rules="[
-                    val => val != '' || 'Поле не должно быть пустым'
-                  ]"/>
-            </div>
-          </q-card-section>
-
-
-          <q-card-actions align="right" class="bg-white text-white">
-            <q-btn class="bg-info" label="Отменить" type="reset" v-close-popup />
-            <q-btn class="bg-info" label="Добавить" type="submit"/>
-          </q-card-actions>
-
-        </q-form>
-      </q-card>
-    </q-dialog> -->
-
-
+    </q-dialog>
     <!-- {{getMedicinesInfo}} -->
   </q-page>
 </template>
@@ -246,10 +194,8 @@
         rColor2: 'grey',
         rowsNumber: null,
         temp: {},
-        left_quantity_box: null,
-        left_quantity_piece: null,
         addRow: false,
-        distribution_amount: {box: '', piece: ''},
+        distribution_amount: '',
         distribution_branch: '',
         distribution_options: [],
 
@@ -288,41 +234,18 @@
       }
     },
     watch:{
-      'pagination.page': async function (newVal, oldVal) {
-        if (newVal == this.pagesNumber) {
-          await this.GET_NEXT_PAGE_FOR_MEDICINE_INFO();
-        }
-      },
-      'distribution_amount.box': function (newVal, oldVal){
-        if(newVal < this.left_quantity_box){
-          this.left_quantity_piece = Number(this.temp.capacity);
-        }else if (newVal == this.left_quantity_box){
-          this.left_quantity_piece = Number(this.temp.left_quantity_piece);
-        }
-      },
-      'temp.left_quantity_box': function (newVal, oldVal){
-        this.left_quantity_box = Number(this.temp.left_quantity_box);
-      },
-      'temp.left_quantity_piece': function (newVal, oldVal){
-        this.left_quantity_piece = Number(this.temp.left_quantity_piece);
-      },
-      addRow: function (newVal, oldVal){
-        if(newVal == true){
-          if(this.temp.capacity <= 1){
-            Object.assign(this.distribution_amount, {piece: 0});
-          }
-        }
-      },
-
+      // 'pagination.page': async function (newVal, oldVal) {
+      //   if (newVal == this.pagesNumber) {
+      //     await this.GET_NEXT_PAGE_FOR_MEDICINE_INFO();
+      //   }
+      // },
     },
     async mounted(){
       const details = await this.FETCH_BUSSINESS_PRODUCT(this.id);
       this.getProduct = await this.getProductDetail;
 
-
       await this.refresh();
       await this.refresh2();
-
 
       await this.FETCH_ALL_BRANCHES();
       this.distribution_options = await this.getBranchNames;
@@ -363,36 +286,27 @@
         this.rColor2 = 'grey';
       },
       async addToCart(){
-        await this.$emit('medicines', true);
+        await this.$emit('products', true);
         const branch_id = this.GET_ALL_BRANCHES.filter(el => el.name == this.distribution_branch);
-        console.log(branch_id);
 
         let isAdded = await this.ADD_TO_CARD({
           business_product_info_id: this.temp.business_product_info_id,
-          quantity_box: this.distribution_amount.box,
-          quantity_piece: this.distribution_amount.piece,
-          branch_id: branch_id[0].id,
+          quantity: this.distribution_amount,
+          branch_id: branch_id[0].branch_id,
         });
-        this.$q.notify({
-          icon: 'done',
-          color: 'positive',
-          message: 'Успешно отправлено в корзину!'
-        })
-        
-        console.log(isAdded);
        
         if (!isAdded.error)
         {
           this.$q.notify({
             icon: 'done',
             color: 'positive',
-            message: 'Успешно отправлено в корзину!'
+            message: 'Успешно добавлено в корзину!'
           })
         }else
         {
           this.$q.notify({
             color: 'negative',
-            message: 'товар не добавилось в карзину . Попробуйте еще раз'
+            message: 'Ошибка!'
           })
         }
 
@@ -401,9 +315,9 @@
 
         await this.refresh();
       },
-     async onReset () {
-         this.distribution_branch = '';
-         this.distribution_amount = {box: '', piece: ''};
+      onReset () {
+        this.distribution_branch = '';
+        this.distribution_amount = '';
       },
 
     }

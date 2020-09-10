@@ -5,34 +5,32 @@
       <q-space></q-space>
       <q-btn icon="close" color="white" flat round dense v-close-popup />
     </q-card-section>
-
     <q-form @submit.prevent="addTypeInfo" class="q-mt-md">
         <q-list class="row">
           <q-item class="col-12">
             <q-item-section>
               <q-input color="blue" outlined dense v-model="title" label="Название единицы измерения*" />
-              
             </q-item-section>
           </q-item>
           <q-item class="col-12">
-            <q-item-section>
-              <q-toggle
-                v-model="isCountable"
-                color="blue"
-                keep-color
-              />
+            <q-item-section class="col">
+              <div class="col-12 row items-center">
+                <q-toggle
+                  v-model="isCountable"
+                  color="blue"
+                  keep-color
+                />
+                <div class="text-grey-8">Двойная точность</div>
+              </div>
             </q-item-section>
-            <q-item-section>
+            <q-item-section class="col-3">
               <q-btn label="Добавить" type="submit" class="bg-info text-white" v-close-popup/>
              </q-item-section>
           </q-item>
         </q-list>
-        <!-- <q-separator></q-separator> -->
-        <div class="row justify-end">
-        </div>
     </q-form>
 
-    <!-- {{medicine_add}} -->
+    <!-- {{title}} -->
   </q-card>
 </template>
 
@@ -56,7 +54,7 @@
     },
     methods: {
       ...mapActions([
-        'ADD_TYPE'
+        'ADD_TYPE', 'FETCH_ALL_TYPES'
       ]),
       async addTypeInfo(){
         let response = await this.ADD_TYPE({ name: this.title, is_countable: this.isCountable});
@@ -67,6 +65,7 @@
             position: 'top',
           });
           this.title = '';
+          await this.FETCH_ALL_TYPES();
         }else{
           this.$q.notify({
             message: 'Ошибка!',

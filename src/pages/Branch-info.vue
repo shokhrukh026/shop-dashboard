@@ -24,7 +24,7 @@
           </q-td>
         </template>
         <template v-slot:top="props">
-          <span class="text-h6">Лекарства в {{branch_name.name}}</span>
+          <span class="text-h6">Продукты в {{branch_name.name}}</span>
           <q-space />
           <form @submit.prevent.stop="getSearchResultByFilter"  class="row">
             <q-input square borderless dense debounce="500" color="primary" v-model="filter"
@@ -111,7 +111,7 @@
     },
     computed:{
       ...mapGetters([
-        'GET_ALL_BRANCHES', 'getUser', 'getMedicinesByBranch'
+        
       ])
     },
     methods: {

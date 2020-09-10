@@ -70,12 +70,13 @@
     </q-drawer>
 
     <q-page-container class="bg-grey-2">
-      <router-view @medicines="distributeMedicines"/>
+      <router-view @products="distributeProducts"/>
     </q-page-container>
   </q-layout>
 </template>
 
 <script>
+import {mapActions, mapGetters} from 'vuex'
 import EssentialLink from 'components/EssentialLink'
 
 
@@ -96,28 +97,34 @@ export default {
       sideBar: [
         {title: 'Главная', icon: 'dashboard', url: '/main'},
         {title: 'Филиалы', icon: 'fas fa-building', url: '/branches'},
-        {title: 'Продукты', icon: 'store', url: '/products'},
-        {title: 'Категории', icon: 'store', url: '/categories'},
+        {title: 'Категории', icon: 'fas fa-list', url: '/categories'},
+        {title: 'Продукты', icon: 'fas fa-box-open', url: '/products'},
+        {title: 'Возврат', icon: 'fas fa-exchange-alt', url: '/return-branches'},
         {title: 'История', icon: 'fas fa-history', url: '/history'},
-
       ]
-
     }
   },
   watch: {
 
   },
-  async mounted(){;
+  async mounted(){
+     await this.FETCH_CART_LIST();
+    this.cart = this.getCartList.length;
   },
-
+  computed:{
+    ...mapGetters([
+      'getCartList'
+    ])
+  },
   methods: {
+    ...mapActions([
+      'FETCH_CART_LIST'
+    ]),
     //clears Session
     async logout(){
       await this.$store.dispatch('LOGOUT');
     },
-    async distributeMedicines(value){
-      // this.$set(this.shopping_cart, this.shopping_cart.length, await value);
-      console.log(value);
+    async distributeProducts(value){
       if(value == true){
         this.cart++;
       }else if(value == false){

@@ -2,20 +2,13 @@ import shop from "../api/shop";
 export default{
   state:{
     cartList: [],
-    isAdded: "",
   },
   mutations:{
-
     SET_CARD_LIST: (state, payload)=> {
       state.cartList = payload;
-
       state.cartList.forEach((row, index) => {
         row.index = index + 1
       })
-    },
-
-    SET_ADD_TO_CARD: (state, payload) =>{
-      state.isAdded = payload;
     },
   },
   actions: {
@@ -27,7 +20,6 @@ export default{
           },
         });
         commit("SET_CARD_LIST", response.data);
-
         return response.data;
       } catch (e) {
         console.log(e + "watch to FETCH_CART_LIST");
@@ -63,17 +55,15 @@ export default{
           {
             business_product_info_id: payload.business_product_info_id,
             quantity: payload.quantity,
-            branch_id: payload.business_product_info_id,
+            branch_id: payload.branch_id,
           },
           {
             headers: {
               Authorization: getters.getUser.token,
             },
           });
-            commit("SET_ADD_TO_CARD", response.data);
-        return response.data();
+        return response.data;
       }catch (e) {
-        commit("SET_ADD_TO_CARD", e + "SET_ADD_TO_CARD");
         return {error: "error in request"};
       }
     },

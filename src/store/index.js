@@ -8,7 +8,7 @@ import products from "src/store/products";
 import categories from "src/store/categories";
 import cart from "src/store/cart";
 import arrival from "src/store/arrival";
-
+import refunds from './refunds'
 Vue.use(Vuex);
 
 /*
@@ -30,6 +30,7 @@ export default function (/* { ssrContext } */) {
       products,
       categories,
       arrival,
+      refunds
     },
 
     // enable strict mode (adds overhead!)

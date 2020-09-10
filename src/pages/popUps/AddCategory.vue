@@ -46,7 +46,7 @@
     },
     methods: {
       ...mapActions([
-        'ADD_CATEGORY'
+        'ADD_CATEGORY', 'FETCH_ALL_CATEGORIES'
       ]),
       async addCategoryInfo(){
         let response = await this.ADD_CATEGORY(this.title);
@@ -57,6 +57,7 @@
             position: 'top',
           });
           this.title = '';
+          await this.FETCH_ALL_CATEGORIES();
         }else{
           this.$q.notify({
             message: 'Ошибка!',

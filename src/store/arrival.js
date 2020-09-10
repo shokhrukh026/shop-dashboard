@@ -36,7 +36,6 @@ export default{
         commit('SET_ARRIVAL_ALL', response.data);
         return  response.data;
       } catch (e) {
-        console.log(e + "check branches request FETCH_ALL_BRANCHES");
         return {error: "Error"}
       }
     },

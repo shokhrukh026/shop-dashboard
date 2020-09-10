@@ -22,7 +22,7 @@
             </q-td>
           </template>
           <template v-slot:top="props">
-            <span class="text-subtitle1">Все Продукты</span>
+            <span class="text-subtitle1">Все продукты</span>
             <q-space />
             <q-btn
               flat round dense
@@ -39,12 +39,12 @@
       <!-- {{data}} -->
       <q-dialog v-model="deleteRowVar">
         <q-card>
-          <q-card-section class="bg-warning">
+          <q-card-section class="bg-negative">
             <div class="text-h6 text-white">Удаление</div>
           </q-card-section>
           <q-separator />
           <q-card-section class="q-pt-none q-pa-lg">
-            Вы всерьёз хотите удалить лекарство?
+            - Вы уверены, что хотите удалить продукт из корзины? 
           </q-card-section>
           <q-separator />
           <q-card-actions align="right" class="bg-white text-teal">
@@ -65,7 +65,7 @@
     data(){
       return {
         pagination: {
-          rowsPerPage: 4,
+          rowsPerPage: 9,
           page: 1,
         },
         deleteRowVar: false,
