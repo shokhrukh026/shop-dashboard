@@ -34,17 +34,18 @@
               <q-icon name="search" />
             </q-btn>
           </form>
+          <q-btn flat round dense icon="fas fa-sync-alt" class="q-ml-sm" :color="rColor" size="sm" @click="refresh"></q-btn>
           <q-btn
             flat round dense
             :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
             @click="props.toggleFullscreen"
-            class="q-ml-md"
+            class="q-ml-xs"
           />
         </template>
       </q-table>
     </div>
     <!-- {{data}} -->
-    <!-- {{getMedicinesByBranch}} -->
+    {{getProductInBranch}}
   </q-page>
 </template>
 
@@ -61,9 +62,11 @@
     },
     data(){
       return {
+        rColor: 'grey',
         rowsNumber: '',
         pagination: {
-          rowsPerPage: 8
+          rowsPerPage: 8,
+          page: 1,
         },
         branch_name: this.row ? this.row : '',
         loading: false,
@@ -76,48 +79,49 @@
           { name: 'manufacture', align: 'center', label: 'Производитель', field: 'manufacture', sortable: true },
           { name: 'quantity', align: 'center', label: 'Кол-во', field: 'quantity', sortable: true },
           { name: 'vat', align: 'center', label: 'НДС', field: 'vat', sortable: true },
-          { name: 'description', align: 'center', label: 'описание', field: 'description', sortable: true },
-          { name: 'category', align: 'center', label: 'котегория', field: 'category', sortable: true },
+          { name: 'category', align: 'center', label: 'Категория', field: 'category', sortable: true },
           { name: 'actions', label: 'Действия', field: '', align:'center' },
         ],
-        data: [],
+        data: [ {index: 1, title: 'shokolad', barcode: '3421424', country: 'Uz', manufacture: 'Uz Shokolads', quantity: 1000,
+         vat: 10, business_medicine_id: 1,}],
       }
     },
     watch:{
 
     },
     async mounted(){
-      if(this.getBranches.length === 0){
+      if(this.GET_ALL_BRANCHES.length === 0){
         await this.FETCH_ALL_BRANCHES();
       }
-      let name = await this.getBranches.filter(obj => {
-        return obj.id === this.id;
+      let name = await this.GET_ALL_BRANCHES.filter(obj => {
+        return obj.branch_id === this.id;
       })
       this.branch_name = name[0];
+      // await this.refresh();
 
-
-
-      this.loading = true;
-      const answer = await this.FETCH_BUSSINESS_PRODUCT_IN_BRANCH(this.id);
-      // console.log(answer);
-      this.rowsNumber = answer.count;
-      for(let i = 0; i < answer.results.length; i++ ){
-        this.$set(this.data, this.data.length, answer.results[i]);
-      }
-      this.loading = false;
-
+      
 
 
     },
     computed:{
       ...mapGetters([
-        
+        'GET_ALL_BRANCHES', 'getProductInBranch'
       ])
     },
     methods: {
       ...mapActions([
         'FETCH_ALL_BRANCHES', 'FETCH_BUSSINESS_PRODUCT_IN_BRANCH', 'GET_SEARCH_RESULT_BY_BRANCH'
       ]),
+       async refresh(){
+        this.rColor = 'blue';
+        this.loading = true;
+        await this.FETCH_BUSSINESS_PRODUCT_IN_BRANCH(this.id);
+        this.rowsNumber = await this.getProductInBranch.count;
+        this.data = await this.getProductInBranch.results;
+        this.pagination.page = 1;
+        this.loading = false;
+        this.rColor = 'grey';
+      },
       async getSearchResultByFilter(){
         return await this.GET_SEARCH_RESULT_BY_BRANCH(
           {

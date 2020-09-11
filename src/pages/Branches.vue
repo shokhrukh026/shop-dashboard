@@ -73,6 +73,7 @@
           />
         </template>
       </q-table>
+      <!-- {{GET_ALL_BRANCHES}} -->
     </div>
   </q-page>
 </template>
