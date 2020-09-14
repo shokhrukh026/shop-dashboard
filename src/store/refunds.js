@@ -8,9 +8,25 @@ export default{
     //   state.refunds.forEach((row, index) => {
     //     row.index = index + 1
     //   })
+    },
+    SET_CHECK_FOR_REFUND: (state, payload)=>{
+      state.check_refunds = payload;
     }
   },
   actions:{
+    async FETCH_CHECK_FOR_REFUND({commit, getters}, payload) {
+      try {
+        const response = await shop.get('refund/branch/'+ payload.branch_id +'/product/info/'+ payload.business_product_info_id +'/check/',
+         {
+          headers: {
+            Authorization: getters.getUser.token
+          },
+        });
+        commit('SET_CHECK_FOR_REFUND', response.data);
+      } catch (e) {
+        return e.data
+      }
+    },
     async FETCH_REFUNDS({commit, getters}, payload) {
       try {
         const response = await shop.get('refund_list_front/' + payload.branch_id + '/', {
@@ -60,8 +76,10 @@ export default{
   },
   state:{
     refunds: [],
+    check_refunds: [],
   },
   getters:{
-    getRefunds : state => state.refunds,
+    getRefunds: state => state.refunds,
+    getCheckRefunds: state => state.check_refunds
   }
 }

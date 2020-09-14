@@ -1,48 +1,58 @@
 <template>
     <q-page class="bg-grey-3">
         <div class="q-pa-md">
-            <q-expansion-item expand-separator icon="info" default-opened   header-class="bg-blue text-h6" dark :label="'Информация о продукте ' + getMedicines.title">
+            <q-expansion-item expand-separator icon="info" default-opened   header-class="bg-blue text-h6" dark :label="'Информация о продукте ' + getProducts.title">
 
              <q-list bordered separator dense class="bg-white shadow-1">
                <q-item v-ripple>
                  <q-item-section>
-                     <q-item-label class="text-h6 text-blue-9">Название продукта : <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.title}}</span></q-item-label>
+                     <q-item-label class="text-h6 text-blue-9">Название продукта : <span class="text-subtitle1 text-black">&nbsp;{{getProducts.title}}</span></q-item-label>
+                 </q-item-section>
+               </q-item>
+               <q-item v-ripple>
+                 <q-item-section>
+                     <q-item-label class="text-h6 text-blue-9">Категория: <span class="text-subtitle1 text-black">&nbsp;{{getProducts.category}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6 text-blue-9">Описание: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.description}}</span></q-item-label>
+                   <q-item-label class="text-h6 text-blue-9">Ед. измерения: <span class="text-subtitle1 text-black">&nbsp;{{getProducts.type_name}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6 text-blue-9">Штрих-код: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.barcode}}</span></q-item-label>
+                   <q-item-label class="text-h6 text-blue-9">Описание: <span class="text-subtitle1 text-black">&nbsp;{{getProducts.description}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6 text-blue-9">Страна: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.country}}</span></q-item-label>
+                   <q-item-label class="text-h6 text-blue-9">Штрих-код: <span class="text-subtitle1 text-black">&nbsp;{{getProducts.barcode}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6 text-blue-9">Производитель: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.manufacture}}</span></q-item-label>
+                   <q-item-label class="text-h6 text-blue-9">Страна: <span class="text-subtitle1 text-black">&nbsp;{{getProducts.country}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6 text-blue-9">НДС: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.vat}}%</span></q-item-label>
+                   <q-item-label class="text-h6 text-blue-9">Производитель: <span class="text-subtitle1 text-black">&nbsp;{{getProducts.manufacture}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6 text-blue-9">Общее количество в филиале: <span class="text-subtitle1 text-black">&nbsp;{{getMedicines.total_quantity}}</span></q-item-label>
+                   <q-item-label class="text-h6 text-blue-9">НДС: <span class="text-subtitle1 text-black">&nbsp;{{getProducts.vat}}%</span></q-item-label>
+                 </q-item-section>
+               </q-item>
+               <q-item v-ripple >
+                 <q-item-section>
+                   <q-item-label class="text-h6 text-blue-9">Общее количество в филиале: <span class="text-subtitle1 text-black">&nbsp;{{getProducts.quantity}}</span></q-item-label>
                  </q-item-section>
                </q-item>
              </q-list>
       </q-expansion-item>
 
-                   <!-- {{getBranchMedicineDetail}} -->
+                   {{getProductDetail}}
 
             <q-btn push color="white" text-color="blue" icon="fas fa-arrow-left" 
               class="q-mt-md q-mr-xs" :to="{ name: 'branch-info', params: {id: branch_id}}"/>
@@ -114,11 +124,11 @@
                <q-card-actions align="right" class="bg-white text-teal">
                  <q-btn flat label="Отменить" v-close-popup />
                  <q-btn flat label="Добавить" @click="addRefunds"/>
-                 <!-- {{temp}} -->
+                 {{temp}}
                </q-card-actions>
              </q-card>
            </q-dialog>
-        <!-- {{getBranchMedicineInfo}} -->
+        {{getProductInfo}}
     </q-page>
 </template>
 
@@ -128,7 +138,7 @@ import {mapActions, mapGetters} from 'vuex'
 
 export default {
     props:{
-      business_medicine_id: {
+      business_product_id: {
         required: true
       },
       branch_id: {
@@ -146,8 +156,7 @@ export default {
             temp_already_added: '',
             addRow: false,
             distribution_amount: {box: '', piece: ''},
-
-            getMedicines: {title: '', barcode: '', country: '', manufacture: '', serial_code: '', vat: '', total_quantity: '', left_quantity: ''},
+            getProducts: {},
             pagination: {
               rowsPerPage: 8,
               page: 1,
@@ -178,7 +187,7 @@ export default {
       },
       addRow: async function(newVal, oldVal){
         if(newVal == true){
-          let a = await this.GET_CHECK_FOR_REFUND({ branch_id: this.branch_id, med_info_id: this.temp.business_medicine_info_id});
+          let a = await this.FETCH_CHECK_FOR_REFUND({ branch_id: this.branch_id, med_info_id: this.temp.business_product_info_id});
           // a.limit_quantity = 56;
           // a.capacity = 5;
           // a.already_added = 10;
@@ -195,24 +204,17 @@ export default {
 
         }
       }
-      
-    
-        
+
     },
     async mounted(){
-      const details = await this.GET_BRANCH_MEDICINE_DETAIL({branch_id: this.branch_id,  business_medicine_id: this.business_medicine_id});
-      // console.log(details);
-      Object.assign(this.getMedicines, {title: details.title, description: details.description, barcode: details.barcode,
-       country: details.country, manufacture: details.manufacture, serial_code: details.serial_code,vat: details.vat,
-        total_quantity: details.total_quantity});
-     
+      await this.FETCH_PRODUCT_DETAIL_IN_BRANCH({branch_id: this.branch_id,  business_product_id: this.business_product_id});
+      this.getProducts = this.getProductDetail;
 
       await this.refresh();
-      
     },
     computed:{
       ...mapGetters([
-        'getBranchMedicineInfo', 'getBranchMedicineDetail'
+        'getProductInfo', 'getProductDetail'
       ]),
       pagesNumber () {
         return Math.ceil(this.data.length / this.pagination.rowsPerPage)
@@ -220,15 +222,15 @@ export default {
     },
     methods: {
       ...mapActions([
-          'GET_BRANCH_MEDICINE_DETAIL', 'GET_BRANCH_MEDICINE_INFO', 'GET_CHECK_FOR_REFUND', 'ADD_REFUND',
+          'FETCH_PRODUCT_DETAIL_IN_BRANCH', 'FETCH_PRODUCT_INFO_IN_BRANCH', 'FETCH_CHECK_FOR_REFUND', 'ADD_REFUND',
           'GET_NEXT_PAGE_FOR_BRANCH_INFO_DETAIL'
       ]),
       async refresh(){
         this.rColor = 'blue';
         this.loading = true;
-        await this.GET_BRANCH_MEDICINE_INFO({branch_id: this.branch_id,  business_medicine_id: this.business_medicine_id});
-        this.rowsNumber = await this.getBranchMedicineInfo.count;
-        this.data = await this.getBranchMedicineInfo.results;
+        await this.FETCH_PRODUCT_INFO_IN_BRANCH({branch_id: this.branch_id,  business_product_id: this.business_product_id});
+        this.rowsNumber = await this.getProductInfo.count;
+        this.data = await this.getProductInfo.results;
         this.pagination.page = 1;
         this.loading = false;
         this.rColor = 'grey';
