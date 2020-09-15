@@ -24,11 +24,18 @@
         <template v-slot:top="props">
           <span class="text-h6">История приходов</span>
           <q-space />
+          <q-input borderless dense debounce="300" color="primary" v-model="filter"
+            placeholder="Искать" style="border: 1px solid silver; padding: 0px 5px; border-radius: 5px;">
+            <template v-slot:append>
+                <q-icon name="search" />
+            </template>
+          </q-input>
+          <q-btn flat round dense icon="fas fa-sync-alt" class="q-ml-md" :color="rColor" size="sm" @click="refresh"></q-btn>
           <q-btn
             flat round dense
             :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
             @click="props.toggleFullscreen"
-            class="q-ml-md"
+            class="q-ml-sm"
           />
         </template>
       </q-table>
@@ -42,7 +49,7 @@
         </q-card-section>
         <q-separator />
         <q-card-section class="q-pt-none q-pa-lg">
-          Вы Деиствительно хотите удалить историю?
+          - Вы уверены, что хотите удалить историю? 
         </q-card-section>
         <q-separator />
         <q-card-actions align="right" class="bg-white text-teal">
@@ -51,7 +58,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-
+  {{data}}
   </q-page>
 </template>
 
@@ -61,21 +68,14 @@ import { mapActions, mapGetters } from "vuex";
 export default {
   data() {
     return {
-      rowsNumber: "",
+      rColor: 'grey',
       pagination: {
-        rowsPerPage: 8,
-      },
-      row: {
-        index: "",
-        branch_name: "",
-        city: "",
-        owner: "",
-        status: "",
+        rowsPerPage: 9,
       },
       loading: false,
       rowDelete: {},
       deleteRowVar: false,
-      filter: "",
+      filter: '',
       columns: [
         {
           name: "id",
@@ -118,32 +118,31 @@ export default {
       data: [],
     };
   },
-
   async mounted() {
-    this.loading = true;
-    this.data = await this.FETCH_ARRIVAL_ALL();
-    this.loading = false;
+    await this.refresh();
   },
-
   computed:{
     ...mapGetters([
       'getArrivalAll',
     ])
   },
-
   methods: {
     ...mapActions([
       'FETCH_ARRIVAL_ALL', 'DELETE_ARRIVAL_FROM_HISTORY'
     ]),
-
+    async refresh(){
+      this.rColor = 'blue';
+      this.loading = true;
+      this.data = await this.FETCH_ARRIVAL_ALL();
+      this.loading = false;
+      this.rColor = 'grey';
+    },
     deleteRow(props){
       this.rowDelete = props.row;
       this.deleteRowVar = !this.deleteRowVar;
     },
-
     async deleteArrival(){
       let response = await this.DELETE_ARRIVAL_FROM_HISTORY(this.rowDelete.id);
-      console.log(response);
       if(response.success){
         this.$q.notify({
           message: 'Успешно удалено!',

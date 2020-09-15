@@ -45,12 +45,12 @@
           </q-item>
           <q-item v-ripple >
             <q-item-section>
-              <q-item-label class="text-h6 text-blue-9">Общее количество в бизнесе: <span class="text-subtitle1 text-black">&nbsp;{{getProduct.total_quantity}}</span></q-item-label>
+              <q-item-label class="text-h6 text-blue-9">Общее количество в бизнесе: <span class="text-subtitle1 text-black">&nbsp;{{getProduct.total_quantity}} {{getProduct.type_product_name}}</span></q-item-label>
             </q-item-section>
           </q-item>
           <q-item v-ripple >
             <q-item-section>
-              <q-item-label class="text-h6 text-blue-9">Оставшееся количество в бизнесе: <span class="text-subtitle1 text-black">{{getProduct.left_quantity}}</span></q-item-label>
+              <q-item-label class="text-h6 text-blue-9">Оставшееся количество в бизнесе: <span class="text-subtitle1 text-black">{{getProduct.left_quantity}} {{getProduct.type_product_name}}</span></q-item-label>
             </q-item-section>
           </q-item>
           <q-item v-ripple >
@@ -105,7 +105,7 @@
       </div>
       <!-- {{data}} -->
 
-      {{data}}
+      {{getProductInfo}}
       <div class="q-mt-md">
         <q-table
           dense

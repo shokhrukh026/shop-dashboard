@@ -16,12 +16,12 @@
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6 text-blue-9">Ед. измерения: <span class="text-subtitle1 text-black">&nbsp;{{getProducts.type_name}}</span></q-item-label>
+                   <q-item-label class="text-h6 text-blue-9">Описание: <span class="text-subtitle1 text-black">&nbsp;{{getProducts.description}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6 text-blue-9">Описание: <span class="text-subtitle1 text-black">&nbsp;{{getProducts.description}}</span></q-item-label>
+                   <q-item-label class="text-h6 text-blue-9">Ед. измерения: <span class="text-subtitle1 text-black">&nbsp;{{getProducts.type_name}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
@@ -46,13 +46,13 @@
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6 text-blue-9">Общее количество в филиале: <span class="text-subtitle1 text-black">&nbsp;{{getProducts.quantity}}</span></q-item-label>
+                   <q-item-label class="text-h6 text-blue-9">Общее количество в филиале: <span class="text-subtitle1 text-black">&nbsp;{{getProducts.quantity}}  {{getProducts.type_name}}</span></q-item-label>
                  </q-item-section>
                </q-item>
              </q-list>
       </q-expansion-item>
 
-                   {{getProductDetail}}
+                   {{getProductDetailInBranch}}
 
             <q-btn push color="white" text-color="blue" icon="fas fa-arrow-left" 
               class="q-mt-md q-mr-xs" :to="{ name: 'branch-info', params: {id: branch_id}}"/>
@@ -100,35 +100,30 @@
         </div>
 
 
-        <q-dialog v-model="addRow" persistent >
-             <q-card>
+        <q-dialog v-model="addRow" persistent>
+             <q-card style="min-width: 30vw;">
                <q-card-section class="bg-info">
                  <div class="text-h6 text-white">Возврат</div>
                </q-card-section>
                <q-separator />
                <q-card-section class="q-pt-none q-pa-lg">
                 <div class="row">
-                  <q-input outlined v-model="distribution_amount.box" label="Кол-во упаковок" class="q-mr-xs col" :suffix="String(temp_total_quantity)" 
+                  <q-input outlined v-model="distribution_amount" label="Кол-во для возврата" class="q-mr-xs col" :suffix="String(getCheckRefunds.limit_quantity)" 
                   :rules="[
-                    val => val >= 0 && val <= temp_total_quantity || 'В складе имеется ' + temp_total_quantity + ' упаковок'
-                  ]"/>
-                  <q-input outlined v-model="distribution_amount.piece" label="Кол-во штук" class="col" :suffix="String(temp_total_piece)" 
-                  :rules="[
-                    val => val >= 0 && val <= temp_total_piece || 'В складе имеется ' + temp_total_piece + ' штук'
+                    val => val >= 0 && val <= getCheckRefunds.limit_quantity || 'В складе имеется ' + getCheckRefunds.limit_quantity + ' ' + getProducts.type_name
                   ]"/>
                 </div>
                 
-                <div class="q-mt-md"><span class="text-green text-weight-bold">Уже добавлено:</span> {{temp_already_added}}</div>
+                <div class="q-mt-md"><span class="text-green text-weight-bold">Уже добавлено:</span> {{getCheckRefunds.already_added}} {{getProducts.type_name}}</div>
                </q-card-section>
                <q-separator />
                <q-card-actions align="right" class="bg-white text-teal">
                  <q-btn flat label="Отменить" v-close-popup />
                  <q-btn flat label="Добавить" @click="addRefunds"/>
-                 {{temp}}
                </q-card-actions>
              </q-card>
            </q-dialog>
-        {{getProductInfo}}
+        {{getProductInfoInBranch}}
     </q-page>
 </template>
 
@@ -148,14 +143,10 @@ export default {
     data(){
         return{
             rColor: 'grey',
-            id: '',
             rowsNumber: null,
             temp: {},
-            temp_total_quantity: '',
-            temp_total_piece: '',
-            temp_already_added: '',
             addRow: false,
-            distribution_amount: {box: '', piece: ''},
+            distribution_amount: '',
             getProducts: {},
             pagination: {
               rowsPerPage: 8,
@@ -179,42 +170,25 @@ export default {
     watch:{ 
       'pagination.page': async function (newVal, oldVal) {
         if (newVal == this.pagesNumber) {
-          await this.GET_NEXT_PAGE_FOR_BRANCH_INFO_DETAIL();
+          await this.FETCH_NEXT_PAGE_PRODUCTS_INFO_IN_BRANCHES();
         }
-      },
-      'temp.total_qauntity': function (newVal, oldVal){
-        this.temp_total_quantity = Number(this.temp.total_qauntity);
       },
       addRow: async function(newVal, oldVal){
         if(newVal == true){
-          let a = await this.FETCH_CHECK_FOR_REFUND({ branch_id: this.branch_id, med_info_id: this.temp.business_product_info_id});
-          // a.limit_quantity = 56;
-          // a.capacity = 5;
-          // a.already_added = 10;
-          // console.log(a);
-
-          this.temp_total_quantity = Math.floor(a.limit_quantity / a.capacity);
-          this.temp_total_piece = a.limit_quantity % a.capacity;
-          if(a.already_added != 0){
-            this.temp_already_added = Math.floor(a.already_added / a.capacity) + ' упаковок ' + '(по ' + a.capacity + ' )'
-             + ' и ' + (a.already_added % a.capacity) + ' штук';
-          }else{
-            this.temp_already_added = 0;
-          }
-
+          await this.FETCH_CHECK_FOR_REFUND({ branch_id: this.branch_id, business_product_info_id: this.temp.business_product_info_id});
         }
       }
 
     },
     async mounted(){
       await this.FETCH_PRODUCT_DETAIL_IN_BRANCH({branch_id: this.branch_id,  business_product_id: this.business_product_id});
-      this.getProducts = this.getProductDetail;
+      this.getProducts = this.getProductDetailInBranch;
 
       await this.refresh();
     },
     computed:{
       ...mapGetters([
-        'getProductInfo', 'getProductDetail'
+        'getProductInfoInBranch', 'getProductDetailInBranch', 'getCheckRefunds'
       ]),
       pagesNumber () {
         return Math.ceil(this.data.length / this.pagination.rowsPerPage)
@@ -223,30 +197,27 @@ export default {
     methods: {
       ...mapActions([
           'FETCH_PRODUCT_DETAIL_IN_BRANCH', 'FETCH_PRODUCT_INFO_IN_BRANCH', 'FETCH_CHECK_FOR_REFUND', 'ADD_REFUND',
-          'GET_NEXT_PAGE_FOR_BRANCH_INFO_DETAIL'
+          'FETCH_NEXT_PAGE_PRODUCTS_INFO_IN_BRANCHES'
       ]),
       async refresh(){
         this.rColor = 'blue';
         this.loading = true;
         await this.FETCH_PRODUCT_INFO_IN_BRANCH({branch_id: this.branch_id,  business_product_id: this.business_product_id});
-        this.rowsNumber = await this.getProductInfo.count;
-        this.data = await this.getProductInfo.results;
+        this.rowsNumber = await this.getProductInfoInBranch.count;
+        this.data = await this.getProductInfoInBranch.results;
         this.pagination.page = 1;
         this.loading = false;
         this.rColor = 'grey';
       },
       async addRefunds(){
-        if(this.distribution_amount.box == ''){
-          this.distribution_amount.box = 0;
-        }
-        if(this.distribution_amount.piece == ''){
-          this.distribution_amount.piece = 0;
-        }
-        
-        let response = await this.ADD_REFUND({branch_id: this.branch_id, business_medicine_info_id: this.temp.business_medicine_info_id, 
-        quantity_box: this.distribution_amount.box, quantity_piece: this.distribution_amount.piece})
+        let response = await this.ADD_REFUND
+        ({
+          branch_id: this.branch_id,
+          business_product_info_id: this.temp.business_product_info_id, 
+          quantity: this.distribution_amount
+        });
 
-        Object.assign(this.distribution_amount, {box: '', piece: ''});
+        this.distribution_amount = '';
         // console.log(response);
         if(response.status == 'SUCCESS'){
           this.$q.notify({

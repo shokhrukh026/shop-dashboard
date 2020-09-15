@@ -3,14 +3,14 @@ import shop from "../api/shop";
 export default {
   mutations: {
     SET_PRODUCT_INFO_IN_BRANCH: (state, payload)=>{
-      state.product_info = payload;
-      state.product_info.results.forEach((row, index) => {
+      state.product_info_in_branch = payload;
+      state.product_info_in_branch.results.forEach((row, index) => {
         row.index = index + 1
       })
   },
     SET_PRODUCT_DETAIL_IN_BRANCH: (state, payload)=>{
-        state.product_detail = payload;
-        state.product_detail.forEach((row, index) => {
+        state.product_detail_in_branch = payload;
+        state.product_detail_in_branch.forEach((row, index) => {
           row.index = index + 1
         })
     },
@@ -44,11 +44,88 @@ export default {
           row.status = 'Активный'
         }
       })
+    },
+    SET_NEXT_PAGE_PRODUCTS_IN_BRANCHES: (state, payload) => {
+      let final = false;
+      state.productsInsideBranch.links = payload.links;
+      state.productsInsideBranch.count = payload.count;
 
-    }
+      for (let i = 0; i < payload.results.length; i++) {
+        for (let k = 0; k < state.productsInsideBranch.results.length; k++) {
+          let answer = lodash.isEqual(state.productsInsideBranch.results[k], payload.results[i]);
+          if (answer) {
+            final = answer;
+          }
+        }
+
+        if (!final) {
+          // payload.results[i].index
+          state.productsInsideBranch.results.push(payload.results[i]);
+        }
+        final = false;
+      }
+      state.productsInsideBranch.results.forEach((row, index) => {
+        row.index = index + 1
+      })
+    },
+    SET_NEXT_PAGE_PRODUCTS_INFO_IN_BRANCHES: (state, payload) => {
+      let final = false;
+      state.product_info_in_branch.links = payload.links;
+      state.product_info_in_branch.count = payload.count;
+
+      for (let i = 0; i < payload.results.length; i++) {
+        for (let k = 0; k < state.product_info_in_branch.results.length; k++) {
+          let answer = lodash.isEqual(state.product_info_in_branch.results[k], payload.results[i]);
+          if (answer) {
+            final = answer;
+          }
+        }
+
+        if (!final) {
+          // payload.results[i].index
+          state.product_info_in_branch.results.push(payload.results[i]);
+        }
+        final = false;
+      }
+      state.product_info_in_branch.results.forEach((row, index) => {
+        row.index = index + 1
+      })
+    },
 
   },
   actions: {
+    async FETCH_NEXT_PAGE_PRODUCTS_IN_BRANCHES({ commit, getters }, payload) {
+      let url = getters.getProductsInsideBranch.links.next;
+      return await axios({
+        method: "GET",
+        url: url,
+        headers: { Authorization: getters.getUser.token },
+      })
+      .then((e) => {
+        commit("SET_NEXT_PAGE_PRODUCTS_IN_BRANCHES", e.data);
+        //return e;
+      })
+      .catch((error) => {
+        console.log(error);
+        //   return error;
+      });
+    },
+    async FETCH_NEXT_PAGE_PRODUCTS_INFO_IN_BRANCHES({ commit, getters }, payload) {
+      let url = getters.getProductInfoInBranch.links.next;
+      return await axios({
+        method: "GET",
+        url: url,
+        headers: { Authorization: getters.getUser.token },
+      })
+      .then((e) => {
+        commit("SET_NEXT_PAGE_PRODUCTS_INFO_IN_BRANCHES", e.data);
+        //return e;
+      })
+      .catch((error) => {
+        console.log(error);
+        //   return error;
+      });
+    },
     async FETCH_PRODUCT_INFO_IN_BRANCH({ commit, getters}, payload) {
       try {
         const response = await shop.get('branch/' + payload.branch_id + '/business_product/' + payload.business_product_id + '/branch_product_info/', {
@@ -95,7 +172,7 @@ export default {
         });
         commit('SET_BRANCHES', response.data);
       } catch (e) {
-        console.log(e + "check branches request FETCH_ALL_BRANCHES");
+        console.log(e.data);
       }
     },
     async FETCH_ONE_BRANCHES ({commit}, getters, id) {
@@ -107,7 +184,7 @@ export default {
         });
         commit('SET_ONE_BRANCH', response.data);
       }catch (e) {
-        console.log(e + "ckeck branches FETCH_ONE_BRANCHES")
+        console.log(e.data)
       }
     },
 
@@ -116,14 +193,14 @@ export default {
     branches: [],
     oneBranch: [],
     productsInsideBranch: [],
-    product_detail: [],
-    product_info: []
+    product_detail_in_branch: [],
+    product_info_in_branch: []
   },
   getters: {
     GET_ALL_BRANCHES: state => state.branches,
     GET_ONE_BRANCH:  state => state.oneBranch,
     getProductsInsideBranch: state => state.productsInsideBranch,
-    getProductDetail: state => state.product_detail,
-    getProductInfo: state => state.product_info
+    getProductDetailInBranch: state => state.product_detail_in_branch,
+    getProductInfoInBranch: state => state.product_info_in_branch
   },
 };

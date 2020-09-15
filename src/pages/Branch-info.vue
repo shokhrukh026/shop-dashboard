@@ -33,7 +33,7 @@
               <q-icon name="search" />
             </q-btn>
           </form>
-          <q-btn flat round dense icon="fas fa-sync-alt" class="q-ml-sm" :color="rColor" size="sm" @click="refresh"></q-btn>
+          <q-btn flat round dense icon="fas fa-sync-alt" class="q-ml-md" :color="rColor" size="sm" @click="refresh"></q-btn>
           <q-btn
             flat round dense
             :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
@@ -63,7 +63,7 @@
         rColor: 'grey',
         rowsNumber: '',
         pagination: {
-          rowsPerPage: 8,
+          rowsPerPage: 9,
           page: 1,
         },
         branch_name: this.row ? this.row : '',
@@ -72,7 +72,7 @@
         columns: [
           { name: 'index', align: 'center', label: 'No#', field: 'index', sortable: true},
           { name: 'title', align: 'center', label: 'Название', field: 'title', sortable: true },
-          { name: 'category', align: 'center', label: 'Категория', field: 'category', sortable: true },
+          { name: 'category_title', align: 'center', label: 'Категория', field: 'category_title', sortable: true },
           { name: 'barcode', align: 'center', label: 'Штрих-код', field: 'barcode', sortable: true },
           { name: 'country', align: 'center', label: 'Страна', field: 'country', sortable: true },
           { name: 'manufacture', align: 'center', label: 'Производитель', field: 'manufacture', sortable: true },
@@ -85,6 +85,11 @@
       }
     },
     watch:{
+      "pagination.page": async function (newVal, oldVal) {
+        if (newVal === this.pagesNumber) {
+          await this.FETCH_NEXT_PAGE_PRODUCTS_IN_BRANCHES();
+        }
+      },
 
     },
     async mounted(){
@@ -100,11 +105,14 @@
     computed:{
       ...mapGetters([
         'GET_ALL_BRANCHES', 'getProductsInsideBranch'
-      ])
+      ]),
+      pagesNumber() {
+        return Math.ceil(this.data.length / this.pagination.rowsPerPage);
+      },
     },
     methods: {
       ...mapActions([
-        'FETCH_ALL_BRANCHES', 'FETCH_PRODUCTS_INSIDE_BRANCH'
+        'FETCH_ALL_BRANCHES', 'FETCH_PRODUCTS_INSIDE_BRANCH', 'FETCH_NEXT_PAGE_PRODUCTS_IN_BRANCHES'
       ]),
        async refresh(){
         this.rColor = 'blue';

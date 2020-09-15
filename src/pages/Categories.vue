@@ -42,8 +42,9 @@
                 <q-icon name="search" />
             </template>
           </q-input>
+          <q-btn flat round dense icon="fas fa-sync-alt" class="q-ml-md" :color="rColor" size="sm" @click="refresh"></q-btn>
           <q-btn flat round dense :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-            @click="props.toggleFullscreen" class="q-ml-md" />
+            @click="props.toggleFullscreen" class="q-ml-sm"/>
         </template>
       </q-table>
     </div>
@@ -65,8 +66,9 @@ export default {
 
   data() {
     return {
+      rColor: 'grey',
       pagination: {
-        rowsPerPage: 8,
+        rowsPerPage: 9,
       },
       loading: false,
       filter: '',
@@ -92,10 +94,12 @@ export default {
     ...mapActions(["FETCH_ALL_CATEGORIES"]),
 
     async updateTableInfo() {
+      this.rColor = 'blue';
       this.loading = true;
       await this.FETCH_ALL_CATEGORIES();
       this.data = this.getAllCategories;
       this.loading = false;
+      this.rColor = 'grey';
     }
 
   },

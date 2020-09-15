@@ -197,10 +197,10 @@
               <addCategory  @onDestroyComponent="updateCategories"/>
              </q-dialog>
 
-              {{getAllTypes}}
-             {{getAllCategories}}
+              <!-- {{getAllTypes}} -->
+             <!-- {{getAllCategories}} -->
 
-             -------------------{{product_add_new}}
+             --------{{product_add_new}}
             </q-card>
 </template>
 
@@ -237,7 +237,6 @@ export default {
     },
     watch:{
       'product_add_new.type': function(newVal, oldVal){
-        console.log(newVal);
         let unit = this.getAllTypes.filter(el => el.id == this.product_add_new.type);
         if(unit.length == 0){
           this.money.precision = 2
@@ -271,26 +270,6 @@ export default {
       async updateTypes(){
         await this.FETCH_ALL_TYPES();
       },
-      filterFn (val, update) {
-        if (val === '') {
-          update(async () => {
-            for(let i = 0; i < this.getAllCategories.length; i++){
-              await this.$set(this.categories_options, i, this.getAllCategories[i]);
-            }
-          })
-          return
-        }
-        update(() => {
-          let a = []
-          for(let i = 0; i < this.getAllCategories.length; i++){
-            a.push(this.getAllCategories[i].title);
-          }
-          const needle = val.toLowerCase()
-          this.categories_options = a.filter(v => v.toLowerCase().indexOf(needle) > -1)
-        })
-      },
-
-
       filterTypeFn (val, update) {
         if (val === '') {
           update(async () => {
@@ -303,10 +282,28 @@ export default {
         update(() => {
           let a = []
           for(let i = 0; i < this.getAllTypes.length; i++){
-            a.push(this.getAllTypes[i].name);
+            a.push(this.getAllTypes[i]);
           }
           const needle = val.toLowerCase()
-          this.type_options = a.filter(v => v.toLowerCase().indexOf(needle) > -1)
+          this.type_options = a.filter(v => v.name.toLowerCase().indexOf(needle) > -1)
+        })
+      },
+      filterFn (val, update) {
+        if (val === '') {
+          update(async () => {
+            for(let i = 0; i < this.getAllCategories.length; i++){
+              await this.$set(this.categories_options, i, this.getAllCategories[i]);
+            }
+          })
+          return
+        }
+        update(() => {
+          let a = []
+          for(let i = 0; i < this.getAllCategories.length; i++){
+            a.push(this.getAllCategories[i]);
+          }
+          const needle = val.toLowerCase()
+          this.categories_options = a.filter(v => v.title.toLowerCase().indexOf(needle) > -1);
         })
       },
 
@@ -322,11 +319,12 @@ export default {
             quantity: this.product_add_new.quantity,
             vat: this.product_add_new.vat,
             description: this.product_add_new.description,
-            purchase_price: this.product_add_new.purchase_price,
-            selling_price: this.product_add_new.selling_price,
+            purchase_price: this.product_add_new.purchase_price.replaceAll(',', ''),
+            selling_price: this.product_add_new.selling_price.replaceAll(',', ''),
             expire_date: this.product_add_new.expire_date
           }
         )
+        console.log(answer);
         Object.assign(this.product_add_new, {title: '', barcode: '', type: '', country: '', manufacture: '', category_id: '', quantity: '',
               vat: '', description: '', purchase_price: '', selling_price: '', expire_date: ''});
         if(answer.status == 'SUCCESS'){

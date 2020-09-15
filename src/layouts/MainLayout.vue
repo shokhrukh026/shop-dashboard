@@ -97,8 +97,8 @@ export default {
       sideBar: [
         {title: 'Главная', icon: 'dashboard', url: '/main'},
         {title: 'Филиалы', icon: 'fas fa-building', url: '/branches'},
-        {title: 'Категории', icon: 'fas fa-list', url: '/categories'},
         {title: 'Продукты', icon: 'fas fa-box-open', url: '/products'},
+        {title: 'Категории', icon: 'fas fa-list', url: '/categories'},
         {title: 'Возврат', icon: 'fas fa-exchange-alt', url: '/return-branches'},
         {title: 'История', icon: 'fas fa-history', url: '/history'},
       ]
@@ -108,7 +108,7 @@ export default {
 
   },
   async mounted(){
-     await this.FETCH_CART_LIST();
+    await this.FETCH_CART_LIST();
     this.cart = this.getCartList.length;
   },
   computed:{

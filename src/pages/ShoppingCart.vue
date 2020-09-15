@@ -75,7 +75,7 @@
         columns: [
           { name: 'index', align: 'center', label: 'No#', field: 'index', sortable: true},
           { name: 'branch_name', align: 'center', label: 'Филиал', field: 'branch_name', sortable: true },
-          { name: 'title', align: 'center', label: 'Лекарство', field: 'title', sortable: true },
+          { name: 'title', align: 'center', label: 'Продукт', field: 'title', sortable: true },
           { name: 'quantity', align: 'center', label: 'Кол-во', field: 'quantity', sortable: true },
           { name: 'actions', label: 'Действия', field: '', align:'center' },
         ],
@@ -103,14 +103,11 @@
         this.rowDelete = props.row
       },
       async deleteProcess(){
-
        const resp =  await this.DELETE_CART_ITEM(this.rowDelete.cart_id);
-       console.log(resp);
         this.data = [];
         this.data = await this.FETCH_CART_LIST();
-        console.log(this.data);
 
-        await this.$emit('medicines', false);
+        await this.$emit('products', false);
         this.$q.notify({
           icon: 'done',
           color: 'positive',
@@ -118,9 +115,9 @@
         })
       },
       async distribute(){
-       const resp =   await this.ADD_ARRIVAL_ALL();
+       const resp = await this.ADD_ARRIVAL_ALL();
         if (resp) {
-          await this.$emit('medicines', 'distribute_all');
+          await this.$emit('products', 'distribute_all');
           this.data = [];
           this.data = await this.FETCH_CART_LIST();
           this.$q.notify({
@@ -133,7 +130,7 @@
           this.$q.notify({
             icon: 'done',
             color: 'negative',
-            message: 'Не получилось распределить',
+            message: 'Ошибка!',
           })
         }
       }

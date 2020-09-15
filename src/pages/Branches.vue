@@ -9,7 +9,7 @@
         ">
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <q-btn dense round flat color="grey"  icon="edit"></q-btn>
+            <q-btn dense round flat color="grey" icon="edit"></q-btn>
             <q-btn dense round flat color="grey" :to="{
                 name: 'branch-info',
                 params: { id: props.row.branch_id, row: props.row },
@@ -28,8 +28,9 @@
               <q-icon name="search" />
             </template>
           </q-input>
+          <q-btn flat round dense icon="fas fa-sync-alt" :color="rColor" size="sm" class="q-ml-md" @click="refresh"></q-btn>
           <q-btn flat round dense :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
-            @click="props.toggleFullscreen" class="q-ml-md" />
+            @click="props.toggleFullscreen" class="q-ml-xs" />
         </template>
       </q-table>
       <!-- {{GET_ALL_BRANCHES}} -->
@@ -42,11 +43,13 @@ import { mapGetters, mapActions } from "vuex";
 export default {
   data() {
     return {
+      rColor: 'grey',
       pagination: {
-        rowsPerPage: 8,
+        rowsPerPage: 9,
+        page: 1,
       },
       loading: false,
-      filter: "",
+      filter: '',
       columns: [
         {
           name: "index",
@@ -111,32 +114,26 @@ export default {
     };
   },
   watch: {
-    data: {
-      handler: function (val, oldVal) {
-        this.data.forEach((row, index) => {
-          row.index = index + 1;
-        });
-      },
-      deep: true,
-    },
+  
   },
   async created() {
-    this.loading = true;
-    await this.FETCH_ALL_BRANCHES();
-    //await this.FETCH_ONE_BRANCHES("1/"); //geting brach by id
-    //await console.log(this.GET_ONE_BRANCH); //geting brach by id
-    this.data = this.GET_ALL_BRANCHES;
-    this.loading = false;
+    await this.refresh();
   },
   computed: {
     ...mapGetters(["GET_ALL_BRANCHES", "GET_ONE_BRANCH"]),
   },
   methods: {
     ...mapActions(["FETCH_ALL_BRANCHES", "FETCH_ONE_BRANCHES"]),
+    async refresh(){
+      this.rColor = 'blue';
+      this.loading = true;
+      await this.FETCH_ALL_BRANCHES();
+      this.data = await this.GET_ALL_BRANCHES;
+      this.loading = false;
+      this.rColor = 'grey';
+    }
 
-    propsPrint(id) {
-      console.log(id);
-    },
+    
   },
 };
 </script>

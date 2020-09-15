@@ -33,17 +33,17 @@
                     <q-icon name="search" />
                 </template>
                 </q-input>
-                <q-btn flat round dense icon="fas fa-sync-alt" class="q-ml-sm" :color="rColor" size="sm" @click="refresh"></q-btn>
+                <q-btn flat round dense icon="fas fa-sync-alt" class="q-ml-md" :color="rColor" size="sm" @click="refresh"></q-btn>
                 <q-btn
                 flat round dense
                 :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
                 @click="props.toggleFullscreen"
-                class="q-ml-sm"
+                class="q-ml-xs"
                 />
             </template>
             </q-table> 
         </div>
-        <!-- {{getBranches}} -->
+        <!-- {{GET_ALL_BRANCHES}} -->
     </q-page>
 </template>
 

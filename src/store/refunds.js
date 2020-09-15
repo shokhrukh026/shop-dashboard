@@ -5,9 +5,9 @@ export default{
   mutations:{
     SET_REFUNDS: (state, payload)=>{
       state.refunds = payload;
-    //   state.refunds.forEach((row, index) => {
-    //     row.index = index + 1
-    //   })
+      state.refunds.forEach((row, index) => {
+        row.index = index + 1
+      })
     },
     SET_CHECK_FOR_REFUND: (state, payload)=>{
       state.check_refunds = payload;
@@ -23,8 +23,9 @@ export default{
           },
         });
         commit('SET_CHECK_FOR_REFUND', response.data);
+        return response.data;
       } catch (e) {
-        return e.data
+        return e.data;
       }
     },
     async FETCH_REFUNDS({commit, getters}, payload) {
@@ -38,21 +39,6 @@ export default{
         return  response.data;
       } catch (e) {
         return {error: "Error"}
-      }
-    },
-    async DELETE_ARRIVAL_FROM_HISTORY({commit, getters}, arrival_id) {
-      try {
-        const response = await shop.post('branch/arrival/delete/', {
-            arrival_id: arrival_id
-        },
-        {
-          headers: {Authorization: getters.getUser.token},
-        });
-        return  response.data;
-      }catch (e) {
-        return {
-          success: false
-        }
       }
     },
     async ADD_REFUND({commit, getters}, payload )
@@ -69,7 +55,7 @@ export default{
         });
         return response.data;
       }catch (e) {
-        return e;
+        return e.data;
       }
     }
 

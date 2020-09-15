@@ -57,7 +57,7 @@
         'ADD_TYPE', 'FETCH_ALL_TYPES'
       ]),
       async addTypeInfo(){
-        let response = await this.ADD_TYPE({ name: this.title, is_countable: this.isCountable});
+        let response = await this.ADD_TYPE({ name: this.title, is_countable: !this.isCountable});
         if(response){
           this.$q.notify({
             message: 'Успешно добавлено!',

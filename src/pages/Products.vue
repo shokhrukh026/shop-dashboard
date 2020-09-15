@@ -15,7 +15,6 @@
       </div>
       <q-table
         dense
-        title=""
         :data="data"
         :columns="columns"
         row-key="index"
@@ -36,10 +35,6 @@
               round
               flat
               color="grey"
-              :to="{
-                name: 'edit-product',
-                params: { id: props.row.business_product_id, row: props.row },
-              }"
               icon="edit"
             ></q-btn>
             <q-btn
@@ -58,7 +53,6 @@
               round
               flat
               color="grey"
-              @click="deleteRow(props)"
               icon="delete"
             ></q-btn>
           </q-td>
@@ -93,13 +87,14 @@
             </q-btn>
           </form>
           <q-toggle v-model="scan" icon="fas fa-barcode" color="green" />
+          <q-btn flat round dense icon="fas fa-sync-alt" :color="rColor" size="sm" @click="refresh"></q-btn>
           <q-btn
             flat
             round
             dense
             :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
             @click="props.toggleFullscreen"
-            class="q-ml-md"
+            class="q-ml-sm"
           />
         </template>
       </q-table>
@@ -126,7 +121,7 @@
       <addProduct />
     </q-dialog>
 
-    <!-- {{getProduct}} -->
+    {{getProducts}}
   </q-page>
 </template>
 
@@ -138,129 +133,31 @@ export default {
   components:{
     'addProduct': addProduct
   },
-
   data() {
     return {
-      answer: { data: { data: [] } },
+      rColor: 'grey',
       scan: false,
-
-      title: "",
-      title_options: [],
-      response: [],
-      medicine_add: {
-        title: "",
-        barcode: "",
-        country: "",
-        manufacture: "",
-        serial_code: "",
-        capacity: "",
-        quantity: "",
-        piece: "",
-        vat: "",
-        description: "",
-        purchase_price: "",
-        selling_price: "",
-        expire_date: "",
-      },
-
       pagination: {
-        rowsPerPage: 7,
+        rowsPerPage: 9,
         page: 1,
       },
       rowsNumber: null,
-      row: {
-        index: "",
-        business_product_id: "",
-        products: "",
-        barcode: "",
-        total_quantity: "",
-        left_quantity: "",
-        vat: "",
-      },
       addProductPopUp: false,
-      editRowVar: false,
       deleteRowVar: false,
-      rowDelete: {},
       loading: false,
-      filter: "",
+      filter: '',
       columns: [
-        {
-          name: "index",
-          align: "center",
-          label: "No#",
-          field: "index",
-          sortable: true,
-        },
-        {
-          name: "products",
-          align: "center",
-          label: "Название",
-          field: "title",
-          sortable: true,
-        },
-        {
-          name: "barcode",
-          align: "center",
-          label: "Штрих-код",
-          field: "barcode",
-          sortable: true,
-        },
-        {
-          name: "country",
-          align: "center",
-          label: "Страна",
-          field: "country",
-          sortable: true,
-        },
-
-        {
-          name: "manufacture",
-          align: "center",
-          label: "Производство",
-          field: "manufacture",
-          sortable: true,
-        },
-        {
-          name: "type",
-          align: "center",
-          label: "Тип",
-          field: "type",
-        },
-        {
-          name: "category",
-          align: "center",
-          label: "Категория",
-          field: "category",
-        },
-        {
-          name: "vat",
-          align: "center",
-          label: "НДС",
-          field: "vat",
-          sortable: true,
-        },
-        {
-          name: "total_quantity",
-          align: "center",
-          label: "Кол-во",
-          field: "total_quantity",
-          sortable: true,
-        },
-        {
-          name: "left_quantity",
-          align: "center",
-          label: "Остаток",
-          field: "left_quantity",
-          sortable: true,
-        },
-        {
-          name: "sold_quantity",
-          align: "center",
-          label: "Продажи за 30 дней",
-          field: "sold_quantity",
-          sortable: true,
-        },
-
+        { name: "index", align: "center", label: "No#", field: "index", sortable: true },
+        { name: "products", align: "center", label: "Название", field: "title", sortable: true },
+        { name: "barcode", align: "center", label: "Штрих-код", field: "barcode", sortable: true },
+        { name: "country", align: "center", label: "Страна", field: "country", sortable: true },
+        { name: "manufacture", align: "center", label: "Производство", field: "manufacture", sortable: true },
+        { name: "type_product_name", align: "center", label: "Ед. измерения", field: "type_product_name", sortable: true },
+        { name: "category", align: "center", label: "Категория", field: "category", sortable: true },
+        { name: "vat", align: "center", label: "НДС", field: "vat", sortable: true },
+        { name: "total_quantity", align: "center", label: "Кол-во", field: "total_quantity", sortable: true },
+        { name: "left_quantity", align: "center", label: "Остаток", field: "left_quantity", sortable: true },
+        { name: "sold_quantity", align: "center", label: "Продажи за 30 дней", field: "sold_quantity", sortable: true },
         { name: "actions", label: "Действия", field: "", align: "center" },
       ],
       data: [],
@@ -270,7 +167,7 @@ export default {
   watch: {
     "pagination.page": async function (newVal, oldVal) {
       if (newVal === this.pagesNumber) {
-        await this.GET_NEXT_PAGE();
+        await this.FETCH_NEXT_PAGE_ALL_PRODUCTS();
       }
     },
 
@@ -287,33 +184,36 @@ export default {
     },
   },
   async mounted() {
-    this.loading = true;
-    await this.FETCH_BUSSINESS_PRODUCT_LIST();
-    this.rowsNumber = await this.getProducts.count;
-    this.data = await this.getProducts.results;
-    console.log(this.data);
-    this.loading = false;
+   await this.refresh();
   },
   computed: {
-    ...mapGetters(["getProducts", "getBranches"]),
+    ...mapGetters([
+      'getProducts', 'getBranches'
+    ]),
     pagesNumber() {
       return Math.ceil(this.data.length / this.pagination.rowsPerPage);
     },
   },
   methods: {
     ...mapActions([
-      "FETCH_BUSSINESS_PRODUCT_LIST",
-      "GET_NEXT_PAGE",
-      "GET_SEARCH_RESULT_ALL_PRODUCTS",
+      'FETCH_BUSSINESS_PRODUCT_LIST', 'FETCH_NEXT_PAGE_ALL_PRODUCTS',
+      'GET_SEARCH_RESULT_ALL_PRODUCTS',
     ]),
+    async refresh(){
+      this.rColor = 'blue';
+      this.loading = true;
+      await this.FETCH_BUSSINESS_PRODUCT_LIST();
+      this.rowsNumber = await this.getProducts.count;
+      this.data = await this.getProducts.results;
+      this.pagination.page = 1;
+      this.loading = false;
+      this.rColor = 'grey';
+    },
 
     async getSearchResultByFilter() {
       let a = await this.GET_SEARCH_RESULT_ALL_PRODUCTS({
         value: this.filter,
       });
-    },
-    deleteRow(props) {
-      console.log(props.business_product_id);
     },
   },
 };

@@ -18,9 +18,8 @@
       >
         <template v-slot:body-cell-actions="props">
           <q-td :props="props">
-            <q-btn dense round flat color="grey" :to="{ name: 'branch-update', params: {id: props.row.id, row: props.row}}"
-                   icon="edit"></q-btn>
-            <q-btn dense round flat color="grey" :to="{ name: 'branch-info', params: {id: props.row.id, row: props.row}}" icon="fas fa-info-circle"></q-btn>
+            <q-btn dense round flat color="grey" icon="edit"></q-btn>
+            <q-btn dense round flat color="grey" icon="fas fa-info-circle"></q-btn>
           </q-td>
         </template>
         <template v-slot:top="props">
@@ -32,16 +31,17 @@
               <q-icon name="search" />
             </template>
           </q-input>
+          <q-btn flat round dense icon="fas fa-sync-alt" class="q-ml-md" :color="rColor" size="sm" @click="refresh"></q-btn>
           <q-btn
             flat round dense
             :icon="props.inFullscreen ? 'fullscreen_exit' : 'fullscreen'"
             @click="props.toggleFullscreen"
-            class="q-ml-md"
+            class="q-ml-sm"
           />
         </template>
       </q-table>
     </div>
-    <!-- {{data}} -->
+    {{getArrivalAllInfo}}
   </q-page>
 </template>
 
@@ -55,6 +55,7 @@
     },
     data(){
       return {
+        rColor: 'grey',
         rowsNumber: '',
         pagination: {
           rowsPerPage: 8,
@@ -87,10 +88,7 @@
 
     },
     async mounted(){
-      this.loading = true;
-      let a =  await this.FETCH_ARRIVAL_ALL_INFO(Number(await this.id));
-      this.data = await this.getArrivalAllInfo;
-      this.loading = false;
+      await this.refresh();
 
       if(this.getArrivalAll.length === 0){
         await this.FETCH_ARRIVAL_ALL();
@@ -109,6 +107,14 @@
       ...mapActions([
         'FETCH_ARRIVAL_ALL_INFO', 'FETCH_ARRIVAL_ALL'
       ]),
+      async refresh(){
+        this.rColor = 'blue';
+        this.loading = true;
+        let a =  await this.FETCH_ARRIVAL_ALL_INFO(Number(await this.id));
+        this.data = await this.getArrivalAllInfo;
+        this.loading = false;
+        this.rColor = 'grey';
+      }
 
     }
   }

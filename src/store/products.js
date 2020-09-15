@@ -1,6 +1,7 @@
-import shop from "../api/shop";
 import axios from "axios";
-import ca from "quasar/lang/ca";
+import lodash from 'lodash'; 
+import shop from "../api/shop";
+
 
 export default {
   mutations: {
@@ -10,18 +11,14 @@ export default {
         row.index = index + 1;
       });
     },
-
-    SET_NEXT_PAGE: (state, payload) => {
+    SET_NEXT_PAGE_ALL_PRODUCTS: (state, payload) => {
       let final = false;
       state.products.links = payload.links;
       state.products.count = payload.count;
 
       for (let i = 0; i < payload.results.length; i++) {
         for (let k = 0; k < state.products.results.length; k++) {
-          let answer = lodash.isEqual(
-            state.products.results[k],
-            payload.results[i]
-          );
+          let answer = lodash.isEqual(state.products.results[k], payload.results[i]);
           if (answer) {
             final = answer;
           }
@@ -33,8 +30,10 @@ export default {
         }
         final = false;
       }
+      state.products.results.forEach((row, index) => {
+        row.index = index + 1
+      })
     },
-
     SET_SEARCH_RESULT_ALL_PRODUCTS: (state, payload) => {
       state.products.results.forEach((row, index) => {
         delete row.index;
@@ -128,11 +127,9 @@ export default {
           }
         );
         commit("SET_BUSSINESS_PRODUCT_INFO", response.data);
-
-        return response;
-
+        return response.data;
       } catch (e) {
-        console.log(e + "FETCH_BUSSINESS_PRODUCT_INFO")
+        console.log(e.data)
       }
     },
 
@@ -179,7 +176,7 @@ export default {
     async ADD_PRODUCT({commit, getters}, payload)
     {
        try {
-          await shop.post('/business/product/add/', {
+          let response = await shop.post('/business/product/add/', {
             title: payload.title,
             barcode: payload.barcode,
             type: payload.type,
@@ -192,38 +189,32 @@ export default {
             purchase_price: payload.purchase_price,
             selling_price: payload.selling_price,
             expire_date: payload.expire_date
-        },
-         {
-            headers: {
-              Authorization: getters.getUser.token,
-            },
-         });
+          }, 
+          {
+            headers: { Authorization: getters.getUser.token},
+          });
           return response.data;
        }catch (e) {
          console.log("In ADD_PRODUCT " + e);
        }
 
     },
-
-  
-
-    async GET_NEXT_PAGE({ commit, getters }, payload) {
+    async FETCH_NEXT_PAGE_ALL_PRODUCTS({ commit, getters }, payload) {
       let url = getters.getProducts.links.next;
       return await axios({
         method: "GET",
         url: url,
         headers: { Authorization: getters.getUser.token },
       })
-        .then((e) => {
-          commit("SET_NEXT_PAGE", e.data);
-          //return e;
-        })
-        .catch((error) => {
-          console.log(error + "WATCH NEXT PAGE");
-          //   return error;
-        });
+      .then((e) => {
+        commit("SET_NEXT_PAGE_ALL_PRODUCTS", e.data);
+        //return e;
+      })
+      .catch((error) => {
+        console.log(error);
+        //   return error;
+      });
     },
-
     async GET_SEARCH_RESULT_ALL_PRODUCTS({ commit, getters }, payload) {
       console.log(payload.value);
       try {
@@ -234,7 +225,7 @@ export default {
         });
         commit("SET_SEARCH_RESULT_ALL_PRODUCTS", response.data);
       } catch (e) {
-        console.log(e + " GET_SEARCH_RESULT_ALL_PRODUCTS");
+        console.log(e);
       }
     },
   },
