@@ -41,7 +41,7 @@
         </template>
       </q-table>
     </div>
-    {{getArrivalAllInfo}}
+    <!-- {{getArrivalAllInfo}} -->
   </q-page>
 </template>
 

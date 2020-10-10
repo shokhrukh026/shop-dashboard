@@ -1,3 +1,6 @@
+import Vue from 'vue';
+import axios from "axios";
+import lodash from 'lodash'; 
 import shop from "../api/shop";
 
 export default {
@@ -10,9 +13,6 @@ export default {
   },
     SET_PRODUCT_DETAIL_IN_BRANCH: (state, payload)=>{
         state.product_detail_in_branch = payload;
-        state.product_detail_in_branch.forEach((row, index) => {
-          row.index = index + 1
-        })
     },
     SET_PRODUCTS_INSIDE_BRANCH: (state, payload)=>{
         state.productsInsideBranch = payload;
@@ -91,9 +91,49 @@ export default {
         row.index = index + 1
       })
     },
+    SET_SEARCH_RESULT_BY_BRANCH: (state, payload) => {
+      state.productsInsideBranch.results.forEach((row, index) => {
+        delete row.index;
+      });
 
+      let results = payload.results;
+      if (results.length !== 0) {
+        state.productsInsideBranch.results.forEach((row, index) => {
+          for (let a = 0; a < results.length; a++) {
+            if (lodash.isEqual(row, results[a])) {
+              console.log('it is equal!');
+              results.splice(a, 1);
+            }
+          }
+        });
+        if (results) {
+          for (let i = 0; i < results.length; i++) {
+            Vue.set(state.productsInsideBranch.results, state.productsInsideBranch.results.length, results[i]);
+          }
+        }
+      } else {
+        console.log('Array is empty!');
+      }
+
+      state.productsInsideBranch.results.forEach((row, index) => {
+        row.index = index + 1;
+      });
+
+    },
   },
   actions: {
+    async GET_SEARCH_RESULT_BY_BRANCH({ commit, getters }, payload) {
+      try {
+        const response = await shop.get('branch/' + payload.virtual_number + '/products/?search=' + payload.value, {
+          headers: {
+            Authorization: getters.getUser.token,
+          },
+        });
+        commit('SET_SEARCH_RESULT_BY_BRANCH', response.data);
+      } catch (e) {
+        console.log(e);
+      }
+    },
     async FETCH_NEXT_PAGE_PRODUCTS_IN_BRANCHES({ commit, getters }, payload) {
       let url = getters.getProductsInsideBranch.links.next;
       return await axios({
@@ -147,7 +187,7 @@ export default {
         });
         commit('SET_PRODUCT_DETAIL_IN_BRANCH', response.data);
       } catch (e) {
-        console.log(e.data);
+        console.log(e);
       }
     },
     async FETCH_PRODUCTS_INSIDE_BRANCH({ commit, getters}, id) {

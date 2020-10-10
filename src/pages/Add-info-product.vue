@@ -11,9 +11,19 @@
                </q-card-section>
 
               <q-list dense bordered separator class="bg-white shadow-1">
+                <q-item v-ripple >
+                 <q-item-section>
+                   <q-item-label class="text-h6 text-green-9">Добавлено в: <span class="text-subtitle1 text-black">{{getProduct.added_at}}</span></q-item-label>
+                 </q-item-section>
+               </q-item>
                <q-item v-ripple>
                  <q-item-section>
                      <q-item-label class="text-h6 text-green-9">Название продукта : <span class="text-subtitle1 text-black">&nbsp;{{getProduct.title}}</span></q-item-label>
+                 </q-item-section>
+               </q-item>
+               <q-item v-ripple >
+                 <q-item-section>
+                   <q-item-label class="text-h6 text-green-9">Категория: <span class="text-subtitle1 text-black">&nbsp;{{getProduct.category}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
@@ -43,27 +53,17 @@
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6 text-green-9">Категория: <span class="text-subtitle1 text-black">&nbsp;{{getProduct.category}}</span></q-item-label>
-                 </q-item-section>
-               </q-item>
-               <q-item v-ripple >
-                 <q-item-section>
                    <q-item-label class="text-h6 text-green-9">НДС: <span class="text-subtitle1 text-black">&nbsp;{{getProduct.vat}}%</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6 text-green-9">Общее количество в бизнесе: <span class="text-subtitle1 text-black">&nbsp;{{getProduct.total_quantity}}</span></q-item-label>
+                   <q-item-label class="text-h6 text-green-9">Общее количество в бизнесе: <span class="text-subtitle1 text-black">&nbsp;{{getProduct.total_quantity}} {{getProduct.type_product_name}}</span></q-item-label>
                  </q-item-section>
                </q-item>
                <q-item v-ripple >
                  <q-item-section>
-                   <q-item-label class="text-h6 text-green-9">Оставшееся количество в бизнесе: <span class="text-subtitle1 text-black">{{getProduct.left_quantity}}</span></q-item-label>
-                 </q-item-section>
-               </q-item>
-               <q-item v-ripple >
-                 <q-item-section>
-                   <q-item-label class="text-h6 text-green-9">Добавлено в: <span class="text-subtitle1 text-black">{{getProduct.added_at}}</span></q-item-label>
+                   <q-item-label class="text-h6 text-green-9">Оставшееся количество в бизнесе: <span class="text-subtitle1 text-black">{{getProduct.left_quantity}} {{getProduct.type_product_name}}</span></q-item-label>
                  </q-item-section>
                </q-item>
              </q-list>
@@ -128,7 +128,7 @@
              </q-card>
            </div>
 
-          <!-- {{product_info_add}} -->
+          {{product_info_add}}
 
            <div class="col-lg-12 col-md-12 col-xs-12 col-sm-12 q-mt-md row justify-between">
             <q-btn color="blue" icon="add" label="Добавить информацию о продукте" size="md" @click="addInfoForProduct"/>
@@ -177,9 +177,9 @@ export default {
       },
       
       async addProductInfo(){
-        let response;
+        let response = [];
         for (let i = 0; i < this.product_info_add.length; i++) {
-          response = await this.ADD_PRODUCT_INFO({
+          response[i] = await this.ADD_PRODUCT_INFO({
             business_product_id: this.id,
             quantity: this.product_info_add[i].quantity,
             purchase_price: this.product_info_add[i].purchase_price,
@@ -187,21 +187,26 @@ export default {
             expire_date: this.product_info_add[i].expire_date,
           })
         }
+
         this.$set(this.product_info_add, 0, {quantity: '', purchase_price: '', selling_price: '', expire_date: ''});
-        for(let j = 1; j < this.product_info_add.length; j++){
+
+        let lengthPopUp = this.product_info_add.length
+        for(let j = 1; j < lengthPopUp; j++){
           this.product_info_add.pop()
         }
 
-        if(response.status == 'SUCCESS'){
-          this.$q.notify({
-            message: 'Успешно добавлено!',
-            color: 'green'
-          })
-        }else{
-          this.$q.notify({
-            message: 'Ошибка!',
-            color: 'negative'
-          })
+        for(let k = 0; k < response.length; k++){
+          if(response[k].status == 'SUCCESS'){
+            this.$q.notify({
+              message: 'Успешно добавлено!',
+              color: 'green'
+            })
+          }else if(response[k].status != 'SUCCESS'){
+            this.$q.notify({
+              message: 'Ошибка!',
+              color: 'negative'
+            })
+          }
         }
       },
 

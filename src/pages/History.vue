@@ -58,7 +58,7 @@
         </q-card-actions>
       </q-card>
     </q-dialog>
-  {{data}}
+  <!-- {{data}} -->
   </q-page>
 </template>
 

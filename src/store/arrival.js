@@ -1,5 +1,4 @@
 import shop from "../api/shop";
-import ca from "quasar/lang/ca";
 
 export default{
   mutations:{

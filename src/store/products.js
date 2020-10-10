@@ -1,3 +1,4 @@
+import Vue from 'vue';
 import axios from "axios";
 import lodash from 'lodash'; 
 import shop from "../api/shop";
@@ -34,44 +35,61 @@ export default {
         row.index = index + 1
       })
     },
+    SET_NEXT_PAGE_PRODUCTS_INFO: (state, payload) => {
+      let final = false;
+      state.productInfo.links = payload.links;
+      state.productInfo.count = payload.count;
+
+      for (let i = 0; i < payload.results.length; i++) {
+        for (let k = 0; k < state.productInfo.results.length; k++) {
+          let answer = lodash.isEqual(state.productInfo.results[k], payload.results[i]);
+          if (answer) {
+            final = answer;
+          }
+        }
+
+        if (!final) {
+          // payload.results[i].index
+          state.productInfo.results.push(payload.results[i]);
+        }
+        final = false;
+      }
+      state.productInfo.results.forEach((row, index) => {
+        row.index = index + 1
+      })
+    },
     SET_SEARCH_RESULT_ALL_PRODUCTS: (state, payload) => {
       state.products.results.forEach((row, index) => {
         delete row.index;
       });
 
       let results = payload.results;
-
       if (results.length !== 0) {
         state.products.results.forEach((row, index) => {
           for (let a = 0; a < results.length; a++) {
             if (lodash.isEqual(row, results[a])) {
-              console.log("it is equal!");
+              console.log('it is equal!');
               results.splice(a, 1);
             }
           }
         });
         if (results) {
           for (let i = 0; i < results.length; i++) {
-            Vue.set(
-              state.products.results,
-              state.products.results.length,
-              results[i]
-            );
+            Vue.set(state.products.results, state.products.results.length, results[i]);
           }
         }
       } else {
-        console.log("Array is empty! SET_SEARCH_RESULT_ALL_PRODUCTS");
+        console.log('Array is empty!');
       }
 
       state.products.results.forEach((row, index) => {
         row.index = index + 1;
       });
-    },
 
+    },
     SET_BUSSINESS_PRODUCT: (state, payload) => {
       state.productDetail = payload;
     },
-
     SET_BUSSINESS_PRODUCT_INFO: (state, payload) => {
       state.productInfo = payload;
       state.productInfo.results.forEach((row, index) => {
@@ -215,15 +233,30 @@ export default {
         //   return error;
       });
     },
+    async FETCH_NEXT_PAGE_PRODUCTS_INFO({ commit, getters }, payload) {
+      let url = getters.getProductInfo.links.next;
+      return await axios({
+        method: "GET",
+        url: url,
+        headers: { Authorization: getters.getUser.token },
+      })
+      .then((e) => {
+        commit("SET_NEXT_PAGE_PRODUCTS_INFO", e.data);
+        //return e;
+      })
+      .catch((error) => {
+        console.log(error);
+        //   return error;
+      });
+    },
     async GET_SEARCH_RESULT_ALL_PRODUCTS({ commit, getters }, payload) {
-      console.log(payload.value);
       try {
-        const response = await shop.get("products/?search=" + payload.value, {
+        const response = await shop.get("business/products/?search=" + payload.value, {
           headers: {
             Authorization: getters.getUser.token,
           },
         });
-        commit("SET_SEARCH_RESULT_ALL_PRODUCTS", response.data);
+        commit('SET_SEARCH_RESULT_ALL_PRODUCTS', response.data);
       } catch (e) {
         console.log(e);
       }

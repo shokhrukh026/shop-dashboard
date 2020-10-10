@@ -3,7 +3,7 @@ import shop from "../api/shop";
 const baseUrl = "/api/v1/user/login/";
 export default {
   state: {
-    user: { token: "", user_id: "", business_id: "" },
+    user: { token: '', user_id: '', business_id: '' },
   },
   mutations: {
     SET_USER_TO_STATE: (state, payload) => {
@@ -20,7 +20,7 @@ export default {
     /**
      * @return {string}
      */
-    async AUTHORIZATION({ commit }, payload) {
+    async AUTHORIZATION({ commit, getters }, payload) {
       try {
         const response = await shop.post("user/login/", {
             username: payload.username,
@@ -33,6 +33,12 @@ export default {
         console.log(e + " AUTHORIZATION actions");
         return "error";
       }
+
+      // console.log(payload);
+      // console.log(getters.getUser);
+      // commit("SET_USER_TO_STATE", { token: 'Token 0f37f804f4090de8a64c404ed833b8c834b21b8c', user_id: '1', business_id: '3' });
+      // sessionStorage.setItem('user', JSON.stringify({ token: 'Token 0f37f804f4090de8a64c404ed833b8c834b21b8c', user_id: '1', business_id: '3' }));
+      // payload.router.push({ path: "/main" });
 
     },
     async STATE_CHANGED({commit}, payload){

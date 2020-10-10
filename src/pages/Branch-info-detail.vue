@@ -50,9 +50,9 @@
                  </q-item-section>
                </q-item>
              </q-list>
-      </q-expansion-item>
+            </q-expansion-item>
 
-                   {{getProductDetailInBranch}}
+                   <!-- {{getProductDetailInBranch}} -->
 
             <q-btn push color="white" text-color="blue" icon="fas fa-arrow-left" 
               class="q-mt-md q-mr-xs" :to="{ name: 'branch-info', params: {id: branch_id}}"/>
@@ -123,7 +123,7 @@
                </q-card-actions>
              </q-card>
            </q-dialog>
-        {{getProductInfoInBranch}}
+        <!-- {{getProductInfoInBranch}} -->
     </q-page>
 </template>
 

@@ -200,7 +200,7 @@
               <!-- {{getAllTypes}} -->
              <!-- {{getAllCategories}} -->
 
-             --------{{product_add_new}}
+             <!-- {{product_add_new}} -->
             </q-card>
 </template>
 

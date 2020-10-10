@@ -3,6 +3,11 @@
     <div class="q-pa-md">
       <q-expansion-item expand-separator icon="info" default-opened   header-class="bg-blue text-h6" dark :label="'Информация о Продукте ' + getProduct.title">
         <q-list bordered separator dense class="bg-white shadow-1">
+          <q-item v-ripple >
+            <q-item-section>
+              <q-item-label class="text-h6 text-blue-9">Добавлено в : <span class="text-subtitle1 text-black">{{getProduct.added_at}}</span></q-item-label>
+            </q-item-section>
+          </q-item>
           <q-item v-ripple>
             <q-item-section>
               <q-item-label class="text-h6 text-blue-9">Название Продукта : <span class="text-subtitle1 text-black">&nbsp;{{getProduct.title}}</span></q-item-label>
@@ -53,15 +58,10 @@
               <q-item-label class="text-h6 text-blue-9">Оставшееся количество в бизнесе: <span class="text-subtitle1 text-black">{{getProduct.left_quantity}} {{getProduct.type_product_name}}</span></q-item-label>
             </q-item-section>
           </q-item>
-          <q-item v-ripple >
-            <q-item-section>
-              <q-item-label class="text-h6 text-blue-9">Добавлено в : <span class="text-subtitle1 text-black">{{getProduct.added_at}}</span></q-item-label>
-            </q-item-section>
-          </q-item>
         </q-list>
       </q-expansion-item>
 
-      {{getProduct}}
+      <!-- {{getProduct}} -->
       <div class="q-mt-md">
         <q-btn push color="white" text-color="blue" icon="fas fa-arrow-left"
                class="q-mb-xs q-mr-xs" to="/products"/>
@@ -86,8 +86,8 @@
           <template v-slot:body-cell-actions="props">
             <q-td :props="props">
               <q-btn dense round flat color="grey" @click="(addRow = !addRow) && (temp = props.row)" icon="add_circle"></q-btn>
-              <q-btn dense round flat color="grey" to="/branch-update" icon="edit"></q-btn>
-              <q-btn dense round flat color="grey" to="/branch-info" icon="fas fa-info-circle"></q-btn>
+              <q-btn dense round flat color="grey" icon="edit"></q-btn>
+              <q-btn dense round flat color="grey" icon="fas fa-info-circle"></q-btn>
             </q-td>
           </template>
           <template v-slot:top="props">
@@ -105,7 +105,7 @@
       </div>
       <!-- {{data}} -->
 
-      {{getProductInfo}}
+      <!-- {{getProductInfo}} -->
       <div class="q-mt-md">
         <q-table
           dense
@@ -122,8 +122,8 @@
         >
           <template v-slot:body-cell-actions="props">
             <q-td :props="props">
-              <q-btn dense round flat color="grey" to="/branch-update" icon="edit"></q-btn>
-              <q-btn dense round flat color="grey" to="/branch-info" icon="fas fa-info-circle"></q-btn>
+              <q-btn dense round flat color="grey" icon="edit"></q-btn>
+              <q-btn dense round flat color="grey" icon="fas fa-info-circle"></q-btn>
             </q-td>
           </template>
           <template v-slot:top="props">
@@ -202,7 +202,7 @@
         getProduct: {title: '', barcode: '', type: '', country: '', manufacture: '', category: '',
           total_quantity: '', left_quantity: '', vat: '', description: "", added_at: ""},
         pagination: {
-          rowsPerPage: 8,
+          rowsPerPage: 9,
           page: 1,
         },
         loading: false,
@@ -234,11 +234,11 @@
       }
     },
     watch:{
-      // 'pagination.page': async function (newVal, oldVal) {
-      //   if (newVal == this.pagesNumber) {
-      //     await this.GET_NEXT_PAGE_FOR_MEDICINE_INFO();
-      //   }
-      // },
+      'pagination.page': async function (newVal, oldVal) {
+        if (newVal == this.pagesNumber) {
+          await this.FETCH_NEXT_PAGE_PRODUCTS_INFO();
+        }
+      },
     },
     async mounted(){
       const details = await this.FETCH_BUSSINESS_PRODUCT(this.id);
@@ -254,6 +254,9 @@
       ...mapGetters([
         'getProductDetail', 'getProductInfo', 'getProductInBranch', 'GET_ALL_BRANCHES'
       ]),
+      pagesNumber() {
+        return Math.ceil(this.data.length / this.pagination.rowsPerPage);
+      },
       getBranchNames() {
         let a = [];
         for(let i = 0; i<this.GET_ALL_BRANCHES.length; i++){
@@ -265,7 +268,7 @@
     methods: {
       ...mapActions([
         'FETCH_BUSSINESS_PRODUCT', 'FETCH_BUSSINESS_PRODUCT_INFO', 'FETCH_ALL_BRANCHES',
-        'FETCH_BUSSINESS_PRODUCT_IN_BRANCH', 'ADD_TO_CARD'
+        'FETCH_BUSSINESS_PRODUCT_IN_BRANCH', 'ADD_TO_CARD', 'FETCH_NEXT_PAGE_PRODUCTS_INFO'
       ]),
       async refresh(){
         this.rColor = 'blue';

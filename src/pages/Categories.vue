@@ -48,7 +48,7 @@
         </template>
       </q-table>
     </div>
-      {{data}}
+      <!-- {{data}} -->
     <q-dialog v-model="addCategoryPopUp" persistent>
       <addCategory  @onDestroyComponent="updateTableInfo"/>
     </q-dialog>

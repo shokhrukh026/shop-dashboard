@@ -121,7 +121,7 @@
       <addProduct />
     </q-dialog>
 
-    {{getProducts}}
+    <!-- {{getProducts}} -->
   </q-page>
 </template>
 

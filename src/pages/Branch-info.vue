@@ -43,7 +43,7 @@
         </template>
       </q-table>
     </div>
-    {{getProductsInsideBranch}}
+    <!-- {{getProductsInsideBranch}} -->
   </q-page>
 </template>
 
@@ -90,6 +90,15 @@
           await this.FETCH_NEXT_PAGE_PRODUCTS_IN_BRANCHES();
         }
       },
+      filter: async function (newVal, oldVal) {
+        if (newVal.length >= 2) {
+          await this.getSearchResultByFilter();
+        } else {
+          console.log(
+            "Search input has less than 2 characters. Search is not working"
+          );
+        }
+      },
 
     },
     async mounted(){
@@ -112,7 +121,7 @@
     },
     methods: {
       ...mapActions([
-        'FETCH_ALL_BRANCHES', 'FETCH_PRODUCTS_INSIDE_BRANCH', 'FETCH_NEXT_PAGE_PRODUCTS_IN_BRANCHES'
+        'FETCH_ALL_BRANCHES', 'FETCH_PRODUCTS_INSIDE_BRANCH', 'FETCH_NEXT_PAGE_PRODUCTS_IN_BRANCHES', 'GET_SEARCH_RESULT_BY_BRANCH'
       ]),
        async refresh(){
         this.rColor = 'blue';
@@ -124,14 +133,14 @@
         this.loading = false;
         this.rColor = 'grey';
       },
-      // async getSearchResultByFilter(){
-      //   return await this.GET_SEARCH_RESULT_BY_BRANCH(
-      //     {
-      //       virtual_number: this.id,
-      //       title: this.filter
-      //     }
-      //   )
-      // },
+      async getSearchResultByFilter(){
+        return await this.GET_SEARCH_RESULT_BY_BRANCH(
+          {
+            virtual_number: this.id,
+            value: this.filter
+          }
+        )
+      },
     }
   }
 </script>

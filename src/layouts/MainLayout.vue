@@ -32,10 +32,6 @@
                   <q-item-section>Филиалы</q-item-section>
                 </q-item>
                 <q-separator />
-                <q-item clickable to="/profile">
-                  <q-item-section>Настройки</q-item-section>
-                </q-item>
-                <q-separator />
                 <q-item clickable>
                   <q-item-section>
                     <q-btn color="blue" label="Выход" push size="sm" v-close-popup to="/" @click="logout" />

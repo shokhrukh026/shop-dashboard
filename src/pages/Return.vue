@@ -40,7 +40,7 @@
             </template>
             </q-table>
         </div>
-        {{getRefunds}}
+        <!-- {{getRefunds}} -->
     </q-page>
 </template>
 
